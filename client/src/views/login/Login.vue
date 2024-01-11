@@ -7,9 +7,10 @@
 </template>
 
 <script setup>
-import axios from '@/api';
+import { register } from '@/api/user'
+
 const clickBtn = async() => {
-  const res = await axios.get('/user/userInfo');
+  const res = await register()
   console.log(res);
 }
 </script>
