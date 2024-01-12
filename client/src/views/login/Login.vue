@@ -10,7 +10,7 @@
 import { register } from '@/api/user'
 
 const clickBtn = async() => {
-  const res = await register()
+  const res = await register({})
   console.log(res);
 }
 </script>
