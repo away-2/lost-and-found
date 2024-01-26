@@ -9,8 +9,19 @@ const indexRouter = require('../router/index')
 
 const app = new koa()
 
+const { koaSwagger } = require('koa2-swagger-ui')
+const swagger = require('../config/swagger')
+
+app.use(swagger.routes(),swagger.allowedMethods())
+app.use(koaSwagger({
+    routePrefix: '/swagger',
+    swaggerOptions: {
+        url: '/swagger.json'
+    }
+}))
+
 const cors = require('@koa/cors')
-app.use(cors())
+app.use(cors({}))
 
 // 托管静态资源
 app.use(static(path.join(__dirname, '../../statics')))
