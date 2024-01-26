@@ -1,5 +1,5 @@
 {
-  "name": "test",
+  "name": "client",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,17 +7,18 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^7.0.1",
+    "ant-design-vue": "4.x",
     "axios": "^1.6.5",
-    "element-plus": "^2.4.4",
     "less": "^4.2.0",
+    "less-loader": "^12.1.0",
+    "pinia": "^2.1.7",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3"
   },
   "devDependencies": {
     "@craco/craco": "^7.1.0",
     "@vue/cli-plugin-router": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "unplugin-auto-import": "^0.17.3",
-    "unplugin-vue-components": "^0.26.0"
+    "@vue/cli-service": "~5.0.0"
   }
 }
