@@ -2,7 +2,7 @@
 	<div class="header">
 		<div class="header-logo">
 			<img src="@/assets/images/logo.png" alt="Element logo" />
-			<div class="title">校园失物招领</div>
+			<div class="title">校园失物招领系统</div>
 		</div>
 		<a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @click="toRoute" @select="selectedKeys" />
 		<div class="header-right">
@@ -10,11 +10,36 @@
 				<Login />
 			</div>
 			<div class="avatorWrap">
-				<img src="@/assets/images/通知.png" alt="">
-				<a-avatar src="@/assets/images/logo.png" />
+				<a-dropdown>
+					<img src="@/assets/images/通知.png" alt="" />
+					<template #overlay>
+						<a-menu>
+							<a-menu-item key="1">评论</a-menu-item>
+							<a-menu-item key="2">赞和收藏</a-menu-item>
+							<a-menu-item key="3">新增粉丝</a-menu-item>
+							<a-menu-item key="4">私信</a-menu-item>
+							<a-menu-item key="5">系统通知</a-menu-item>
+						</a-menu>
+					</template>
+				</a-dropdown>
+				<a-dropdown :trigger="['click']">
+					<a-avatar src="@/assets/images/logo.png" />
+					<template #overlay>
+						<a-menu>
+							<a-menu-item key="1">
+					<a-avatar src="@/assets/images/logo.png" />
+								
+							</a-menu-item>
+							<a-menu-item key="2">赞和收藏</a-menu-item>
+							<a-menu-item key="3">新增粉丝</a-menu-item>
+							<a-menu-item key="4">私信</a-menu-item>
+							<a-menu-item key="5">系统通知</a-menu-item>
+						</a-menu>
+					</template>
+				</a-dropdown>
+				
 			</div>
 		</div>
-
 	</div>
 </template>
 
@@ -42,8 +67,8 @@ const items = ref([
 	},
 	{
 		key: '/publish',
-		label: '发布帖子',
-		title: '发布帖子',
+		label: '论坛',
+		title: '论坛',
 	},
 	{
 		key: '/hot',
@@ -55,7 +80,7 @@ const isLogin = ref(true)
 let $router = useRouter()
 
 const selectedKeys = (item) => {
-	console.log(item);
+	console.log(item)
 }
 const toRoute = (current) => {
 	$router.push(current.key)
@@ -87,6 +112,7 @@ onMounted(() => {
 		.title {
 			margin-left: 5px;
 			font-size: 18px;
+			font-family: 'Myfont';
 		}
 	}
 
@@ -94,26 +120,27 @@ onMounted(() => {
 		.loginWrap {
 			width: 100px;
 		}
-		.avatorWrap{
+		.avatorWrap {
 			display: flex;
 			// justify-content: center;
 			align-items: center;
-			img{
+			img {
 				width: 20px;
 				height: 20px;
 				margin-right: 15px;
 			}
-
 		}
 		.isLogin {
 			display: none;
 		}
 	}
-
 }
 </style>
 <style>
 .ant-menu-horizontal {
 	line-height: 60px;
+}
+.ant-dropdown {
+	width: 150px;
 }
 </style>
