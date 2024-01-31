@@ -6,10 +6,10 @@
 		</div>
 		<a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @click="toRoute" @select="selectedKeys" />
 		<div class="header-right">
-			<div class="loginWrap" :class="{ isLogin: isLogin }">
-				<Login />
+			<div class="loginWrap" v-show="isLogin" @click="toLogin">
+				登录
 			</div>
-			<div class="avatorWrap">
+			<div class="avatorWrap" v-show="!isLogin">
 				<a-dropdown>
 					<img src="@/assets/images/通知.png" alt="" />
 					<template #overlay>
@@ -45,7 +45,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import Login from '@/views/login/Login.vue'
 import { useRouter } from 'vue-router'
 
 const current = ref(['/home'])
@@ -86,6 +85,9 @@ const toRoute = (current) => {
 	$router.push(current.key)
 }
 
+const toLogin = () => {
+	$router.push('/Login')
+}
 onMounted(() => {
 	// console.log($router.options.routes);
 })
@@ -118,11 +120,19 @@ onMounted(() => {
 
 	.header-right {
 		.loginWrap {
-			width: 100px;
+			width: 70px;
+			height: 30px;
+			border: 1px solid #69a0ee;
+			background-color: #f4f9ff;
+			text-align: center;
+			font-size: 13px;
+			cursor: pointer;
+			padding-top: 6px;
+			border-radius: 2px;
+
 		}
 		.avatorWrap {
 			display: flex;
-			// justify-content: center;
 			align-items: center;
 			img {
 				width: 20px;

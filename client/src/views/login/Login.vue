@@ -23,7 +23,7 @@
 			</div>
 		</div>
 		<div class="updatePwdPage" v-show="currentPage === 1">
-			<UpdatePwd />
+			<UpdatePwd :currentPage="currentPage"/>
 		</div>
 	</div>
 </template>
@@ -42,7 +42,8 @@ const formVal = reactive({
 	password: '',
 })
 const inputVal = ref('')
-const currentPage = ref(0)
+const currentPage = ref(1)
+
 
 // 选中学生传入0， 选中管理员传入1
 const selctedStatus = (index) => {
