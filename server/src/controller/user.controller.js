@@ -62,7 +62,16 @@ class UserController {
     const { email } = ctx.request.body
     // first_step: 根据邮箱找到用户
     let users = await searchUsersByCondition({ logicOpt: 'and', whereArr: [{ email }] })
-    console.log(users);
+    const { password: userPassword,...userInfo } = users[0]
+    const token = jwt.sign(userInfo,JWT_SECRET,{ expiresIn: '2h' })
+    ctx.body = {
+      code: 200,
+      message: '用户登录成功',
+      data: {
+        token,
+        userInfo
+      }
+    }
   }
   // 通过学号查找学生信息
   // async findStudentInfoByStudentCode(ctx, next) {
