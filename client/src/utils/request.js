@@ -41,7 +41,7 @@ axiosInstance.interceptors.request.use((config) => {
 
 // 响应拦截器
 axiosInstance.interceptors.response.use((response) => {
-    console.log(response);
+    // console.log(response);
 	if (response.data.code && String(response.data.code) !== '200') {
 		// 说明后端手动声明这次是一次错误的请求
 		if (checkTokenError(response)) return
