@@ -3,12 +3,17 @@ import { createRouter, createWebHistory } from 'vue-router';
 const routes = [
   {
     path: '/',
-    redirect: '/home',
+    redirect: '/login',
   },
   {
     path: '/login',
     name: 'Login',
-    component: () => import('../views/login/Login.vue')
+    component: () => import('../views/login/Login.vue'),
+  },
+  {
+    path: '/updatePwd',
+    name: 'UpdatePwd',
+    component: () => import('../views/login/components/updatePwd.vue')
   },
   {
     path: '/layout',

@@ -1,112 +1,181 @@
 <template>
-	<div class="loginWrap" @click="showModal">
-		<span>登录</span>
-	</div>
-	<a-modal v-model:open="open" @ok="handleOk" :footer="null" class="modalWrap" centered width="400px">
-		<div class="title">登录</div>
-		<div class="btnContainer">
-			<div v-for="(item, index) in tabList" :key="index" class="btnWrap" :class="{ active: index === isActive }"
-				@click="selctedStatus(index)">{{ item }}</div>
+	<div class="container">
+		<a-tooltip placement="bottomLeft">
+			<template #title>返回首页</template>
+			<div class="backImg">
+				<img src="@/assets/images/backHome.png" alt="" @click="backHomePage" />
+			</div>
+		</a-tooltip>
+		<div class="loginWrap">
+			<div class="loginBox">
+				<div class="loginForm">
+					<div class="login-title">校园失物招领系统</div>
+					<div class="btnContainer">
+						<div v-for="(item, index) in tabList" :key="index" class="btnWrap" :class="{ active: index === isActive }" @click="selctedStatus(index)">{{ item }}</div>
+					</div>
+					<input placeholder="请输入学号/邮箱" class="input-style" type="text" :onblur="getInputVal" :value="formVal.username" />
+					<input placeholder="请输入密码" class="input-style" type="text" :onblur="getInputVal" :value="formVal.username" />
+					<div class="loginBtn" @click="toLogin">登录</div>
+					<div class="forgetWrap" @click="toUpdatePwd">*忘记密码？</div>
+				</div>
+			</div>
 		</div>
-		<a-form :model="formState" name="basic" :label-col="{ span: 5 }" :wrapper-col="{ span: 16 }" autocomplete="off"
-			@finish="onFinish" @finishFailed="onFinishFailed">
-			<a-form-item name="username" :rules="[{ message: 'Please input your username!' }]">
-				<a-input v-model:value="formState.username" placeholder="请输入学号/邮箱" />
-			</a-form-item>
-			<a-form-item name="password" :rules="[{ message: 'Please input your password!' }]">
-				<a-input-password v-model:value="formState.password" placeholder="请输入密码" />
-			</a-form-item>
-		</a-form>
-		<a-button type="primary" html-type="submit">登录</a-button>
-	</a-modal>
+	</div>
 </template>
 
 <script setup>
 import { reactive, ref } from 'vue'
-const open = ref(false)
+import { useRouter } from 'vue-router'
+import { message } from 'ant-design-vue'
+
+const $router = useRouter()
 const isActive = ref(0)
 const tabList = reactive(['学生', '管理员'])
-
-const showModal = () => {
-	open.value = true
-}
-const handleOk = (e) => {
-	console.log(e)
-	open.value = false
-}
-const formState = reactive({
+const formVal = reactive({
 	username: '',
 	password: '',
 })
-const onFinish = (values) => {
-	console.log('Success:', values)
-}
-const onFinishFailed = (errorInfo) => {
-	console.log('Failed:', errorInfo)
-}
+const inputVal = ref('')
 
+// 选中学生传入0， 选中管理员传入1
 const selctedStatus = (index) => {
 	isActive.value = index
+}
+
+const backHomePage = () => {
+	$router.push('/home')
+}
+
+const toLogin = () => {
+	if (!inputVal.value) {
+		message.warn('学号或密码为空，请确认后登录')
+		return
+	}
+}
+
+const toUpdatePwd = () => {
+	$router.push('/updatePwd')
+}
+
+const getInputVal = (e) => {
+	inputVal.value = e.target.value
+	console.log(e.target.value)
 }
 </script>
 
 <style lang="less" scoped>
-.loginWrap span:nth-child(2n-1) {
-	cursor: pointer;
-	&:hover {
-		opacity: 0.5;
-	}
-}
+.container {
+	width: 100vw;
+	height: 100vh;
+	background: #f4f9ff;
 
-.modalWrap {
-	.title {
-		font-size: 18px;
-		line-height: 20px;
+	.backImg {
 		width: 100%;
-		text-align: center;
-		margin: 30px 0;
-	}
-
-	.btnContainer {
+		height: 35px;
+		background: rgb(255, 255, 255);
+		opacity: 0.7;
 		display: flex;
+		align-items: center;
+		padding-left: 5px;
 
-		.btnWrap {
-			background-color: rgb(242, 243, 249);
-			color: rgb(102, 102, 102);
-			width: 70px;
+		img {
 			height: 30px;
-			text-align: center;
-			border: 1px solid rgb(204, 204, 204);
-			border-radius: 5px;
-			padding: 4px 0;
-			margin: 0 10px 20px 0px;
-			cursor: pointer;
-		}
-
-		.active {
-			background-color: rgb(204, 227, 246);
-			color: rgb(114, 136, 250);
-			width: 70px;
-			height: 30px;
-			text-align: center;
-			border: 1px solid rgb(114, 136, 250);
-			border-radius: 5px;
-			padding: 4px 0;
-			margin: 0 10px 20px 0px;
 			cursor: pointer;
 		}
 	}
-}
-</style>
-<style>
-.ant-modal {
-	.ant-modal-content {
-		height: 400px;
-	}
-}
 
-.ant-btn {
-	width: 100%;
-	height: 40px;
+	.loginWrap {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: calc(100vh - 35px);
+
+		.loginBox {
+			background: #e8f1fd;
+			width: 490px;
+			height: 520px;
+			border-radius: 30px;
+			padding: 20px;
+
+			.loginForm {
+				width: 450px;
+				height: 480px;
+				border-radius: 20px;
+				background: #fff;
+				box-shadow: 0px 22px 35px 0px rgba(5, 27, 105, 0.12);
+				display: flex;
+				flex-direction: column;
+				padding: 50px 80px;
+				row-gap: 20px;
+
+				.login-title {
+					font-size: 25px;
+					width: 100%;
+					text-align: center;
+					font-family: 'MyFont';
+					margin-bottom: 20px;
+				}
+
+				.btnContainer {
+					display: flex;
+					column-gap: 10px;
+
+					.btnWrap {
+						width: 50%;
+						height: 40px;
+						color: rgb(117, 117, 117);
+						text-align: center;
+						border: 1px solid #c8d1e5;
+						border-radius: 5px;
+						padding: 13px 0;
+						cursor: pointer;
+						font-size: 13px;
+					}
+
+					.active {
+						color: rgb(124, 145, 251);
+						width: 50%;
+						height: 40px;
+						text-align: center;
+						border: 1px solid rgba(160, 197, 244, 0.25);
+						border-radius: 5px;
+						padding: 13px 0;
+						cursor: pointer;
+						font-size: 13px;
+					}
+				}
+
+				.input-style {
+					padding: 10px;
+					border: 1px solid #c8d1e5;
+					border-radius: 5px;
+					font-size: 14px;
+					outline: none;
+				}
+
+				.input-style:focus {
+					border-color: rgba(160, 197, 244, 0.25);
+					box-shadow: 0 0 0 0.2rem rgba(232, 241, 253, 0.25);
+				}
+
+				.loginBtn {
+					width: 100%;
+					height: 40px;
+					background: #1e2c4b;
+					color: #fff;
+					text-align: center;
+					padding-top: 10px;
+					border-radius: 5px;
+					cursor: pointer;
+				}
+
+				.forgetWrap {
+					font-size: 12px;
+					color: rgb(124, 145, 251);
+					cursor: pointer;
+				}
+			}
+		}
+	}
 }
 </style>

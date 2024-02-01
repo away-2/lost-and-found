@@ -12,6 +12,7 @@
 <script setup>
 import Header from './header/index.vue'
 import Main from './main/index.vue'
+
 </script>
 
 <style lang="less" scoped>

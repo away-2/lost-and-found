@@ -53,3 +53,12 @@ html, body{
 	width: 100%;
 	height: 100%;
 }
+
+/* 通过@font-face引入字体 */
+@font-face {
+	font-family: 'MyFont';
+	src: url('../font/ZCOOLKuaiLe-Regular.ttf') format('truetype');
+	font-weight: 400; /* 可根据字体文件的权重进行调整 */
+	font-style: normal;
+  }
+  
