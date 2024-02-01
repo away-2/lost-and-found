@@ -1,29 +1,24 @@
 <template>
 	<div class="container">
-		<div class="loginPage" v-show="currentPage === 0">
+		<a-tooltip placement="bottomLeft">
+			<template #title>返回首页</template>
 			<div class="backImg">
 				<img src="@/assets/images/backHome.png" alt="" @click="backHomePage" />
 			</div>
-			<div class="loginWrap">
-				<div class="loginBox">
-					<div class="loginForm">
-						<div class="login-title">校园失物招领系统</div>
-						<div class="btnContainer">
-							<div v-for="(item, index) in tabList" :key="index" class="btnWrap"
-								:class="{ active: index === isActive }" @click="selctedStatus(index)">{{ item }}</div>
-						</div>
-						<input placeholder="请输入学号/邮箱" class="input-style" type="text" :onblur="getInputVal"
-							:value="formVal.username">
-						<input placeholder="请输入密码" class="input-style" type="text" :onblur="getInputVal"
-							:value="formVal.username">
-						<div class="loginBtn" @click="toLogin">登录</div>
-						<div class="forgetWrap" @click="toUpdatePwd" >*忘记密码？</div>
+		</a-tooltip>
+		<div class="loginWrap">
+			<div class="loginBox">
+				<div class="loginForm">
+					<div class="login-title">校园失物招领系统</div>
+					<div class="btnContainer">
+						<div v-for="(item, index) in tabList" :key="index" class="btnWrap" :class="{ active: index === isActive }" @click="selctedStatus(index)">{{ item }}</div>
 					</div>
+					<input placeholder="请输入学号/邮箱" class="input-style" type="text" :onblur="getInputVal" :value="formVal.username" />
+					<input placeholder="请输入密码" class="input-style" type="text" :onblur="getInputVal" :value="formVal.username" />
+					<div class="loginBtn" @click="toLogin">登录</div>
+					<div class="forgetWrap" @click="toUpdatePwd">*忘记密码？</div>
 				</div>
 			</div>
-		</div>
-		<div class="updatePwdPage" v-show="currentPage === 1">
-			<UpdatePwd :currentPage="currentPage"/>
 		</div>
 	</div>
 </template>
@@ -31,8 +26,7 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { message } from 'ant-design-vue';
-import UpdatePwd from './components/updatePwd.vue';
+import { message } from 'ant-design-vue'
 
 const $router = useRouter()
 const isActive = ref(0)
@@ -42,8 +36,6 @@ const formVal = reactive({
 	password: '',
 })
 const inputVal = ref('')
-const currentPage = ref(1)
-
 
 // 选中学生传入0， 选中管理员传入1
 const selctedStatus = (index) => {
@@ -56,18 +48,18 @@ const backHomePage = () => {
 
 const toLogin = () => {
 	if (!inputVal.value) {
-		message.warn("学号或密码为空，请确认后登录")
+		message.warn('学号或密码为空，请确认后登录')
 		return
 	}
 }
 
 const toUpdatePwd = () => {
-	currentPage.value = 1
+	$router.push('/updatePwd')
 }
 
 const getInputVal = (e) => {
-	inputVal.value = e.target.value;
-	console.log(e.target.value);
+	inputVal.value = e.target.value
+	console.log(e.target.value)
 }
 </script>
 
@@ -75,7 +67,7 @@ const getInputVal = (e) => {
 .container {
 	width: 100vw;
 	height: 100vh;
-	background: #F4F9FF;
+	background: #f4f9ff;
 
 	.backImg {
 		width: 100%;
@@ -99,7 +91,7 @@ const getInputVal = (e) => {
 		height: calc(100vh - 35px);
 
 		.loginBox {
-			background: #E8F1FD;
+			background: #e8f1fd;
 			width: 490px;
 			height: 520px;
 			border-radius: 30px;
@@ -109,7 +101,7 @@ const getInputVal = (e) => {
 				width: 450px;
 				height: 480px;
 				border-radius: 20px;
-				background: #FFF;
+				background: #fff;
 				box-shadow: 0px 22px 35px 0px rgba(5, 27, 105, 0.12);
 				display: flex;
 				flex-direction: column;
@@ -128,13 +120,12 @@ const getInputVal = (e) => {
 					display: flex;
 					column-gap: 10px;
 
-
 					.btnWrap {
 						width: 50%;
 						height: 40px;
 						color: rgb(117, 117, 117);
 						text-align: center;
-						border: 1px solid #C8D1E5;
+						border: 1px solid #c8d1e5;
 						border-radius: 5px;
 						padding: 13px 0;
 						cursor: pointer;
@@ -156,7 +147,7 @@ const getInputVal = (e) => {
 
 				.input-style {
 					padding: 10px;
-					border: 1px solid #C8D1E5;
+					border: 1px solid #c8d1e5;
 					border-radius: 5px;
 					font-size: 14px;
 					outline: none;
@@ -170,8 +161,8 @@ const getInputVal = (e) => {
 				.loginBtn {
 					width: 100%;
 					height: 40px;
-					background: #1E2C4B;
-					color: #FFF;
+					background: #1e2c4b;
+					color: #fff;
 					text-align: center;
 					padding-top: 10px;
 					border-radius: 5px;
@@ -182,11 +173,9 @@ const getInputVal = (e) => {
 					font-size: 12px;
 					color: rgb(124, 145, 251);
 					cursor: pointer;
-
 				}
 			}
 		}
-
-
 	}
-}</style>
+}
+</style>

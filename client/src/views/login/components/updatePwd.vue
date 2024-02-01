@@ -1,8 +1,14 @@
 <template>
 	<div class="container">
-		<div class="backImg">
-			<img src="@/assets/images/backHome.png" alt="" @click="backLogin" />
-		</div>
+        <a-tooltip placement="bottomLeft">
+			<template #title>返回登录页</template>
+			<div class="backImg">
+				<img src="@/assets/images/backHome.png" alt="" @click="backLogin" />
+			</div>
+		</a-tooltip>
+		<!-- <div class="backImg">
+			<img src="@/assets/images/backHome.png" alt=""  />
+		</div> -->
 		<a-steps :current="current" :items="items" @change="onChange"></a-steps>
 		<div class="steps-content">
 			<div class="firstContent" v-if="steps[current].title === 'First'">
@@ -31,9 +37,11 @@
 					</div>
 					<div class="verifyWrap">
 						<input type="text" placeholder="请输入邮箱验证码" />
+                        <div @click="sendEmail">
 						<button @click="getCode(countDownTime)" :disabled="isCountDownDisabled">
 							{{ countDownText }}
 						</button>
+                    </div>
 					</div>
 					<div class="sendText" :class="{ isSend: !isCountDownDisabled }">
 						<span>验证码发送成功，请注意查收！</span>
@@ -86,9 +94,7 @@ const form = reactive({
 	code: '2020213498',
 })
 
-const props = defineProps({
-	currentPage: String,
-})
+
 
 const next = () => {
 	current.value++
@@ -127,7 +133,7 @@ const items = steps.map((item) => ({
 }))
 
 const backLogin = () => {
-	console.log(props.currentPage)
+	$router.push('/login')
 }
 
 const onChange = (current) => {
@@ -137,6 +143,11 @@ const onChange = (current) => {
 // 获取随机验证码
 const getVerifyVal = (data) => {
 	verifyVal.value = data
+}
+
+// 发送验证码
+const sendEmail = () => {
+    console.log(123);
 }
 </script>
 <style lang="less">
