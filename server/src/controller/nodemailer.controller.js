@@ -1,4 +1,5 @@
 const { createSixNum } = require('../tools/index')
+const { searchUsersByCondition } = require('../service/user.service')
 const nodemail = require('./nodemailer')
 
 
@@ -6,10 +7,15 @@ class NodemailerController {
     async sendVarifyCode(ctx, next) {
         // 前端传过来的邮箱
         const email = ctx.query.email
-        const user_name = ctx.query.user_name
+        const users = await searchUsersByCondition({ logicOpt: 'and', whereArr: [{ email }] })
+        if(users.length === 0) {
+            ctx.body = {
+                code: 500,
+                message: '登录邮箱不存在, 请检查!'
+            }
+            return
+        }
         const randomCode = createSixNum()
-        const date = new Date()
-        const isLive = 'no'
         const mail = {
             // 发件人
             from: '<thy2934386052@163.com>',
@@ -20,12 +26,6 @@ class NodemailerController {
             // 邮件内容
             text: `<p>您的验证码为 <span style="font-size:'18px'"> ${randomCode} </span>, 小心泄露</p>`
         }
-        let res = ''
-        // if (!user_name) {
-        //     res = await updateUser({ whereObj: { email }, updateObj: { emailCode: randomCode } })
-        // } else {
-        //     res = await updateUser({ whereObj: { user_name }, updateObj: { emailCode: randomCode } })
-        // }
         nodemail(mail)
         ctx.body = {
             code: 200,
