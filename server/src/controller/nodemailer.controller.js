@@ -1,6 +1,5 @@
 const { createSixNum } = require('../tools/index')
 const nodemail = require('./nodemailer')
-const { updateUser } = require('../service/user.service')
 
 
 class NodemailerController {

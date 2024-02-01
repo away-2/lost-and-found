@@ -32,6 +32,9 @@ dependencies:
   mysql2:
     specifier: ^3.2.0
     version: 3.7.0
+  nodemailer:
+    specifier: ^6.9.1
+    version: 6.9.8
   sequelize:
     specifier: ^6.29.0
     version: 6.35.2(mysql2@3.7.0)
@@ -1042,6 +1045,11 @@ packages:
 
   /neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
+    dev: false
+
+  /nodemailer@6.9.8:
+    resolution: {integrity: sha512-cfrYUk16e67Ks051i4CntM9kshRYei1/o/Gi8K1d+R34OIs21xdFnW7Pt7EucmVKA0LKtqUGNcjMZ7ehjl49mQ==}
+    engines: {node: '>=6.0.0'}
     dev: false
 
   /normalize-package-data@2.5.0:
