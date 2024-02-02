@@ -3,12 +3,12 @@ import { defineStore } from "pinia";
 // 引入接口
 import { loginByCode, loginByEmail } from "@/api/user";
 // 引入操作本地存储相关方法
-import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN } from "@/utils/token";
+import { SET_USERINFO,REMOVE_USERINFO,GET_USERINFO } from "@/utils/token";
 
 let useUserStore = defineStore('User', {
     state: () =>{
         return {
-            token: GET_TOKEN(),
+           
         }
     },
     // 异步|逻辑的地方
@@ -17,16 +17,14 @@ let useUserStore = defineStore('User', {
         async codeLogin(data) {
             let res = await loginByCode(data)
             if (res.code === 200) {
-                this.token = res.data.token;
-                SET_TOKEN(res.data.token);
+                SET_USERINFO(res.data);
             }
         },
         // 用户邮箱登录的方法
         async emailLogin(data) {
             let res = await loginByEmail(data)
             if (res.code === 200) {
-                this.token = res.data.token;
-                SET_TOKEN(res.data.token);
+                SET_USERINFO(res.data);
             }
         },
         

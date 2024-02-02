@@ -22,24 +22,18 @@
 							<div v-for="(item, index) in tabList" :key="index" class="btnWrap"
 								:class="{ active: index === isActive }" @click="selctedStatus(index)">{{ item }}</div>
 						</div>
-						<input placeholder="请输入学号" class="input-style" type="text" :onblur="getUsernameVal"
-							:value="formVal.user_name" />
-						<input placeholder="请输入密码" class="input-style" type="password" :onblur="getPasswordVal"
-							:value="formVal.password" />
+						<input placeholder="请输入学号" class="input-style" type="text" v-model="formVal.user_name" />
+						<input placeholder="请输入密码" class="input-style" type="password" v-model="formVal.password" />
 						<div class="loginBtn" @click="codeLogin">登录</div>
 						<div class="forgetWrap" @click="toUpdatePwd">*忘记密码？</div>
 					</div>
 					<div class="emailLogin" v-show="isSelected === 1">
-						<input placeholder="请输入邮箱地址" class="input-style" type="text" :value="formVal.email"
-							:onblur="getEmailVal" />
+						<input placeholder="请输入邮箱地址" class="input-style" type="text" v-model="formVal.email" />
 						<div class="verifyBox">
-							<input placeholder="请输入验证码" class="input" type="text" :value="formVal.verifyCode"
-								:onblur="getVerifyVal" />
-							<div @click="sendEmail">
-								<button @click="getCode(countDownTime)" :disabled="isCountDownDisabled">
-									{{ countDownText }}
-								</button>
-							</div>
+							<input placeholder="请输入验证码" class="input" type="text" v-model="formVal.verifyCode" />
+							<button @click="sendEmail(countDownTime)" :disabled="isCountDownDisabled">
+								{{ countDownText }}
+							</button>
 						</div>
 						<div class="loginBtn" @click="emailLogin">登录</div>
 						<div class="remarkText">*注意：只有已绑定邮箱的账号才能进行邮箱登录</div>
@@ -55,13 +49,14 @@ import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { message, notification } from 'ant-design-vue'
 import useUserStore from '@/store/user'
-import { countDown } from '@/utils/countDown.js'
+import { countDecreaseHook } from '@/hooks/index'
 import { getTime } from '@/utils/time.js'
 import { getVerifyCodeByEmail } from '@/api/user'
+import { GET_USERINFO } from '@/utils/token'
 
 
 // 执行 countDown 函数，解构返回的数据和函数进行使用
-const { getCode, countDownTime, isCountDownDisabled, countDownText } = countDown()
+const { getCode, countDownTime, isCountDownDisabled, countDownText } = countDecreaseHook.setup()
 
 let userStore = useUserStore()
 const $router = useRouter()
@@ -78,7 +73,7 @@ const formVal = reactive({
 })
 
 let verifyVal = ref('')
-
+let isFreeze = GET_USERINFO().user.is_freeze
 
 // 选中学生传入0， 选中管理员传入1
 const selctedStatus = (index) => {
@@ -109,57 +104,46 @@ const codeLogin = async () => {
 		message.warn('密码为空，请确认后登录')
 		return
 	}
-	try {
-		await userStore.userLogin(formVal)
+	await userStore.codeLogin(formVal)
+	if (isFreeze === 0) {
 		$router.push('/home')
 		notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好` })
-	} catch (e) {
-
+	} else {
+		message.warn("账户已冻结，请联系管理员解除冻结")
 	}
+
 }
 
 // 发送邮箱验证码
-const sendEmail = async () => {
-	return
+const sendEmail = async (countDownTime) => {
 	let res = await getVerifyCodeByEmail(formVal.email)
 	if (res.code === 200) {
 		verifyVal.value = res.data.emailCode
+		getCode(countDownTime)
 	}
 }
 
 // 邮箱登录
 const emailLogin = async () => {
 	if (!formVal.email || !formVal.verifyCode) {
-		message.warn("邮箱或验证码为空，请确认后登录")
+		message.warn('邮箱或验证码为空，请确认后登录')
 		return
 	}
 	if (verifyVal.value !== formVal.verifyCode) {
-		message.warn("验证码错误")
+		message.warn('验证码错误')
 		return
-	}else {
-		await userStore.emailLogin(formVal);
-		$router.push('/home')
-		notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好` })
+	} else {
+		await userStore.emailLogin(formVal)
+		if (isFreeze === 0) {
+			$router.push('/home')
+			notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好` })
+		} else {
+			message.warn("账户已冻结，请联系管理员解除冻结")
+		}
 	}
 }
 const toUpdatePwd = () => {
 	$router.push('/updatePwd')
-}
-
-const getUsernameVal = (e) => {
-	formVal.user_name = e.target.value
-}
-
-const getPasswordVal = (e) => {
-	formVal.password = e.target.value
-}
-
-const getEmailVal = (e) => {
-	formVal.email = e.target.value
-}
-
-const getVerifyVal = (e) => {
-	formVal.verifyCode = e.target.value
 }
 </script>
 
@@ -210,6 +194,7 @@ const getVerifyVal = (e) => {
 
 				.tabWrap {
 					position: relative;
+					cursor: pointer;
 
 					.tabItem {
 						display: flex;
@@ -224,7 +209,6 @@ const getVerifyVal = (e) => {
 							align-items: center;
 						}
 
-
 						.selected {
 							color: #1e2c4b;
 							// border-bottom: 3px solid #1e2c4b;
@@ -237,7 +221,7 @@ const getVerifyVal = (e) => {
 						width: 55px;
 						height: 2px;
 						background: #1e2c4b;
-						transition: all .3s;
+						transition: all 0.3s;
 
 						&.lineLeft {
 							left: 0;
@@ -247,12 +231,7 @@ const getVerifyVal = (e) => {
 							left: 26%;
 						}
 					}
-
-
 				}
-
-
-
 
 				.login-title {
 					font-size: 25px;
