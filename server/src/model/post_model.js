@@ -33,10 +33,6 @@ const Post = seq.define('laf_post',{
         allowNull: false,
         comment: '丢失/拾取时间'
     },
-    remark: {
-        type: DataTypes.STRING,
-        comment: '备注'
-    },
     /*
         发布一个帖子的时候，如果用户选择不立即发布(暂存为草稿),那么前端审核状态给我为`未开始审核`，调用新增接口
         如果是选择一个草稿帖子,选择发布，前端传递帖子状态为：正常,且审核状态为：审核中，调用更新接口

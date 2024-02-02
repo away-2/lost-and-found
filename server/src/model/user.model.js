@@ -61,17 +61,29 @@ const USer = seq.define('laf_users',{
         allowNull: false,
         comment: '头像'
     },
-    like_number: {
+    get_like_number: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,
         comment: '被点赞量'
     },
+    fans_number: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        comment: '被关注量,也就是有多少个粉丝'
+    },
     concern_number: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,
-        comment: '被关注量'
+        comment: '关注了多少用户'
+    },  
+    collect_post_number: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        comment: '收藏了多少个帖子'
     },
     profile: {
         type: DataTypes.STRING,
