@@ -12,3 +12,8 @@ const HotTopicLike = seq.define('laf_hot_topic_like',{
         comment: '被点赞的沸点id'
     }
 })
+
+// HotTopicLike.sync({ force: true })
+
+module.exports = HotTopicLike
+

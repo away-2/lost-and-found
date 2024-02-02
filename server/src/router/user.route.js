@@ -28,6 +28,7 @@ router.post('/register',userValidator,register)
 // 普通登录用户
 router.post('/login',loginRequiredInfoValidator,login)
 
+
 // 发送邮箱验证码
 router.get('/sendVarifyCode',sendVarifyCode)
 
