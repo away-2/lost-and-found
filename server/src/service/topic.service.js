@@ -8,7 +8,7 @@ class HotTopicServices {
     // 根据条件查询沸点列表
     async searchTopicsByPaging({ pageNum, pageSize, view_user_id }) {
         const offset = (pageNum - 1) * pageSize
-        const hotTopicList = await HotTopic.findAll({
+        const res = await HotTopic.findAndCountAll({
             limit: pageSize,
             offset,
             include: [{
@@ -17,6 +17,8 @@ class HotTopicServices {
             }],
             raw: true
         })
+        const hotTopicList = res.rows
+        const total = res.count
         const publish_user_ids = hotTopicList.map(item => item['user.id'])
         const hotTopicIds = hotTopicList.map(item => item.id)
         // 在沸点喜欢表中查: 点赞的用户是观看的用户并且沸点是这些列表中的
@@ -55,31 +57,34 @@ class HotTopicServices {
         hotTopicList.forEach(hotTopic => {
             // 处理观看的用户对这个沸点点赞过没有
             hotTopic.already_like = false
-            if(view_user_like_topics.find(item => item.hot_topic_id === hotTopic.id)) {
+            if (view_user_like_topics.find(item => item.hot_topic_id === hotTopic.id)) {
                 hotTopic.already_like = true
             }
             // 构建publish_user
-            let userObj = {}    
+            let userObj = {}
             Object.keys(hotTopic).forEach(key => {
-                if(key.includes('user.')) {
-                    if(key.split('.')[1] !== 'password') {
+                if (key.includes('user.')) {
+                    if (key.split('.')[1] !== 'password') {
                         userObj[key.split('.')[1]] = hotTopic[key]
                     }
-                    Reflect.deleteProperty(hotTopic,key)
+                    Reflect.deleteProperty(hotTopic, key)
                 }
             })
             // 处理观看的用户对这个沸点的发布者关注了没有
             hotTopic.publish_user = userObj
             hotTopic.already_concern_publish_user = false
-            if(view_user_concern_users.find(item => item.passive_concern_user === hotTopic.publish_user.id)) {
+            if (view_user_concern_users.find(item => item.passive_concern_user === hotTopic.publish_user.id)) {
                 hotTopic.already_concern_publish_user = true
             }
         })
-        console.log(hotTopicList);
+        return {
+            hotTopicList,
+            total
+        }
     }
 }
 
-const a = new HotTopicServices()
-a.searchTopicsByPaging({ pageSize: 10, pageNum: 1, view_user_id: 4 })
+// const a = new HotTopicServices()
+// a.searchTopicsByPaging({ pageSize: 10, pageNum: 1, view_user_id: 4 })
 
 module.exports = new HotTopicServices()
