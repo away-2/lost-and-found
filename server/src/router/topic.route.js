@@ -3,12 +3,18 @@ const Router = require('@koa/router')
 const router = new Router({ prefix: '/topicService' })
 
 // 引入controller层的方法作为回调
-const { findTopicListByPaging } = require('../controller/topic.controller')
+const { findTopicListByPaging, publishHotTopic, changeTopicAuditStatus } = require('../controller/topic.controller')
 // 引入一些要用到的中间件
 const { auth  } = require('../middleware/auth.middleware')
 
-// 根据邮箱登录用户
+// 分页查询沸点列表
 router.post('/findTopicListByPaging',auth,findTopicListByPaging)
+
+// 发布沸点
+router.post('/publishHotTopic',auth,publishHotTopic)
+
+// 修改沸点审核状态
+router.post('/changeTopicAuditStatus',auth,changeTopicAuditStatus)
 
 
 module.exports = router

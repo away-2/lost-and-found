@@ -6,15 +6,25 @@ const { Op, where, literal } = require('sequelize')
 
 class HotTopicServices {
     // 根据条件查询沸点列表
-    async searchTopicsByPaging({ pageNum, pageSize, view_user_id }) {
+    async searchTopicsByPaging({ pageNum, pageSize, audit_state, view_user_id }) {
         const offset = (pageNum - 1) * pageSize
+        const whereArr = []
+        if (audit_state) {
+            whereArr.push({ audit_state })
+        }
         const res = await HotTopic.findAndCountAll({
+            where: {
+                [Op.and]: whereArr
+            },
             limit: pageSize,
             offset,
             include: [{
                 model: User,
                 as: 'user'
             }],
+            order: [
+                ["createdAt", "desc"]
+            ],
             raw: true
         })
         const hotTopicList = res.rows
@@ -82,9 +92,26 @@ class HotTopicServices {
             total
         }
     }
+    // 添加一条沸点
+    async insertOneTopic(topic) {
+        const topicAfterInsert = await HotTopic.create(topic)
+        return topicAfterInsert
+    }
+    // 修改沸点
+    async modifyTopic(topic, whereObj) {
+        await HotTopic.update(topic, { where: whereObj })
+    }
+    // 删除沸点
+    async deleteTopic(id) {
+        // 其他有关系的表的记录会自动删除
+        await HotTopic.destroy({ where: { id } })
+    }
 }
 
-// const a = new HotTopicServices()
+const a = new HotTopicServices()
 // a.searchTopicsByPaging({ pageSize: 10, pageNum: 1, view_user_id: 4 })
+// a.insertOneTopic({ user_id: 1,content: '好好好好222222' })
+// a.modifyTopic({ content: '好好好好33333' }, { id: 8 })
+a.deleteTopic(12)
 
 module.exports = new HotTopicServices()

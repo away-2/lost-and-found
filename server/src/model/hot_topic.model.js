@@ -22,6 +22,11 @@ const HotTopic = seq.define('laf_hot_topic',{
         type: DataTypes.INTEGER,
         defaultValue: 0,
         comment: '点赞数'
+    },
+    audit_state: {
+        type: DataTypes.STRING,
+        defaultValue: 'auditing',
+        comment: '状态: auditing、pass、fail'
     }
 })
 

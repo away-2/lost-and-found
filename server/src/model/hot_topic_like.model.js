@@ -1,16 +1,26 @@
 const { DataTypes } = require('sequelize')
 const seq = require('../db/seq')
+const User = require('./user.model') 
+const HotTopic = require('./hot_topic.model') 
 
 // 沸点点赞表
 const HotTopicLike = seq.define('laf_hot_topic_like',{
-    user_id: {
+    id: {
         type: DataTypes.INTEGER,
-        comment: '主动点赞的用户id'
+        autoIncrement: true,
+        primaryKey: true,
     },
-    hot_topic_id: {
-        type: DataTypes.INTEGER,
-        comment: '被点赞的沸点id'
-    }
+})
+
+User.belongsToMany(HotTopic,{
+    through: HotTopicLike,
+    foreignKey: 'user_id',
+    otherKey: 'hot_topic_id',
+})
+HotTopic.belongsToMany(User,{
+    through: HotTopicLike,
+    foreignKey: 'hot_topic_id',
+    otherKey: 'user_id',
 })
 
 // HotTopicLike.sync({ force: true })

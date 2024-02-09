@@ -14,10 +14,13 @@ const LikeConcernNotice = seq.define('laf_like_concern_post_notice',{
         allowNull: false,
         comment: '被点赞评论或收藏帖子的用户id'
     },
-    source_id: {
+    source_topic_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        comment: '帖子或沸点的id'
+        comment: '沸点的id'
+    },
+    source_post_id: {
+        type: DataTypes.INTEGER,
+        comment: '帖子的id'
     },
     picture: {
         type: DataTypes.STRING,

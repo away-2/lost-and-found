@@ -36,8 +36,8 @@ const auth = async (ctx,next) => {
                     message: '验证token出错'
                 }
         }
-        await next()
     }
+    await next()
 }
 
 module.exports = {
