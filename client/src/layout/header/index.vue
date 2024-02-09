@@ -6,11 +6,11 @@
 		</div>
 		<a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @click="toRoute" @select="selectedKeys" />
 		<div class="header-right">
-			<div class="loginWrap" v-show="isLogin" @click="toLogin">
+			<div class="loginWrap" v-show="!token" @click="toLogin">
 				登录
 			</div>
-			<div class="avatorWrap" v-show="!isLogin">
-				<a-dropdown>
+			<div class="avatorWrap" v-show="token">
+				<a-dropdown :trigger="['click']">
 					<img src="@/assets/images/通知.png" alt="" />
 					<template #overlay>
 						<a-menu>
@@ -23,12 +23,30 @@
 					</template>
 				</a-dropdown>
 				<a-dropdown :trigger="['click']">
-					<a-avatar src="@/assets/images/logo.png" />
+					<a-avatar :src="userInfo.avator" />
 					<template #overlay>
 						<a-menu>
 							<a-menu-item key="1">
-					<a-avatar src="@/assets/images/logo.png" />
-								
+								<div class="popoverWrap">
+									<div class="userInfo">
+										<a-avatar :src="userInfo.avator" />
+										<div class="username">{{ userInfo.nick_name || userInfo.real_name }}</div>
+									</div>
+									<div class="counts-item">
+										<div class="single-count-item">
+											<div class="count-num">40</div>
+											<div class="count-text">关注</div>
+										</div>
+										<div class="single-count-item">
+											<div class="count-num">202</div>
+											<div class="count-text">粉丝</div>
+										</div>
+										<div class="single-count-item">
+											<div class="count-num">47</div>
+											<div class="count-text">收藏</div>
+										</div>
+									</div>
+								</div>
 							</a-menu-item>
 							<a-menu-item key="2">赞和收藏</a-menu-item>
 							<a-menu-item key="3">新增粉丝</a-menu-item>
@@ -37,16 +55,16 @@
 						</a-menu>
 					</template>
 				</a-dropdown>
-				
+
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { GET_USERINFO } from '@/utils/token';
 const current = ref(['/home'])
 const items = ref([
 	{
@@ -75,8 +93,12 @@ const items = ref([
 		title: '沸点',
 	},
 ])
-const isLogin = ref(true)
+
+
+const userInfo = GET_USERINFO().user
+
 let $router = useRouter()
+let token = GET_USERINFO().token
 
 const selectedKeys = (item) => {
 	console.log(item)
@@ -89,7 +111,7 @@ const toLogin = () => {
 	$router.push('/Login')
 }
 onMounted(() => {
-	// console.log($router.options.routes);
+	console.log(GET_USERINFO());
 })
 </script>
 
@@ -105,7 +127,6 @@ onMounted(() => {
 		display: flex;
 		align-items: center;
 
-		// width: 25px;
 		img {
 			width: 30px;
 			height: 30px;
@@ -131,26 +152,72 @@ onMounted(() => {
 			border-radius: 2px;
 
 		}
+
 		.avatorWrap {
 			display: flex;
 			align-items: center;
+
 			img {
 				width: 20px;
 				height: 20px;
 				margin-right: 15px;
 			}
+
 		}
+
 		.isLogin {
 			display: none;
 		}
 	}
 }
 </style>
-<style>
+<style lang="less">
 .ant-menu-horizontal {
 	line-height: 60px;
 }
+
 .ant-dropdown {
 	width: 150px;
+}
+
+.ant-dropdown-menu {
+	width: 200px;
+}
+
+.ant-dropdown-menu-item[data-menu-id="1"] {
+	.popoverWrap {
+		width: 150px;
+		// height: 200px;
+		border-bottom: 1px solid #f1f1f1;
+
+		.userInfo {
+			display: flex;
+			align-items: center;
+			.username {
+				margin-left: 10px;
+				color: #252933;
+			}
+		}
+
+		.counts-item {
+			display: flex;
+			justify-content: space-between;
+			padding: 10px;
+			align-items: center;
+			.single-count-item {
+				padding: 10px;
+				.count-num{
+					color: #252933;
+					width: 30px;
+				}
+				.count-text{
+					color: #8a919f;
+					font-size: 12px;
+					width: 30px;
+				}
+			}
+
+		}
+	}
 }
 </style>

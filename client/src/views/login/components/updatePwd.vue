@@ -37,11 +37,9 @@
 					</div>
 					<div class="verifyWrap">
 						<input type="text" placeholder="请输入邮箱验证码" />
-                        <div @click="sendEmail">
-						<button @click="getCode(countDownTime)" :disabled="isCountDownDisabled">
+						<button @click="sendEmail(countDownTime)" :disabled="isCountDownDisabled">
 							{{ countDownText }}
 						</button>
-                    </div>
 					</div>
 					<div class="sendText" :class="{ isSend: !isCountDownDisabled }">
 						<span>验证码发送成功，请注意查收！</span>
@@ -81,9 +79,10 @@ import { onMounted, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import SIdentify from '@/components/SIdentify.vue'
-import { countDown } from '@/utils/countDown.js'
+import { countDown } from '@/hooks/index'
 // 执行 countDown 函数，解构返回的数据和函数进行使用
-const { getCode, countDownTime, isCountDownDisabled, countDownText } = countDown()
+const { getCode, countDownTime, isCountDownDisabled, countDownText } = countDecreaseHook.setup()
+
 
 const $router = useRouter()
 const current = ref(0)
@@ -146,8 +145,9 @@ const getVerifyVal = (data) => {
 }
 
 // 发送验证码
-const sendEmail = () => {
+const sendEmail = (countDownTime) => {
     console.log(123);
+	getCode(countDownTime)
 }
 </script>
 <style lang="less">
