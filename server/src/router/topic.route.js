@@ -3,7 +3,7 @@ const Router = require('@koa/router')
 const router = new Router({ prefix: '/topicService' })
 
 // 引入controller层的方法作为回调
-const { findTopicListByPaging, publishHotTopic, changeTopicAuditStatus } = require('../controller/topic.controller')
+const { findTopicListByPaging, publishHotTopic, changeTopicAuditStatus, removeTopicById, handleCancelLikeTopic, handleLikeTopic } = require('../controller/topic.controller')
 // 引入一些要用到的中间件
 const { auth  } = require('../middleware/auth.middleware')
 
@@ -16,5 +16,13 @@ router.post('/publishHotTopic',auth,publishHotTopic)
 // 修改沸点审核状态
 router.post('/changeTopicAuditStatus',auth,changeTopicAuditStatus)
 
+// 删除沸点
+router.delete('/removeTopicById',auth,removeTopicById)
+
+// 点赞沸点
+router.post('/likeTopic',auth,handleLikeTopic)
+
+// 取消点赞沸点
+router.post('/cancelLikeTopic',auth,handleCancelLikeTopic)
 
 module.exports = router

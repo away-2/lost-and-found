@@ -1,4 +1,4 @@
-const { searchTopicsByPaging, insertOneTopic, modifyTopic } = require("../service/topic.service");
+const { searchTopicsByPaging, insertOneTopic, modifyTopic, deleteTopic, likeTopic, cancelLikeTopic } = require("../service/topic.service");
 
 class HotTopicController {
     // 根据分页查询沸点列表
@@ -35,7 +35,30 @@ class HotTopicController {
             code: 200,
             message: '修改沸点状态成功'
         }
-        
+    }
+    // 删除沸点
+    async removeTopicById(ctx, next) {
+        await deleteTopic(ctx.request.query.id)
+        ctx.body = {
+            code: 200,
+            message: '删除沸点成功'
+        }
+    }
+    // 点赞沸点
+    async handleLikeTopic(ctx, next) {
+        await likeTopic(ctx.state.user.id, ctx.request.query.topic_id)
+        ctx.body = {
+            code: 200,
+            message: '点赞沸点成功'
+        }
+    }
+    // 取消点赞沸点
+    async handleCancelLikeTopic(ctx, next) {
+        await cancelLikeTopic(ctx.state.user.id, ctx.request.query.topic_id)
+        ctx.body = {
+            code: 200,
+            message: '取消点赞沸点成功'
+        }
     }
     // {
     //     id: 1,

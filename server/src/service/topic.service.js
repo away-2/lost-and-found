@@ -52,18 +52,17 @@ class HotTopicServices {
             where: {
                 [Op.and]: [
                     {
-                        passive_concern_user: {
+                        passiveUserId: {
                             [Op.in]: publish_user_ids
                         }
                     },
                     {
-                        active_concern_user: view_user_id
+                        activeUserId: view_user_id
                     }
                 ]
             },
             raw: true
         })
-        console.log(view_user_concern_users);
         hotTopicList.forEach(hotTopic => {
             // 处理观看的用户对这个沸点点赞过没有
             hotTopic.already_like = false
@@ -83,7 +82,7 @@ class HotTopicServices {
             // 处理观看的用户对这个沸点的发布者关注了没有
             hotTopic.publish_user = userObj
             hotTopic.already_concern_publish_user = false
-            if (view_user_concern_users.find(item => item.passive_concern_user === hotTopic.publish_user.id)) {
+            if (view_user_concern_users.find(item => item.passiveUserId === hotTopic.publish_user.id)) {
                 hotTopic.already_concern_publish_user = true
             }
         })
@@ -106,12 +105,76 @@ class HotTopicServices {
         // 其他有关系的表的记录会自动删除
         await HotTopic.destroy({ where: { id } })
     }
+    // 点赞沸点
+    async likeTopic(user_id,topic_id) {
+        // 查出这个用户对这个沸点是否已点赞
+        const res = await HotTopicLike.findAll({
+            where: {
+                user_id,
+                hot_topic_id: topic_id
+            },
+            raw: true
+        })
+        // 如果该用户已经点赞了该沸点，则不管
+        if(res.length >= 1) {
+            return
+        }
+        // first step: 点赞关系表中存入记录
+        await HotTopicLike.create({
+            user_id,
+            hot_topic_id: topic_id
+        })
+        // second step: 给点赞数+1
+        await HotTopic.update(
+            {
+                like_number: literal("like_number + 1")
+            },
+            {
+                where: {
+                    id: topic_id
+                }
+            }
+        )
+    }
+     // 取消点赞沸点
+     async cancelLikeTopic(user_id,topic_id) {
+        // 查出这个用户对这个沸点是否已点赞
+        const res = await HotTopicLike.findAll({
+            where: {
+                user_id,
+                hot_topic_id: topic_id
+            },
+            raw: true
+        })
+        // 如果该用户本来就没点赞该沸点，则不管
+        if(res.length === 0) {
+            return
+        }
+        // first step: 点赞关系表中删除记录
+        await HotTopicLike.destroy({
+            where: {
+                user_id,
+                hot_topic_id: topic_id
+            }
+        })
+        // second step: 给点赞数-1
+        await HotTopic.update(
+            {
+                like_number: literal("like_number - 1")
+            },
+            {
+                where: {
+                    id: topic_id
+                }
+            }
+        )
+    }
 }
 
 const a = new HotTopicServices()
 // a.searchTopicsByPaging({ pageSize: 10, pageNum: 1, view_user_id: 4 })
 // a.insertOneTopic({ user_id: 1,content: '好好好好222222' })
 // a.modifyTopic({ content: '好好好好33333' }, { id: 8 })
-a.deleteTopic(12)
+// a.deleteTopic(12)
 
 module.exports = new HotTopicServices()

@@ -23,6 +23,11 @@ const HotTopic = seq.define('laf_hot_topic',{
         defaultValue: 0,
         comment: '点赞数'
     },
+    remark_number: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        comment: '评论数'
+    },
     audit_state: {
         type: DataTypes.STRING,
         defaultValue: 'auditing',
