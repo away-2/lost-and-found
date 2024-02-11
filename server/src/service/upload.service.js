@@ -10,11 +10,11 @@ class UploadServices {
         if(ctx.request.files['file']) {
             let file = ctx.request.files.file
             // 创建可读流
-            const reader = fs.createReadStream(file.filePath)
+            const reader = fs.createReadStream(file.filepath)
             const timeStamp = Math.floor(new Date().getTime() / 100)
             const serviceFileName = timeStamp + '.' + file.originalFilename.split('.')[1]
             // 要把文件写到的目的地
-            let filePath = path.join(__dirname,'../../statics/upload' + serviceFileName)
+            let filePath = path.join(__dirname,'../../statics/upload/' + serviceFileName)
             remoteFilePath = `http://localhost:${APP_PORT}/upload/${serviceFileName}`
             // 创建可写流
             const upStream = fs.createWriteStream(filePath)

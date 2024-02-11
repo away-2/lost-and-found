@@ -20,4 +20,6 @@ const Appendix = seq.define('laf_appendix',{
     }
 })
 
+// Appendix.sync({ force: true })
+
 module.exports = Appendix
