@@ -23,7 +23,13 @@ const UserConcernRelation = seq.define('laf_user_concern_relation',{
 User.belongsToMany(User,{
     through: UserConcernRelation,
     foreignKey: 'activeUserId',
-    as: 'passiveUser'
+    as: 'activeConcern'
+})
+
+User.belongsToMany(User,{
+    through: UserConcernRelation,
+    foreignKey: 'passiveUserId',
+    as: 'passiveConcern'
 })
 
 // UserConcernRelation.sync({ force: true })
