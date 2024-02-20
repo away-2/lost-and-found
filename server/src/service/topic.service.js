@@ -136,7 +136,7 @@ class HotTopicServices {
             }
         )
     }
-     // 取消点赞沸点
+    // 取消点赞沸点
      async cancelLikeTopic(user_id,topic_id) {
         // 查出这个用户对这个沸点是否已点赞
         const res = await HotTopicLike.findAll({
@@ -169,6 +169,7 @@ class HotTopicServices {
             }
         )
     }
+    
 }
 
 const a = new HotTopicServices()

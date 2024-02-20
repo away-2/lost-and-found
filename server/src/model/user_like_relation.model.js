@@ -24,7 +24,13 @@ const UserLikeRelation = seq.define('laf_user_like_relation',{
 User.belongsToMany(User,{
     through: UserLikeRelation,
     foreignKey: 'activeUserId',
-    as: 'passiveUser'
+    as: 'activeLike'
+})
+
+User.belongsToMany(User,{
+    through: UserLikeRelation,
+    foreignKey: 'passiveUserId',
+    as: 'passiveLike'
 })
 
 // UserLikeRelation.sync({ force: true })

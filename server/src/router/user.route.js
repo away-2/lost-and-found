@@ -3,10 +3,11 @@ const Router = require('@koa/router')
 const router = new Router({ prefix: '/userService' })
 
 // 引入controller层的方法作为回调
-const { register,login, loginByEmail } = require('../controller/user.controller')
+const { register,login, loginByEmail, checkAlreadyConcernSomeone, checkAlreadyLikeSomeone, concernSomeone, cancelConcernSomeone } = require('../controller/user.controller')
 const { sendVarifyCode } = require('../controller/nodemailer.controller')
 // 引入一些要用到的中间件
 const { userValidator,loginRequiredInfoValidator  } = require('../middleware/user.middleware')
+const { auth } = require('../middleware/auth.middleware')
 
 /**
  * @swagger
@@ -35,5 +36,16 @@ router.get('/sendVarifyCode',sendVarifyCode)
 // 根据邮箱登录用户
 router.post('/loginByEmail',loginByEmail)
 
+// 查询当前用户是否关注了某个用户
+router.get('/checkAlreadyConcernSomeone',auth,checkAlreadyConcernSomeone)
+
+// 查询当前用户是否点赞了某个用户
+router.get('/checkAlreadyLikeSomeone',auth,checkAlreadyLikeSomeone)
+
+// 让当前用户关注某个用户
+router.get('/concernSomeone',auth,concernSomeone)
+
+// 让当前用户取消关注某个用户
+router.get('/cancelConcernSomeone',auth,cancelConcernSomeone)
 
 module.exports = router
