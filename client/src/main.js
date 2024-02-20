@@ -5,6 +5,8 @@ import './assets/style/reset.css'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 import store from './store'
+// 引入路由鉴权文件
+import './utils/permisstion'
 
 
 

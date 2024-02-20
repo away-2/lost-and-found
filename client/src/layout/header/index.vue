@@ -111,7 +111,7 @@ let $router = useRouter()
 let token = GET_USERINFO().token
 
 const selectedKeys = (item) => {
-	console.log(item)
+	// console.log(item)
 }
 const toRoute = (current) => {
 	$router.push(current.key)
@@ -143,7 +143,7 @@ const updatePwd = () => {
 	$router.push('/updatePwd')
 }
 onMounted(() => {
-	console.log(GET_USERINFO());
+	$router.push('/')
 })
 </script>
 

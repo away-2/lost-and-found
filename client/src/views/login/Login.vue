@@ -109,8 +109,7 @@ const codeLogin = async () => {
 	if(res.code === 200) {
 		SET_USERINFO(res.data)
 		isFreeze.value = res.data.userInfo.is_freeze
-	}
-	console.log(res.data);
+	}	
 	if (isFreeze.value === 0) {
 		$router.push('/home')
 		notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好` })

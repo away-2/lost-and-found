@@ -24,7 +24,7 @@ import Main from './main/index.vue'
         }
     .layout_main{
         background: #f1f1f1;
-        height: calc(100vh - 60px);
+        height: calc(100% - 60px);
     }
 }
 </style>

@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
-  {
-    path: '/',
-    redirect: '/login',
-  },
+  // {
+  //   path: '/',
+  //   redirect: '/login',
+  // },
   {
     path: '/login',
     name: 'Login',
@@ -16,9 +16,10 @@ const routes = [
     component: () => import('../views/login/components/updatePwd.vue')
   },
   {
-    path: '/layout',
+    path: '/',
     name: 'Layout',
     component: () =>import('@/layout/index.vue'),
+    redirect: '/home',
     children: [
       {
         path: '/home',
