@@ -47,6 +47,11 @@ const routes = [
       }
     ]
   },
+  {
+      path: `/hotInfo`,
+      name: 'hotInfo',
+      component: () => import('../views/hot/components/hotInfo.vue')
+  },
 ]
 
 const router = createRouter({

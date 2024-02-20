@@ -48,17 +48,17 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { message, notification } from 'ant-design-vue'
-import useUserStore from '@/store/user'
+// import useUserStore from '@/store/user'
 import { countDecreaseHook } from '@/hooks/index'
 import { getTime } from '@/utils/time.js'
-import { getVerifyCodeByEmail } from '@/api/user'
-import { GET_USERINFO } from '@/utils/token'
+import { getVerifyCodeByEmail, loginByCode, loginByEmail} from '@/api/user'
+import { SET_USERINFO } from '@/utils/token'
 
 
 // 执行 countDown 函数，解构返回的数据和函数进行使用
 const { getCode, countDownTime, isCountDownDisabled, countDownText } = countDecreaseHook.setup()
 
-let userStore = useUserStore()
+// let userStore = useUserStore()
 const $router = useRouter()
 const isActive = ref(0)
 const tabList = reactive(['学生', '管理员'])
@@ -73,7 +73,7 @@ const formVal = reactive({
 })
 
 let verifyVal = ref('')
-let isFreeze = GET_USERINFO().user.is_freeze
+let isFreeze = ref(0)
 
 // 选中学生传入0， 选中管理员传入1
 const selctedStatus = (index) => {
@@ -96,7 +96,8 @@ const backHomePage = () => {
 
 // 学号登录
 const codeLogin = async () => {
-	if (!formVal.user_name) {
+	try{
+		if (!formVal.user_name) {
 		message.warn('学号为空，请确认后登录')
 		return
 	}
@@ -104,13 +105,20 @@ const codeLogin = async () => {
 		message.warn('密码为空，请确认后登录')
 		return
 	}
-	await userStore.codeLogin(formVal)
-	if (isFreeze === 0) {
+	let res = await loginByCode(formVal)
+	if(res.code === 200) {
+		SET_USERINFO(res.data)
+		isFreeze.value = res.data.userInfo.is_freeze
+	}
+	console.log(res.data);
+	if (isFreeze.value === 0) {
 		$router.push('/home')
 		notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好` })
 	} else {
 		message.warn("账户已冻结，请联系管理员解除冻结")
 	}
+	}catch(e) {}
+	
 
 }
 
@@ -133,10 +141,14 @@ const emailLogin = async () => {
 		message.warn('验证码错误')
 		return
 	} else {
-		await userStore.emailLogin(formVal)
+		let res = await loginByEmail(formVal)
+		if(res.code === 200) {
+			SET_USERINFO(res.data)
+			isFreeze.value = res.data.userInfo.is_freeze
+		}
 		if (isFreeze === 0) {
 			$router.push('/home')
-			notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好` })
+			notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好`, duration: '2' })
 		} else {
 			message.warn("账户已冻结，请联系管理员解除冻结")
 		}

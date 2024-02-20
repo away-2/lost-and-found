@@ -79,7 +79,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import SIdentify from '@/components/SIdentify.vue'
-import { countDown } from '@/hooks/index'
+import { countDecreaseHook } from '@/hooks/index'
 // 执行 countDown 函数，解构返回的数据和函数进行使用
 const { getCode, countDownTime, isCountDownDisabled, countDownText } = countDecreaseHook.setup()
 
@@ -146,7 +146,6 @@ const getVerifyVal = (data) => {
 
 // 发送验证码
 const sendEmail = (countDownTime) => {
-    console.log(123);
 	getCode(countDownTime)
 }
 </script>

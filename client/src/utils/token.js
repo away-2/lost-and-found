@@ -15,6 +15,6 @@ export const GET_USERINFO = () => {
 
 // 本地存储删除数据
 export const REMOVE_USERINFO = () => {
-    localStorage.removeItem(SET_USERINFO)
+    localStorage.removeItem(STORAGE_USER)
 }
 

@@ -14,19 +14,19 @@ let useUserStore = defineStore('User', {
     // 异步|逻辑的地方
     actions: {
         // 用户学号登录的方法
-        async codeLogin(data) {
-            let res = await loginByCode(data)
-            if (res.code === 200) {
-                SET_USERINFO(res.data);
-            }
-        },
-        // 用户邮箱登录的方法
-        async emailLogin(data) {
-            let res = await loginByEmail(data)
-            if (res.code === 200) {
-                SET_USERINFO(res.data);
-            }
-        },
+        // async codeLogin(data) {
+        //     let res = await loginByCode(data)
+        //     if (res.code === 200) {
+        //          return SET_USERINFO(res.data);
+        //     }
+        // },
+        // // 用户邮箱登录的方法
+        // async emailLogin(data) {
+        //     let res = await loginByEmail(data)
+        //     if (res.code === 200) {
+        //         SET_USERINFO(res.data);
+        //     }
+        // },
         
     },
     getters: () =>{
