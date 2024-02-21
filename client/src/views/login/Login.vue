@@ -51,7 +51,7 @@ import { message, notification } from 'ant-design-vue'
 // import useUserStore from '@/store/user'
 import { countDecreaseHook } from '@/hooks/index'
 import { getTime } from '@/utils/time.js'
-import { getVerifyCodeByEmail, loginByCode, loginByEmail} from '@/api/user'
+import { getVerifyCodeByEmail, loginByCode, loginByEmail } from '@/api/user'
 import { SET_USERINFO } from '@/utils/token'
 
 
@@ -96,28 +96,29 @@ const backHomePage = () => {
 
 // 学号登录
 const codeLogin = async () => {
-	try{
+	try {
 		if (!formVal.user_name) {
-		message.warn('学号为空，请确认后登录')
-		return
-	}
-	if (!formVal.password) {
-		message.warn('密码为空，请确认后登录')
-		return
-	}
-	let res = await loginByCode(formVal)
-	if(res.code === 200) {
-		SET_USERINFO(res.data)
-		isFreeze.value = res.data.userInfo.is_freeze
-	}	
-	if (isFreeze.value === 0) {
-		$router.push('/home')
-		notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好` })
-	} else {
-		message.warn("账户已冻结，请联系管理员解除冻结")
-	}
-	}catch(e) {}
-	
+			message.warn('学号为空，请确认后登录')
+			return
+		}
+		if (!formVal.password) {
+			message.warn('密码为空，请确认后登录')
+			return
+		}
+		let res = await loginByCode(formVal)
+		if (res.code === 200) {
+			SET_USERINFO(res.data)
+			isFreeze.value = res.data.userInfo.is_freeze
+			if (isFreeze.value === 0) {
+				$router.push('/home')
+				notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好` })
+			} else {
+				message.warn("账户已冻结，请联系管理员解除冻结")
+			}
+		}
+
+	} catch (e) { }
+
 
 }
 
@@ -141,16 +142,17 @@ const emailLogin = async () => {
 		return
 	} else {
 		let res = await loginByEmail(formVal)
-		if(res.code === 200) {
+		if (res.code === 200) {
 			SET_USERINFO(res.data)
 			isFreeze.value = res.data.userInfo.is_freeze
+			if (isFreeze.value === 0) {
+				$router.push('/home')
+				notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好`, duration: '2' })
+			} else {
+				message.warn("账户已冻结，请联系管理员解除冻结")
+			}
 		}
-		if (isFreeze === 0) {
-			$router.push('/home')
-			notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好`, duration: '2' })
-		} else {
-			message.warn("账户已冻结，请联系管理员解除冻结")
-		}
+
 	}
 }
 const toUpdatePwd = () => {

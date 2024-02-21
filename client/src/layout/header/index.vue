@@ -153,6 +153,7 @@ onMounted(() => {
 	align-items: center;
 	justify-content: space-between;
 	padding: 0 50px;
+	background: #fff;
 
 	.header-logo {
 		height: 60px;
@@ -275,14 +276,12 @@ onMounted(() => {
 		display: flex;
 		column-gap: 15px;
 		align-items: center;
-
 		img {
 			width: 16px;
 			height: 16px;
 		}
 		.title{
 			color: #61666d;
-			font-size: 13px
 		}
 	}
 
@@ -299,7 +298,6 @@ onMounted(() => {
 		}
 		.title{
 			color: #61666d;
-			font-size: 13px
 		}
 	}
 }
@@ -316,7 +314,6 @@ onMounted(() => {
 		}
 		.title{
 			color: #61666d;
-			font-size: 13px
 		}
 	}
 }</style>
