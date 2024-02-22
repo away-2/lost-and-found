@@ -1,4 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import {
+  createRouter,
+  createWebHistory
+} from 'vue-router';
 
 const routes = [
   // {
@@ -18,10 +21,9 @@ const routes = [
   {
     path: '/',
     name: 'Layout',
-    component: () =>import('@/layout/index.vue'),
+    component: () => import('@/layout/index.vue'),
     redirect: '/home',
-    children: [
-      {
+    children: [{
         path: '/home',
         name: 'Home',
         component: () => import('../views/home/Home.vue'),
@@ -45,14 +47,15 @@ const routes = [
         path: '/hot',
         name: 'Hot',
         component: () => import('../views/hot/index.vue'),
+        // children: [{
+        //   path: `/hotInfo`,
+        //   name: 'hotInfo',
+        //   component: () => import('../views/hot/components/hotInfo.vue')
+        // }, ]
       }
     ]
   },
-  {
-      path: `/hotInfo`,
-      name: 'hotInfo',
-      component: () => import('../views/hot/components/hotInfo.vue')
-  },
+
 ]
 
 const router = createRouter({

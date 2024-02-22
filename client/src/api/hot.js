@@ -17,3 +17,12 @@ export const filndAllHotInfo = (data) => {
         data
     })
 }
+
+// 文件上传
+export const fileUpload = (data) => {
+    return request({
+        url: '/uploadService/uploadFile',
+        method: 'post',
+        data
+    })
+}
