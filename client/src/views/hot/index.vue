@@ -32,56 +32,59 @@
                     <div class="publishBtn" @click="toPublish">发布</div>
                 </div>
             </div>
-            <div class="contentWrap" v-for="(item, index) in hotList" :key="index">
-                <div class="hot-header">
-                    <a-popover>
-                        <template #content>
-                            <div class="user-popover-header">
-                                <img :src="item.publish_user.avator" alt="">
-                                <div class="user-info">
-                                    <div class="user-name">{{ item.publish_user.nike_name || item.publish_user.real_name }}
+            <a-skeleton :loading="loading" active>
+                <div class="contentWrap" v-for="(item, index) in hotList" :key="index">
+                    <div class="hot-header">
+                        <a-popover>
+                            <template #content>
+                                <div class="user-popover-header">
+                                    <img :src="item.publish_user.avator" alt="">
+                                    <div class="user-info">
+                                        <div class="user-name">{{ item.publish_user.nike_name || item.publish_user.real_name
+                                        }}
+                                        </div>
+                                        <div class="user-school">{{ item.publish_user.school_name }}</div>
                                     </div>
-                                    <div class="user-school">{{ item.publish_user.school_name }}</div>
                                 </div>
-                            </div>
-                            <div class="user-popover-btn" v-show="isShowBtn">
-                                <div class="concern-btn">关注</div>
-                                <div class="message-btn">私信</div>
-                            </div>
-                            <div class="user-popover-footer">
-                                <div class="single-count-item">
-                                    <div class="count-num">1</div>
-                                    <div class="count-text">关注</div>
+                                <div class="user-popover-btn" v-show="isShowBtn">
+                                    <div class="concern-btn">关注</div>
+                                    <div class="message-btn">私信</div>
                                 </div>
-                                <div class="single-count-item">
-                                    <div class="count-num">2</div>
-                                    <div class="count-text">粉丝</div>
+                                <div class="user-popover-footer">
+                                    <div class="single-count-item">
+                                        <div class="count-num">1</div>
+                                        <div class="count-text">关注</div>
+                                    </div>
+                                    <div class="single-count-item">
+                                        <div class="count-num">2</div>
+                                        <div class="count-text">粉丝</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </template>
-                        <img class="avatar" :src="item.publish_user.avator" />
-                    </a-popover>
-                    <div class="userInfo">
-                        <div class="username">{{ item.publish_user.nike_name || item.publish_user.real_name }}</div>
-                        <div class="timestamp">{{ formatPast(item.createdAt) }}</div>
+                            </template>
+                            <img class="avatar" :src="item.publish_user.avator" />
+                        </a-popover>
+                        <div class="userInfo">
+                            <div class="username">{{ item.publish_user.nike_name || item.publish_user.real_name }}</div>
+                            <div class="timestamp">{{ formatPast(item.createdAt) }}</div>
+                        </div>
+                    </div>
+                    <div class="hot-content">
+                        <div class="text">{{ item.content }}</div>
+                        <div class="picture"></div>
+                    </div>
+                    <div class="hot-footer">
+                        <div class="share-action">分享</div>
+                        <div class="comment-action">
+                            <img src="@/assets/images/评论.png" alt="" />
+                            <span>评论</span>
+                        </div>
+                        <div class="like-action">
+                            <img src="@/assets/images/点赞.png" alt="" />
+                            <span>点赞</span>
+                        </div>
                     </div>
                 </div>
-                <div class="hot-content">
-                    <div class="text">{{ item.content }}</div>
-                    <div class="picture"></div>
-                </div>
-                <div class="hot-footer">
-                    <div class="share-action">分享</div>
-                    <div class="comment-action">
-                        <img src="@/assets/images/评论.png" alt="" />
-                        <span>评论</span>
-                    </div>
-                    <div class="like-action">
-                        <img src="@/assets/images/点赞.png" alt="" />
-                        <span>点赞</span>
-                    </div>
-                </div>
-            </div>
+            </a-skeleton>
         </div>
         <div class="rightWrap">
             <div class="user-info-card">
@@ -106,10 +109,12 @@
             </div>
             <div class="select-hot-card">
                 <div class="card-title">精选沸点</div>
-                <div class="select-hot" v-for="(item, index) in selectHotList" :key="index">
-                    <div class="content">{{ item.content }}</div>
-                    <div class="count">{{ item.like_number }}赞 · {{ item.remark_number }}评论</div>
-                </div>
+                <a-skeleton :loading="loading" active>
+                    <div class="select-hot" v-for="(item, index) in selectHotList" :key="index">
+                        <div class="content">{{ item.content }}</div>
+                        <div class="count">{{ item.like_number }} 赞 · {{ item.remark_number }} 评论</div>
+                    </div>
+                </a-skeleton>
             </div>
         </div>
     </div>
@@ -126,6 +131,7 @@ import { GET_USERINFO } from '@/utils/token'
 const list = ref('')
 const content = ref('')
 const hotList = ref([])
+const $router = useRouter()
 
 const pageNum = ref(1)
 const pageSize = ref(10)
@@ -133,6 +139,7 @@ const audit_state = ref('')
 const popoverId = ref('')
 const isShowBtn = ref(true)
 const selectHotList = ref([])
+const loading = ref(false)
 
 let userId = GET_USERINFO().user.id
 let userInfo = GET_USERINFO().user
@@ -179,24 +186,31 @@ const deleteImg = (index) => {
 const toPublish = async () => {
     let data = { content: content.value, pictures: Object.values(list) }
     console.log(data)
-    // return
+    let id = 1
+    const { href } = $router.resolve({
+            path: `/hot/${id}`,
+        })
+        window.open(href, "_blank")
+    return
     const res = await publishHot(data)
     if (res.code == 200) {
         console.log(res)
         message.success('发布成功')
-        // const location = window.location.href
-        // window.open()
+       
     }
 }
 
 // 获取沸点列表
 const getAllHotInfo = async () => {
     let data = { pageNum: pageNum.value, pageSize: pageSize.value, audit_state: 'pass' }
+    loading.value = true
     const res = await filndAllHotInfo(data)
     if (res.code == 200) {
         console.log(res.data)
+        loading.value = false
         hotList.value = res.data.hotTopicList
         selectHotList.value = res.data.hotTopicList.slice(0, 3)
+     
         // popoverId.value = res.data.hotTopicList.filter(item => {
         //     return item.user_id == userId
         // })
@@ -217,12 +231,6 @@ onMounted(() => {
 })
 const activeIcon = reactive({})
 
-const $router = useRouter()
-// const publish = (id) => {
-//     $router.push({ path: '/hotInfo', query: { id: id } })
-//     const location = window.location.href
-//     window.open(location)
-// }
 </script>
 
 <style lang="less" scoped>
@@ -231,14 +239,14 @@ const $router = useRouter()
 .mainContent {
     height: calc(100vh - 60px);
     width: 100%;
-    padding: 10px 350px;
+    padding: 10px 350px 10px 272px;
     display: flex;
     column-gap: 10px;
     background: #f1f1f1;
 
     .leftWrap {
         height: 200px;
-        width: 15%;
+        width: 10%;
         background-color: #fff;
         position: fixed;
         left: 100px;
@@ -247,13 +255,11 @@ const $router = useRouter()
     }
 
     .centerWrap {
-        // height: 5000px;
         width: 100%;
         position: relative;
 
         .inputWrap {
             width: 100%;
-            // height: 200px;
             background: #fff;
             margin-bottom: 20px;
             border-radius: 5px;
@@ -302,6 +308,7 @@ const $router = useRouter()
                     position: relative;
                     margin-top: 15px;
                     cursor: pointer;
+
                 }
 
                 .publishBtn {
@@ -314,7 +321,6 @@ const $router = useRouter()
                     border-radius: 3px;
                     text-align: center;
                     padding-top: 6px;
-                    cursor: pointer;
 
                     // &.active {
                     //     background: #1e80ff;
@@ -328,7 +334,7 @@ const $router = useRouter()
 
                 .upload:hover {
                     background-color: rgb(250, 250, 250);
-                    cursor: pointer;
+                    // cursor: pointer;
                 }
 
                 .upload::before {
@@ -344,14 +350,15 @@ const $router = useRouter()
                     user-select: none;
                     background: url('@/assets/images/图片.png') no-repeat left center;
                     background-size: 20px 20px;
-                    cursor: pointer;
+                    // z-index: 99;
+                    // cursor: pointer;
                 }
 
                 #file {
                     width: 100%;
                     height: 100%;
                     opacity: 0;
-                    cursor: pointer;
+                    // cursor: pointer;
                 }
             }
 
@@ -399,7 +406,6 @@ const $router = useRouter()
 
         .contentWrap {
             width: 100%;
-            // height: 200px;
             background: #fff;
             border-radius: 5px;
             margin: 10px 0;
@@ -417,8 +423,10 @@ const $router = useRouter()
 
                 .userInfo {
                     .username {
-                        font-weight: 400;
+                        font-weight: 500;
+                        font-size: 16px;
                         padding: 8px 0;
+                        color: #252933;
                     }
 
                     .timestamp {
@@ -433,6 +441,8 @@ const $router = useRouter()
             .hot-content {
                 height: 50px;
                 padding: 0 0 10px 70px;
+                color: #252933;
+                font-weight: 300;
             }
 
             .hot-footer {
@@ -563,6 +573,7 @@ const $router = useRouter()
             .select-hot {
                 margin-top: 20px;
                 padding: 0 10px;
+
                 .content {
                     width: 200px;
                     display: -webkit-box;
@@ -571,11 +582,12 @@ const $router = useRouter()
                     overflow: hidden;
                     text-overflow: ellipsis;
                 }
+
                 .count {
                     font-size: 12px;
                     color: #8A919F;
                     padding-top: 5px;
-                    
+
                 }
             }
         }
@@ -589,7 +601,7 @@ const $router = useRouter()
     .user-popover-header {
         display: flex;
         column-gap: 10px;
-        padding: 10px;
+        padding: 10px 0;
 
         img {
             width: 48px;
@@ -601,12 +613,14 @@ const $router = useRouter()
             padding-top: 5px;
 
             .user-name {
-                font-weight: 400;
+                font-weight: 500;
+                font-size: 16px;
 
             }
 
             .user-school {
                 font-size: 12px;
+                font-weight: 300;
                 color: #a9a9a9;
             }
         }
@@ -615,18 +629,18 @@ const $router = useRouter()
 
     .user-popover-btn {
         display: flex;
-        column-gap: 20px;
-        padding-bottom: 10px;
 
+        padding-bottom: 10px;
+        justify-content: space-between;
         .concern-btn {
-            width: 122px;
-            height: 36px;
+            width: 110px;
+            height: 32px;
             background: #1E80FF;
             color: #fff;
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 3px;
             text-align: center;
-            padding: 7px 20px;
+            padding: 4px 20px;
         }
 
         .concern-btn:hover {
@@ -634,14 +648,14 @@ const $router = useRouter()
         }
 
         .message-btn {
-            width: 122px;
-            height: 36px;
+            width: 110px;
+            height: 32px;
             background: #1E80FF0D;
             color: #1E80FF;
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 3px;
             text-align: center;
-            padding: 7px 20px;
+            padding: 4px 20px;
             border: 1px solid rgba(30, 128, 255, 0.3);
 
 
@@ -680,4 +694,5 @@ const $router = useRouter()
         }
 
     }
-}</style>
+}
+</style>

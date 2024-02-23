@@ -75,7 +75,7 @@ import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { GET_USERINFO,REMOVE_USERINFO } from '@/utils/token';
 import { Modal } from 'ant-design-vue';
-const current = ref(['/home'])
+const current = ref([''])
 const items = ref([
 	{
 		key: '/home',
@@ -143,7 +143,7 @@ const updatePwd = () => {
 	$router.push('/updatePwd')
 }
 onMounted(() => {
-	$router.push('/')
+	// $router.push('/')
 })
 </script>
 
