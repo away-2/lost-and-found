@@ -16,21 +16,7 @@
         </div>
         <div class="centerWrap">
             <div class="inputWrap">
-                <div contenteditable="true" spellcheck="false" placeholder="发布～" class="textarea" id="editor"
-                    @input="getVal">
-                    <div class="imageList">
-                        <div v-for="(item, index) in list" :key="index" class="imageBox">
-                            <img :src="item" />
-                            <img src="@/assets/images/关闭.png" class="delete" @click="deleteImg(index)" />
-                        </div>
-                    </div>
-                </div>
-                <div class="buttomWrap">
-                    <div class="upload">
-                        <input type="file" accept="image/*" id="file" @change="upload" />
-                    </div>
-                    <div class="publishBtn" @click="toPublish">发布</div>
-                </div>
+                <comment-input shapeType="publish" :maxFileQuantity="2" @handleSubmit="handlePublishHot" />
             </div>
             <a-skeleton :loading="loading" active>
                 <div class="contentWrap" v-for="(item, index) in hotList" :key="index">
@@ -144,44 +130,6 @@ const loading = ref(false)
 let userId = GET_USERINFO().user.id
 let userInfo = GET_USERINFO().user
 
-// 获取div中输入的值
-const getVal = () => {
-    content.value = document.getElementById('editor').innerText
-}
-// 图片上传
-const upload = async (e) => {
-    console.log(e.target.files)
-    const res = await fileUpload(e.target.files)
-    if (res.code == 200) {
-        message.success('上传成功！')
-        console.log(res)
-        // list.value = res.data
-        // console.log(list);
-    }
-    // let file = []
-    // if (list.length > 9) {
-    //     message.warning("最多只能上传9张图片")
-    //     return
-    // }
-    // if (Object.values(e.target.files).length > 9) {
-    //     message.warning("最多只能上传9张图片")
-    //     file = Object.values(e.target.files).slice(0, 9)
-    // } else {
-    //     file = e.target.files
-    // }
-    // for (let item of file) {
-    //     let reader = new FileReader()
-    //     reader.readAsDataURL(item)
-    //     reader.addEventListener('load', function () {
-    //         list.push(this.result)
-    //     })
-    // }
-}
-// 删除图片
-const deleteImg = (index) => {
-    list.splice(index, 1)
-}
-
 // 发布
 const toPublish = async () => {
     let data = { content: content.value, pictures: Object.values(list) }
@@ -198,6 +146,12 @@ const toPublish = async () => {
         message.success('发布成功')
        
     }
+}
+
+// 发布沸点
+const handlePublishHot = (data) => {
+    message.success('数据过来了')
+    console.log(data);
 }
 
 // 获取沸点列表
@@ -263,145 +217,7 @@ const activeIcon = reactive({})
             background: #fff;
             margin-bottom: 20px;
             border-radius: 5px;
-            padding: 10px 10px 0 10px;
-
-            .textarea {
-                width: 100%;
-                height: 100px;
-                outline: none;
-                border: 1px solid transparent;
-                border-radius: 5px;
-                padding: 10px;
-                overflow-y: scroll;
-                background: #f2f3f5;
-            }
-
-            .textarea:focus {
-                border-color: #1e80ff;
-                background: #fff;
-                box-shadow: 0 0 0 0.2rem rgba(232, 241, 253, 0.25);
-            }
-
-            .textarea::-webkit-scrollbar {
-                width: 0;
-            }
-
-            .textarea:empty::before {
-                content: attr(placeholder);
-                color: #a9a9a9;
-            }
-
-            .textarea:focus::before {
-                content: none;
-            }
-
-            .buttomWrap {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding-bottom: 10px;
-
-                .upload {
-                    width: 50px;
-                    height: 20px;
-                    border-radius: 5px;
-                    position: relative;
-                    margin-top: 15px;
-                    cursor: pointer;
-
-                }
-
-                .publishBtn {
-                    // background: #A9A9A9;
-                    background: #1e80ff;
-                    color: #fff;
-                    width: 80px;
-                    height: 30px;
-                    margin-top: 15px;
-                    border-radius: 3px;
-                    text-align: center;
-                    padding-top: 6px;
-
-                    // &.active {
-                    //     background: #1e80ff;
-
-                    // }
-                }
-
-                .publishBtn:hover {
-                    opacity: 0.5;
-                }
-
-                .upload:hover {
-                    background-color: rgb(250, 250, 250);
-                    // cursor: pointer;
-                }
-
-                .upload::before {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    content: '图片';
-                    font-size: 14px;
-                    text-align: right;
-                    line-height: 20px;
-                    user-select: none;
-                    background: url('@/assets/images/图片.png') no-repeat left center;
-                    background-size: 20px 20px;
-                    // z-index: 99;
-                    // cursor: pointer;
-                }
-
-                #file {
-                    width: 100%;
-                    height: 100%;
-                    opacity: 0;
-                    // cursor: pointer;
-                }
-            }
-
-            .imageList {
-                display: flex;
-                width: 100%;
-                flex-wrap: wrap;
-
-                .imageBox {
-                    width: 50px;
-                    height: 50px;
-                    background-color: rgba(54, 194, 35, 0.1);
-                    margin: 20px 20px 20px 0;
-                    position: relative;
-
-                    img {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                    }
-
-                    .delete {
-                        position: absolute;
-                        right: 0;
-                        top: 0;
-                        width: 18px;
-                        height: 18px;
-                        text-align: center;
-                        background-color: rgba(255, 255, 255, 0.5);
-                        user-select: none;
-                        cursor: pointer;
-                    }
-
-                    .delete:hover {
-                        background-color: rgba(31, 31, 31, 0.5);
-                        color: white;
-                    }
-
-                    .imageBox:hover .delete {
-                        opacity: 1;
-                    }
-                }
-            }
+            padding: 10px 10px 15px 10px;
         }
 
         .contentWrap {
@@ -596,7 +412,7 @@ const activeIcon = reactive({})
 }
 </style>
 
-<style>
+<style lang="less">
 .ant-popover-inner-content {
     .user-popover-header {
         display: flex;

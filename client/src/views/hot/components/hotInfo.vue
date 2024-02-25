@@ -40,7 +40,7 @@
             <div class="comment-wrap">
                 <div class="comment-container">
                     <div class="title">评论 0</div>
-                    <div class="comment-form">
+                    <!-- <div class="comment-form">
                         <div class="avatar-box">
                             <img :src="userInfo.avator" alt="">
                         </div>
@@ -48,7 +48,8 @@
                             <div contenteditable="true" placeholder="抢首评，友善交流" id="editor" class="textarea"
                                 :class="{ 'focus': isFocus }" @focus="focus" @blur="blur"></div>
                         </div>
-                    </div>
+                    </div> -->
+                    <comment-input @handleSubmit="handleSendComment" />
                 </div>
                 <div class="comment-empty" v-show="isEmpty">
                     <img src="@/assets/images/暂无数据.png" alt="">
@@ -79,23 +80,17 @@
 <script setup>
 import { GET_USERINFO } from '@/utils/token';
 import { formatPast } from '@/utils/time';
-import { Modal } from 'ant-design-vue';
+import { message, Modal } from 'ant-design-vue';
 import { ref } from 'vue';
 
 let userInfo = GET_USERINFO().user
 
 const isEmpty = ref(true)
-const isFocus = ref(false)
 
-// div输入框聚焦时
-const focus = () => {
-    isFocus.value = true
-}
-
-const blur = () => {
-    // setTimeout(() => {
-    isFocus.value = false
-    // }, 300); // 等待过渡效果完成后再执行
+// 发送评论
+const handleSendComment = (data) => {
+    message.success('数据过来了')
+    console.log(data);
 }
 
 const toDeleteHot = () => {
@@ -244,74 +239,6 @@ const toDeleteHot = () => {
                 .title {
                     padding-bottom: 20px;
                 }
-
-                .comment-form {
-                    display: flex;
-
-                    .avatar-box {
-                        padding-right: 10px;
-
-                        img {
-                            width: 40px;
-                            height: 40px;
-                        }
-                    }
-
-                    .input-box {
-                        flex: 1;
-                        // height: 200px;
-                        // width: 100%;
-                        background: #fff;
-                        margin-bottom: 20px;
-                        border-radius: 5px;
-                        padding: 10px 10px 0 10px;
-
-                        .textarea {
-                            width: 100%;
-                            height: 100px;
-                            outline: none;
-                            border: 1px solid transparent;
-                            border-radius: 5px;
-                            padding: 10px;
-                            overflow-y: scroll;
-                            background: #f2f3f5;
-                            // transition: all 0.3;
-                        }
-
-                        .textarea:hover {
-                            opacity: 0.6;
-                        }
-
-                        .textarea:focus {
-                            border-color: #1e80ff;
-                            background: #fff;
-                            box-shadow: 0 0 0 0.2rem rgba(232, 241, 253, 0.25);
-                        }
-
-                        .textarea::-webkit-scrollbar {
-                            width: 0;
-                        }
-
-                        .textarea:empty::before {
-                            content: attr(placeholder);
-                            color: #8a919f;
-                            font-size: 13px;
-                        }
-
-                        .textarea:focus::before {
-                            content: none;
-                        }
-
-                        .focus {
-                            min-height: 150px;
-                            max-height: 300px;
-                            transition: height 0.3s ease;
-                        }
-
-                    }
-                }
-
-
             }
 
             .comment-empty {
@@ -376,7 +303,8 @@ const toDeleteHot = () => {
     }
 }
 </style>
-<style>
+
+<style lang="less">
 .ant-popover-content {
     .delete-box {
         width: 100px;
