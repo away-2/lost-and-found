@@ -16,16 +16,19 @@ import Main from './main/index.vue'
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/style/custom.less';
+
 .layout_container {
     height: 100%;
+    position: relative;
     .layout_header{
+        position: fixed;
         width: 100%;
-        // height: 46px;
-        // background: #fff;
+        z-index: 250;
         }
     .layout_main{
         background: #f1f1f1;
-        height: calc(100vh - 60px);
+        padding-top: @base-tabbar-height;
     }
 }
 </style>

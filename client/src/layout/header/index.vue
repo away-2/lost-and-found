@@ -157,6 +157,7 @@ onMounted(() => {
 
 	.header-logo {
 		height: 60px;
+		min-width: 200px !important;
 		display: flex;
 		align-items: center;
 
@@ -204,7 +205,7 @@ onMounted(() => {
 	}
 }
 </style>
-<style lang="less">
+<style lang="less" scoped>
 @import "@/assets/style/custom.less";
 .ant-menu-horizontal {
 	line-height: @base-tabbar-height;
