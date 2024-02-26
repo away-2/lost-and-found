@@ -111,6 +111,13 @@ const handleFocus = () => {
 // 输入框失去焦点回调
 const handleBlur = () => {
 	isFocusedOfInput.value = false
+	// 如果做了自动增高效果，要考虑是否缩回去
+	if(props.isNeedIncreaseHeight) {
+		if(inputRef.value.scrollHeight <= props.inputMinHeight + 40) {
+			saveInputMinHeight.value = props.inputMinHeight + 'px'
+		}
+	}
+	console.log(inputRef.value.scrollHeight);
 }
 
 // 允许输入的最大字符数

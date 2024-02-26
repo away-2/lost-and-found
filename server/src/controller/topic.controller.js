@@ -8,6 +8,7 @@ class HotTopicController {
             pageNum: ctx.request.body.pageNum,
             pageSize: ctx.request.body.pageSize,
             audit_state: ctx.request.body.audit_state,
+            classify: ctx.request.body.classify,
             view_user_id,
         });
         ctx.body = {
