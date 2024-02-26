@@ -188,7 +188,9 @@ const handleDeleteImg = (index) => {
 const handleSubmit = () => {
 	if (alreadyInputCharQuantity.value === 0) return
 	// 组织数据,传给父组件
-	const data = {}
+	const inputElement = inputRef.value
+	console.log(inputElement);
+	const data = {content: inputElement, pictures: pictureList}
 	emits('handleSubmit',data)
 }
 </script>
@@ -239,10 +241,6 @@ const handleSubmit = () => {
 			border-radius: 5px;
 			overflow-y: scroll;
 			transition: all 0.3s;
-
-			&.focus {
-				height: 150px;
-			}
 
 			&:empty::before {
 				content: attr(placeholder);
