@@ -6,9 +6,7 @@
 		</div>
 		<a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @click="toRoute" @select="selectedKeys" />
 		<div class="header-right">
-			<div class="loginWrap" v-show="!token" @click="toLogin">
-				登录
-			</div>
+			<div class="loginWrap" v-show="!token" @click="toLogin">登录</div>
 			<div class="avatorWrap" v-show="token">
 				<a-dropdown>
 					<img src="@/assets/images/通知.png" alt="" />
@@ -48,23 +46,24 @@
 									</div>
 								</div>
 							</a-menu-item>
-							<a-menu-item key="2">
-								<img src="@/assets/images/个人中心.png" alt="">
-								<div class="title">我的主页</div>
-							</a-menu-item>
-							<!-- <a-menu-item key="3">新增粉丝</a-menu-item> -->
-							<a-menu-item key="4" @click="updatePwd">
-								<img src="@/assets/images/修改密码.png" alt="">
-								<div class="title">修改密码</div>
-							</a-menu-item>
-							<a-menu-item key="5" @click="toLogout">
-								<img src="@/assets/images/退出登录.png" alt="">
-								<div class="title">退出登录</div>
-							</a-menu-item>
+							<div class="user-func-list">
+								<a-menu-item key="2">
+									<img src="@/assets/images/个人中心.png" alt="" />
+									<div class="title">我的主页</div>
+								</a-menu-item>
+								<!-- <a-menu-item key="3">新增粉丝</a-menu-item> -->
+								<a-menu-item key="3" @click="updatePwd">
+									<img src="@/assets/images/修改密码.png" alt="" />
+									<div class="title">修改密码</div>
+								</a-menu-item>
+								<a-menu-item key="4" @click="toLogout">
+									<img src="@/assets/images/退出登录.png" alt="" />
+									<div class="title">退出登录</div>
+								</a-menu-item>
+							</div>
 						</a-menu>
 					</template>
 				</a-dropdown>
-
 			</div>
 		</div>
 	</div>
@@ -73,8 +72,8 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { GET_USERINFO,REMOVE_USERINFO } from '@/utils/token';
-import { Modal } from 'ant-design-vue';
+import { GET_USERINFO, REMOVE_USERINFO } from '@/utils/token'
+import { Modal } from 'ant-design-vue'
 const current = ref([''])
 const items = ref([
 	{
@@ -104,7 +103,6 @@ const items = ref([
 	},
 ])
 
-
 const userInfo = GET_USERINFO().user
 
 let $router = useRouter()
@@ -128,14 +126,12 @@ const toLogout = () => {
 		content: null,
 		okText: '确认',
 		cancelText: '取消',
-		onOk(){
+		onOk() {
 			REMOVE_USERINFO()
 			$router.push('/login')
 		},
-		onCancel() {
-		}
-	}) 
-	
+		onCancel() {},
+	})
 }
 
 // 修改密码
@@ -148,6 +144,7 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/style/custom.less';
 .header {
 	display: flex;
 	align-items: center;
@@ -184,7 +181,6 @@ onMounted(() => {
 			cursor: pointer;
 			padding-top: 6px;
 			border-radius: 2px;
-
 		}
 
 		.avatorWrap {
@@ -196,7 +192,6 @@ onMounted(() => {
 				height: 20px;
 				margin-right: 15px;
 			}
-		
 		}
 
 		.isLogin {
@@ -204,9 +199,6 @@ onMounted(() => {
 		}
 	}
 }
-</style>
-<style lang="less" scoped>
-@import "@/assets/style/custom.less";
 .ant-menu-horizontal {
 	line-height: @base-tabbar-height;
 }
@@ -219,13 +211,12 @@ onMounted(() => {
 
 .ant-dropdown-menu {
 	width: 180px;
-	.dropdownMenu{
-				background-color: red;
-			}
-
+	.dropdownMenu {
+		background-color: red;
+	}
 }
 
-.ant-dropdown-menu-item[data-menu-id="1"] {
+.ant-dropdown-menu-item[data-menu-id='1'] {
 	.popoverWrap {
 		width: 180px;
 		// height: 200px;
@@ -248,7 +239,6 @@ onMounted(() => {
 			width: 150px;
 			margin: 5px 0;
 			.single-count-item {
-
 				.count-num {
 					color: #252933;
 					width: 30px;
@@ -264,57 +254,27 @@ onMounted(() => {
 					text-align: center;
 				}
 			}
-
 		}
 	}
 }
-.ant-dropdown-menu-item[data-menu-id="1"].ant-dropdown-menu-item-active{
-		background-color: #fff !important;
-	}
-
-.ant-dropdown-menu-item[data-menu-id="2"] {
-	.ant-dropdown-menu-title-content {
-		display: flex;
-		column-gap: 15px;
-		align-items: center;
-		img {
-			width: 16px;
-			height: 16px;
-		}
-		.title{
-			color: #61666d;
-		}
-	}
-
+.ant-dropdown-menu-item[data-menu-id='1'].ant-dropdown-menu-item-active {
+	background-color: #fff !important;
 }
 
-.ant-dropdown-menu-item[data-menu-id="4"] {
-	.ant-dropdown-menu-title-content {
-		display: flex;
-		column-gap: 15px;
-		align-items: center;
-		img {
-			width: 16px;
-			height: 16px;
-		}
-		.title{
-			color: #61666d;
+.user-func-list {
+	::v-deep(.ant-dropdown-menu-item) {
+		.ant-dropdown-menu-title-content {
+			display: flex;
+			column-gap: 15px;
+			align-items: center;
+			img {
+				width: 16px;
+				height: 16px;
+			}
+			.title {
+				color: #61666d;
+			}
 		}
 	}
 }
-
-.ant-dropdown-menu-item[data-menu-id="5"] {
-	.ant-dropdown-menu-title-content {
-		display: flex;
-		column-gap: 15px;
-		align-items: center;
-
-		img {
-			width: 16px;
-			height: 16px;
-		}
-		.title{
-			color: #61666d;
-		}
-	}
-}</style>
+</style>

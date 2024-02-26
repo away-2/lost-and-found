@@ -74,6 +74,14 @@
                         <div class="text">{{ item.content }}</div>
                         <div class="picture"></div>
                     </div>
+                    <div class="hot-like" v-show="item.rankLikeUsers.length > 0">
+                        <div class="list">
+                            <div class="avatar" v-for="(list, index) in item.rankLikeUsers" :key="index">
+                                <img :src="list.avator" alt="">
+                            </div>
+                        </div>
+                        <div class="label">{{ item.rankLikeUsers.length > 1 ? '等人赞过' : '赞过' }}</div>
+                    </div>
                     <div class="hot-footer">
                         <div class="share-action">分享</div>
                         <div class="comment-action">
@@ -192,7 +200,7 @@ const getAllHotInfo = async () => {
         loading.value = false
         hotList.value = res.data.hotTopicList
         selectHotList.value = res.data.hotTopicList.slice(0, 3)
-
+        
         // popoverId.value = res.data.hotTopicList.filter(item => {
         //     return item.user_id == userId
         // })
@@ -215,8 +223,6 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
-@import '@/assets/style/custom.less';
-
 .mainContent {
     height: 100%;
     width: 100%;
@@ -339,6 +345,28 @@ onMounted(() => {
                     -webkit-box-orient: vertical;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                }
+            }
+            .hot-like {
+                position: relative;
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                padding: 10px;
+                z-index: 1;
+                .list{
+                    display: flex;
+                    .avatar {
+                        img {
+                            width: 19px;
+                            height: 19px;
+                            border-radius: 50%;
+                        }
+                    }
+                }
+                .label {
+                    color: #a9a9a9;
+                    font-size: 13px;
                 }
             }
 
@@ -491,28 +519,6 @@ onMounted(() => {
     }
 }
 
-@media (max-width: 1200px) {
-    .mainContent {
-        flex-direction: column;
-        padding: 10px;
-
-    }
-
-    .leftWrap {
-        display: none;
-    }
-
-    .rightWrap {
-        display: none;
-    }
-
-    .centerWrap {
-        width: 100% !important;
-    }
-}
-</style>
-
-<style lang="less" scoped>
 .ant-popover-inner-content {
     .user-popover-header {
         display: flex;
@@ -611,4 +617,25 @@ onMounted(() => {
         }
 
     }
-}</style>
+}
+
+@media (max-width: 1200px) {
+    .mainContent {
+        flex-direction: column;
+        padding: 10px;
+
+    }
+
+    .leftWrap {
+        display: none;
+    }
+
+    .rightWrap {
+        display: none;
+    }
+
+    .centerWrap {
+        width: 100% !important;
+    }
+}
+</style>
