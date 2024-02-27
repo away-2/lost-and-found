@@ -62,12 +62,27 @@ class HotTopicController {
         }
     }
     // 查询指定沸点的所有点赞用户
-    async findLikeTopicUserList(ctx,next) {
-        const likerList = await searchAllUserOfLikeTopic(ctx.request.query.topic_id,ctx.state.user.id)
+    async findLikeTopicUserList(ctx, next) {
+        const likerList = await searchAllUserOfLikeTopic(ctx.request.query.topic_id, ctx.state.user.id)
         ctx.body = {
             code: 200,
             message: '查询所有点赞者信息成功',
             data: likerList
+        }
+    }
+    // 根据沸点id查询沸点详细信息
+    async findTopicInfoById(ctx, next) {
+        const res = await searchTopicsByPaging({ pageSize: 10, pageNum: 1, topic_id: ctx.request.query.topic_id, view_user_id: ctx.state.user.id })
+        if(res.total === 0) {
+            ctx.body = {
+                code: 500,
+                message: '查询的沸点不存在'
+            }
+        } else {
+            ctx.body = {
+                code: 200,
+                data: res.hotTopicList[0]
+            }
         }
     }
     // {

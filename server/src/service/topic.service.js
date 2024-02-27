@@ -7,7 +7,7 @@ const seq = require("../db/seq");
 
 class HotTopicServices {
   // 根据条件查询沸点列表
-  async searchTopicsByPaging({ pageNum, pageSize, audit_state, belong_user, classify, view_user_id }) {
+  async searchTopicsByPaging({ pageNum, pageSize, audit_state, belong_user, topic_id, classify, view_user_id }) {
     // where、order、分页条件整合
     const offset = (pageNum - 1) * pageSize;
     const whereArr = [];
@@ -34,6 +34,10 @@ class HotTopicServices {
     // 属于哪个用户的沸点
     if(belong_user) {
       whereArr.push({ user_id: belong_user })
+    }
+    // 只查询哪个沸点
+    if(topic_id) {
+      whereArr.push({ id: topic_id })
     }
     // 开始查询基础的沸点数据
     const res = await HotTopic.findAndCountAll({
@@ -269,7 +273,7 @@ class HotTopicServices {
 
 const a = new HotTopicServices();
 a.searchAllUserOfLikeTopic(1,1)
-// a.searchTopicsByPaging({ pageSize: 10, pageNum: 1, classify: '',belong_user: 1, view_user_id: 1 });
+// a.searchTopicsByPaging({ pageSize: 10, pageNum: 1, topic_id: 7, view_user_id: 1 });
 // a.insertOneTopic({ user_id: 1,content: '好好好好222222' })
 // a.modifyTopic({ content: '好好好好33333' }, { id: 8 })
 // a.deleteTopic(12)
