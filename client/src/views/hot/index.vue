@@ -79,7 +79,7 @@
 						</template>
 					</div>
 					<div class="hot-like" v-show="item.rankLikeUsers.length > 0">
-						<div class="like-list" @click="showModal(item.user_id)">
+						<div class="like-list" @click="showModal(item.id)">
 							<div class="list">
 								<div class="avatar" v-for="(list, index) in item.rankLikeUsers" :key="index">
 									<img :src="list.avator" alt="" />

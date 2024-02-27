@@ -272,7 +272,7 @@ class HotTopicServices {
 }
 
 const a = new HotTopicServices();
-a.searchAllUserOfLikeTopic(1,1)
+// a.searchAllUserOfLikeTopic(2,1)
 // a.searchTopicsByPaging({ pageSize: 10, pageNum: 1, topic_id: 7, view_user_id: 1 });
 // a.insertOneTopic({ user_id: 1,content: '好好好好222222' })
 // a.modifyTopic({ content: '好好好好33333' }, { id: 8 })
