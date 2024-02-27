@@ -185,8 +185,7 @@ const handleDeleteImg = (index) => {
 const handleSubmit = () => {
 	if (alreadyInputCharQuantity.value === 0) return
 	// 组织数据,传给父组件
-	const picturePath = pictureList.map(item => item.file_path)[0]
-	const data = { content: inputRef.value.innerHTML, pictures: picturePath }
+	const data = { content: inputRef.value.innerHTML, pictures: pictureList }
 	emits('handleSubmit',data)
 }
 </script>
