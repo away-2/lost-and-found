@@ -226,6 +226,10 @@ class HotTopicServices {
       }
     );
   }
+  // 查询指定沸点的所有点赞用户
+  async searchAllUserOfLikeTopic() {
+
+  }
 }
 
 const a = new HotTopicServices();
