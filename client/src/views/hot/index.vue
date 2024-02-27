@@ -40,15 +40,14 @@
                         <a-popover>
                             <template #content>
                                 <div class="user-popover-header">
-                                    <img :src="item.publish_user.avator" alt="">
+                                    <img :src="item.publish_user.avator" alt="" />
                                     <div class="user-info">
                                         <div class="user-name">{{ item.publish_user.nike_name || item.publish_user.real_name
-                                        }}
-                                        </div>
+                                        }}</div>
                                         <div class="user-school">{{ item.publish_user.school_name }}</div>
                                     </div>
                                 </div>
-                                <div class="user-popover-btn" v-show="isShowBtn">
+                                <div class="user-popover-btn" v-show="item.publish_user.id !== userId">
                                     <div class="concern-btn">关注</div>
                                     <div class="message-btn">私信</div>
                                 </div>
@@ -72,19 +71,21 @@
                     </div>
                     <div class="hot-content">
                         <div class="text">{{ item.content }}</div>
-                        <div class="picture"></div>
+                        <img v-show="item.pictures" :src="item.pictures" alt="" />
                     </div>
-                    <div class="hot-footer">
-                        <div class="share-action">分享</div>
-                        <div class="comment-action">
-                            <img src="@/assets/images/评论.png" alt="" />
-                            <span>评论</span>
+                    <div class="hot-like" v-show="item.rankLikeUsers.length > 0" @click="showModal">
+                        <div class="list">
+                            <div class="avatar" v-for="(list, index) in item.rankLikeUsers" :key="index">
+                                <img :src="list.avator" alt="" />
+                            </div>
                         </div>
-                        <div class="like-action">
-                            <img src="@/assets/images/点赞.png" alt="" />
-                            <span>点赞</span>
-                        </div>
+                        <div class="label">{{ item.rankLikeUsers.length > 1 ? '等人赞过' : '赞过' }}</div>
                     </div>
+                    <a-modal v-model:open="open" :title="`点赞详情 (${item.rankLikeUsers.length})`" @ok="handleOk">
+                        <span>这是</span>
+                    </a-modal>
+                    <comment-footer :isAlreadyLike="item.already_like" :isLikeNumber="item.like_number"
+                        :isShowComment="false" :isCommentNumber="item.remark_number"></comment-footer>
                 </div>
             </a-skeleton>
         </div>
@@ -92,7 +93,7 @@
             <div class="sider-content">
                 <div class="user-info-card">
                     <div class="card-header">
-                        <img :src="userInfo.avator" alt="">
+                        <img :src="userInfo.avator" alt="" />
                         <div class="user-name">{{ userInfo.nike_name || userInfo.real_name }}</div>
                     </div>
                     <div class="count-item">
@@ -128,20 +129,16 @@
 import { message } from 'ant-design-vue'
 import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { publishHot, filndAllHotInfo, fileUpload } from '@/api/hot'
+import { publishHot, filndAllHotInfo } from '@/api/hot'
 import { formatPast } from '@/utils/time'
 import { GET_USERINFO } from '@/utils/token'
 
-const list = ref('')
-const content = ref('')
-const hotList = ref([])
 const $router = useRouter()
 
+const hotList = ref([])
 const pageNum = ref(1)
 const pageSize = ref(10)
 const audit_state = ref('')
-const popoverId = ref('')
-const isShowBtn = ref(true)
 const selectHotList = ref([])
 const loading = ref(false)
 const isSelected = ref(true)
@@ -149,37 +146,31 @@ const isSelected = ref(true)
 let userId = GET_USERINFO().user.id
 let userInfo = GET_USERINFO().user
 
-// 发布
-const toPublish = async () => {
-    let data = { content: content.value, pictures: Object.values(list) }
-    console.log(data)
-    let id = 1
-    const { href } = $router.resolve({
-        path: `/hot/${id}`,
-    })
-    window.open(href, "_blank")
-    return
-    const res = await publishHot(data)
-    if (res.code == 200) {
-        console.log(res)
-        message.success('发布成功')
-
-    }
+const open = ref(false)
+const showModal = () => {
+    open.value = true
+}
+const handleOk = (e) => {
+    console.log(e)
+    open.value = false
 }
 
 // 发布沸点
 const handlePublishHot = async (data) => {
-    message.success('数据过来了')
-    // const res = await publishHot(data)
-    // if(res.code == 200) {
-    //     message.success('发布成功')
-    // }
-    // let id = 1
-    // const { href } = $router.resolve({
-    //     path: `/hot/${id}`,
-    // })
-    // window.open(href, "_blank")
-    console.log(data);
+    const res = await publishHot(data)
+    if (res.code == 200) {
+        message.success('发布成功')
+        getAllHotInfo()
+        let id = res.data.newTopic.id
+        let newTopic = res.data.newTopic
+        localStorage.setItem('newTopic', JSON.stringify(newTopic))
+        // 将newTopic数据赋值给window.opener
+        // window.opener.newTopicData = newTopic;
+        const { href } = $router.resolve({
+            path: `/hot/${id}`,
+        })
+        window.open(href, '_blank')
+    }
 }
 
 // 获取沸点列表
@@ -188,35 +179,18 @@ const getAllHotInfo = async () => {
     loading.value = true
     const res = await filndAllHotInfo(data)
     if (res.code == 200) {
-        console.log(res.data)
         loading.value = false
         hotList.value = res.data.hotTopicList
         selectHotList.value = res.data.hotTopicList.slice(0, 3)
-
-        // popoverId.value = res.data.hotTopicList.filter(item => {
-        //     return item.user_id == userId
-        // })
-        // if (popoverId.value == userId) {
-        //     console.log(123);
-        //     isShowBtn.value = false
-        // } else{
-        //     console.log(popoverId.value, userId);
-        //     console.log(222);
-        //     isShowBtn.value = true
-        // }
     }
 }
 
 onMounted(() => {
     getAllHotInfo()
-
 })
-
 </script>
 
 <style lang="less" scoped>
-@import '@/assets/style/custom.less';
-
 .mainContent {
     height: 100%;
     width: 100%;
@@ -229,11 +203,9 @@ onMounted(() => {
         height: 200px;
         width: 180px;
         background-color: #fff;
-        // padding: 10px;
         border-radius: 5px;
         position: fixed;
         left: 100px;
-        // right: 0;
         z-index: 99;
         transition: all 0.3s linear;
 
@@ -249,13 +221,11 @@ onMounted(() => {
 
             &:hover {
                 background: #f7f8fa;
-
                 .icon {
                     path {
                         fill: #1e80ff;
                     }
                 }
-
                 span {
                     color: #1e80ff;
                 }
@@ -275,8 +245,6 @@ onMounted(() => {
                 }
             }
         }
-
-
     }
 
     .centerWrap {
@@ -326,7 +294,7 @@ onMounted(() => {
             }
 
             .hot-content {
-                height: 50px;
+                // height: 50px;
                 padding: 0 0 10px 70px;
                 color: #252933;
                 font-weight: 300;
@@ -340,56 +308,51 @@ onMounted(() => {
                     overflow: hidden;
                     text-overflow: ellipsis;
                 }
+
+                img {
+                    width: 250px;
+                    height: 250px;
+                    border-radius: 4px;
+                    object-fit: cover;
+                    margin-top: 10px;
+                }
             }
 
-            .hot-footer {
+            .hot-like {
+                position: relative;
                 display: flex;
-                justify-content: space-between;
+                justify-content: flex-end;
                 align-items: center;
-                border-top: 1px solid #f1f2f5;
+                padding: 10px;
+                z-index: 1;
+                column-gap: 10px;
+                cursor: pointer;
 
-                .share-action {
-                    width: 33%;
-                    padding: 10px;
-                    text-align: center;
-                    font-size: 13px;
-                    color: #a9a9a9;
-                }
-
-                .comment-action {
-                    width: 33%;
-                    padding: 10px;
-                    justify-content: center;
+                .list {
                     display: flex;
 
-                    img {
-                        width: 14px;
-                        height: 14px;
-                        margin-right: 5px;
-                    }
+                    .avatar {
+                        width: 22px;
+                        height: 22px;
+                        border-radius: 50%;
+                        border: 2px solid #fff;
+                        margin-right: -6px;
 
-                    span {
-                        font-size: 13px;
-                        color: #a9a9a9;
+                        img {
+                            width: 19px;
+                            height: 19px;
+                            border-radius: 50%;
+                        }
                     }
                 }
 
-                .like-action {
-                    display: flex;
-                    justify-content: center;
-                    padding: 10px;
-                    width: 33%;
+                .label {
+                    color: #8a919f;
+                    font-size: 14px;
+                    line-height: 24px;
 
-                    img {
-                        height: 14px;
-                        width: 14px;
-                        color: #a9a9a9;
-                        margin-right: 5px;
-                    }
-
-                    span {
-                        font-size: 13px;
-                        color: #a9a9a9;
+                    &:hover {
+                        opacity: 0.6;
                     }
                 }
             }
@@ -403,7 +366,6 @@ onMounted(() => {
 
         .sider-content {
             flex: 1;
-
 
             .user-info-card {
                 height: 172px;
@@ -423,7 +385,6 @@ onMounted(() => {
                         height: 48px;
                         border-radius: 50%;
                     }
-
                 }
 
                 .count-item {
@@ -447,7 +408,7 @@ onMounted(() => {
                         }
 
                         .count-text {
-                            color: #8A919F;
+                            color: #8a919f;
                             width: 60px;
                             text-align: center;
                             font-size: 13px;
@@ -481,9 +442,8 @@ onMounted(() => {
 
                     .count {
                         font-size: 12px;
-                        color: #8A919F;
+                        color: #8a919f;
                         padding-top: 5px;
-
                     }
                 }
             }
@@ -491,28 +451,6 @@ onMounted(() => {
     }
 }
 
-@media (max-width: 1200px) {
-    .mainContent {
-        flex-direction: column;
-        padding: 10px;
-
-    }
-
-    .leftWrap {
-        display: none;
-    }
-
-    .rightWrap {
-        display: none;
-    }
-
-    .centerWrap {
-        width: 100% !important;
-    }
-}
-</style>
-
-<style lang="less" scoped>
 .ant-popover-inner-content {
     .user-popover-header {
         display: flex;
@@ -531,7 +469,6 @@ onMounted(() => {
             .user-name {
                 font-weight: 500;
                 font-size: 16px;
-
             }
 
             .user-school {
@@ -540,7 +477,6 @@ onMounted(() => {
                 color: #a9a9a9;
             }
         }
-
     }
 
     .user-popover-btn {
@@ -552,7 +488,7 @@ onMounted(() => {
         .concern-btn {
             width: 110px;
             height: 32px;
-            background: #1E80FF;
+            background: #1e80ff;
             color: #fff;
             cursor: pointer;
             border-radius: 3px;
@@ -567,15 +503,13 @@ onMounted(() => {
         .message-btn {
             width: 110px;
             height: 32px;
-            background: #1E80FF0D;
-            color: #1E80FF;
+            background: #1e80ff0d;
+            color: #1e80ff;
             cursor: pointer;
             border-radius: 3px;
             text-align: center;
             padding: 4px 20px;
             border: 1px solid rgba(30, 128, 255, 0.3);
-
-
         }
 
         .message-btn:hover {
@@ -603,12 +537,31 @@ onMounted(() => {
             }
 
             .count-text {
-                color: #8A919F;
+                color: #8a919f;
                 /* font-size: 12px; */
                 width: 30px;
                 text-align: center;
             }
         }
-
     }
-}</style>
+}
+
+@media (max-width: 1200px) {
+    .mainContent {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .leftWrap {
+        display: none;
+    }
+
+    .rightWrap {
+        display: none;
+    }
+
+    .centerWrap {
+        width: 100% !important;
+    }
+}
+</style>
