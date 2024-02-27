@@ -227,12 +227,48 @@ class HotTopicServices {
     );
   }
   // 查询指定沸点的所有点赞用户
-  async searchAllUserOfLikeTopic() {
-
+  async searchAllUserOfLikeTopic(topic_id,view_user_id) {
+    const likeTopicUserIds = (await HotTopicLike.findAll({
+      where: {
+        hot_topic_id: topic_id
+      },
+      raw: true,
+    })).map(item => item.user_id)
+    const concernList = await UserConcernRelation.findAll({
+      where: {
+        activeUserId: view_user_id,
+        passiveUserId: {
+          [Op.in]: likeTopicUserIds
+        }
+      },
+      raw: true
+    })
+    // 点赞者的信息
+    const userInfos = await User.findAll({
+      where: {
+        id: {
+          [Op.in]: likeTopicUserIds
+        }
+      },
+      raw: true
+    })
+    const result = []
+    likeTopicUserIds.forEach(likerId => {
+      const obj = {}
+      // 观看的用户是否关注了这个点赞者
+      obj.alreadyLike = false
+      if(concernList.find(item => item.passiveUserId === likerId)) {
+        obj.alreadyLike = true
+      }
+      obj.likerInfo = userInfos.find(item => item.id === likerId)
+      result.push(obj)
+    })
+    return result
   }
 }
 
 const a = new HotTopicServices();
+a.searchAllUserOfLikeTopic(1,1)
 // a.searchTopicsByPaging({ pageSize: 10, pageNum: 1, classify: '',belong_user: 1, view_user_id: 1 });
 // a.insertOneTopic({ user_id: 1,content: '好好好好222222' })
 // a.modifyTopic({ content: '好好好好33333' }, { id: 8 })

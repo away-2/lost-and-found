@@ -1,4 +1,4 @@
-const { searchTopicsByPaging, insertOneTopic, modifyTopic, deleteTopic, likeTopic, cancelLikeTopic } = require("../service/topic.service");
+const { searchTopicsByPaging, insertOneTopic, modifyTopic, deleteTopic, likeTopic, cancelLikeTopic, searchAllUserOfLikeTopic } = require("../service/topic.service");
 
 class HotTopicController {
     // 根据分页查询沸点列表
@@ -59,6 +59,15 @@ class HotTopicController {
         ctx.body = {
             code: 200,
             message: '取消点赞沸点成功'
+        }
+    }
+    // 查询指定沸点的所有点赞用户
+    async findLikeTopicUserList(ctx,next) {
+        const likerList = await searchAllUserOfLikeTopic(ctx.request.query.topic_id,ctx.state.user.id)
+        ctx.body = {
+            code: 200,
+            message: '查询所有点赞者信息成功',
+            data: likerList
         }
     }
     // {
