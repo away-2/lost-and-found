@@ -7,7 +7,7 @@
 						<img :src="userInfo.avator" alt="" />
 						<div class="user-info">
 							<div class="user-name">{{ userInfo.nike_name || userInfo.real_name }}</div>
-							<div class="timestamp">{{ formatPast(userInfo.createdAt) }}</div>
+							<div class="timestamp">{{ formatPast(publishHotInfo.createdAt) }}</div>
 						</div>
 					</div>
 					<div class="hot-title-right">
@@ -22,31 +22,13 @@
 						</a-popover>
 					</div>
 				</div>
-				<div class="hot-content">这是上个页面发布的内容</div>
-				<div class="hot-footer">
-					<div class="share-action">分享</div>
-					<div class="comment-action">
-						<img src="@/assets/images/评论.png" alt="" />
-						<span>评论</span>
-					</div>
-					<div class="like-action">
-						<img src="@/assets/images/点赞.png" alt="" />
-						<span>点赞</span>
-					</div>
-				</div>
+				<div class="hot-content">{{ publishHotInfo.content }}</div>
+				<comment-footer :isLikeNumber="publishHotInfo.like_number" :isAlreadyLike="false"
+                        :isShowComment="false" :isCommentNumber="publishHotInfo.remark_number"></comment-footer>
 			</div>
 			<div class="comment-wrap">
 				<div class="comment-container">
 					<div class="title">评论 0</div>
-					<!-- <div class="comment-form">
-                        <div class="avatar-box">
-                            <img :src="userInfo.avator" alt="">
-                        </div>
-                        <div class="input-box">
-                            <div contenteditable="true" placeholder="抢首评，友善交流" id="editor" class="textarea"
-                                :class="{ 'focus': isFocus }" @focus="focus" @blur="blur"></div>
-                        </div>
-                    </div> -->
 					<comment-input @handleSubmit="handleSendComment" />
 				</div>
 				<div class="comment-empty" v-show="isEmpty">
@@ -79,11 +61,18 @@
 import { GET_USERINFO } from '@/utils/token'
 import { formatPast } from '@/utils/time'
 import { message, Modal } from 'ant-design-vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { removeHotById } from '@/api/hot'
 
-let userInfo = GET_USERINFO().user
+
+const $router = useRouter()
 
 const isEmpty = ref(true)
+
+let userInfo = GET_USERINFO().user
+let publishHotInfo = JSON.parse(localStorage.getItem('newTopic'))
+
 
 // 发送评论
 const handleSendComment = (data) => {
@@ -91,18 +80,33 @@ const handleSendComment = (data) => {
 	console.log(data)
 }
 
+// 删除此沸点
 const toDeleteHot = () => {
 	Modal.confirm({
 		title: '确认删除此沸点吗？',
 		content: null,
 		okText: '确认',
 		cancelText: '取消',
-		onOk() {
-			console.log(123)
+		async onOk() {
+			const res = await removeHotById(publishHotInfo.id)
+			if (res.code == 200) {
+				message.success('删除成功')
+				localStorage.removeItem('newTopic');
+				$router.push('/home')
+			}
 		},
-		onCancel() {},
+		onCancel() { },
 	})
 }
+onMounted(() => {
+	// console.log(publishHotInfo);
+})
+
+// 在窗口关闭前监听 beforeunload 事件
+window.addEventListener('beforeunload', function(event) {
+    // 移除 localStorage 中的数据
+    localStorage.removeItem('newTopic');
+});
 </script>
 
 <style lang="less" scoped>
@@ -153,10 +157,15 @@ const toDeleteHot = () => {
 
 				.hot-title-right {
 					padding: 20px;
+					cursor: pointer;
 
 					img {
 						width: 20px;
 						height: 20px;
+
+						&:hover {
+							opacity: 0.6;
+						}
 					}
 				}
 			}
@@ -166,61 +175,6 @@ const toDeleteHot = () => {
 				padding: 0 0 10px 70px;
 				color: #252933;
 				font-weight: 300;
-			}
-
-			.hot-footer {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				border-top: 1px solid #f1f2f5;
-
-				.share-action {
-					width: 33%;
-					padding: 10px;
-					text-align: center;
-					font-size: 13px;
-					color: #a9a9a9;
-					cursor: pointer;
-				}
-
-				.comment-action {
-					width: 33%;
-					padding: 10px;
-					justify-content: center;
-					display: flex;
-					cursor: pointer;
-
-					img {
-						width: 14px;
-						height: 14px;
-						margin-right: 5px;
-					}
-
-					span {
-						font-size: 13px;
-						color: #a9a9a9;
-					}
-				}
-
-				.like-action {
-					display: flex;
-					justify-content: center;
-					padding: 10px;
-					width: 33%;
-					cursor: pointer;
-
-					img {
-						height: 14px;
-						width: 14px;
-						color: #a9a9a9;
-						margin-right: 5px;
-					}
-
-					span {
-						font-size: 13px;
-						color: #a9a9a9;
-					}
-				}
 			}
 		}
 
@@ -270,6 +224,7 @@ const toDeleteHot = () => {
 
 		.hot-list {
 			width: 100%;
+
 			.hot-list-item {
 				margin-top: 20px;
 				padding: 0 10px;

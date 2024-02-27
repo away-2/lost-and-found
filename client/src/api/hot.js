@@ -18,11 +18,10 @@ export const filndAllHotInfo = (data) => {
     })
 }
 
-// 文件上传
-export const fileUpload = (data) => {
+// 根据id删除沸点
+export const removeHotById = (id) => {
     return request({
-        url: '/uploadService/uploadFile',
-        method: 'post',
-        data
+        url: `/topicService/removeTopicById?id=${id}`,
+        method: 'delete',
     })
 }

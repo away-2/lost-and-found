@@ -186,6 +186,7 @@ onMounted(() => {
 		.avatorWrap {
 			display: flex;
 			align-items: center;
+			cursor: pointer;
 
 			img {
 				width: 20px;

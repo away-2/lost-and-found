@@ -10,11 +10,15 @@ import store from './store'
 import './utils/permisstion'
 
 import CommentInput from '@/components/commentInput/index.vue'
+import CommentList from '@/components/commentList/index.vue'
+import CommentFooter from '@/components/commentFooter/index.vue'
 
 
 const app = createApp(App)
 
 app.component('commentInput',CommentInput)
+app.component('commentList',CommentList)
+app.component('commentFooter',CommentFooter)
 
 app.use(Antd)
 

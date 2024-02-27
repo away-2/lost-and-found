@@ -45,7 +45,7 @@ import { ref, computed, reactive } from 'vue'
 import { GET_USERINFO } from '@/utils/token'
 import { formatPast } from '@/utils/time'
 import { message, Modal } from 'ant-design-vue'
-import { fileUpload } from '@/api/hot'
+import { fileUpload } from '@/api/upload'
 import OperateBox from './components/operateBox/index.vue'
 
 const props = defineProps({
@@ -143,10 +143,7 @@ function limitTextLength(e) {
 }
 
 // 上传的图片数据
-const pictureList = reactive([
-	// { id: 1, file_path: 'http://localhost:3100/upload/17076486627.jpeg' },
-	// { id: 2, file_path: 'http://localhost:3100/upload/17076486627.jpeg' },
-])
+const pictureList = reactive([])
 
 // 点击上传
 const handleClickUpload = () => {
@@ -188,9 +185,8 @@ const handleDeleteImg = (index) => {
 const handleSubmit = () => {
 	if (alreadyInputCharQuantity.value === 0) return
 	// 组织数据,传给父组件
-	const inputElement = inputRef.value
-	console.log(inputElement);
-	const data = {content: inputElement, pictures: pictureList}
+	const picturePath = pictureList.map(item => item.file_path)[0]
+	const data = { content: inputRef.value.innerHTML, pictures: picturePath }
 	emits('handleSubmit',data)
 }
 </script>
