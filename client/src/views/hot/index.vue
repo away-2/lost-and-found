@@ -78,17 +78,16 @@
 							</div>
 						</template>
 					</div>
-					<div class="hot-like" v-show="item.rankLikeUsers.length > 0" @click="showModal">
-						<div class="list">
-							<div class="avatar" v-for="(list, index) in item.rankLikeUsers" :key="index">
-								<img :src="list.avator" alt="" />
+					<div class="hot-like" v-show="item.rankLikeUsers.length > 0">
+						<div class="like-list" @click="showModal(item.user_id)">
+							<div class="list">
+								<div class="avatar" v-for="(list, index) in item.rankLikeUsers" :key="index">
+									<img :src="list.avator" alt="" />
+								</div>
 							</div>
+							<div class="label">{{ item.rankLikeUsers.length > 1 ? '等人赞过' : '赞过' }}</div>
 						</div>
-						<div class="label">{{ item.rankLikeUsers.length > 1 ? '等人赞过' : '赞过' }}</div>
 					</div>
-					<a-modal v-model:open="open" :title="`点赞详情 (${item.rankLikeUsers.length})`" @ok="handleOk">
-						<span>这是</span>
-					</a-modal>
 					<comment-footer :isAlreadyLike="item.already_like" :isLikeNumber="item.like_number" :isShowComment="false" :isCommentNumber="item.remark_number"></comment-footer>
 				</div>
 			</a-skeleton>
@@ -127,6 +126,8 @@
 			</div>
 		</div>
 	</div>
+	<!-- 沸点点赞详情Modal -->
+	<like-detail-modal v-model:isOpen="open" :topicId="lookLikersTopicId" />
 </template>
 
 <script setup>
@@ -151,12 +152,10 @@ let userId = GET_USERINFO().user.id
 let userInfo = GET_USERINFO().user
 
 const open = ref(false)
-const showModal = () => {
+const lookLikersTopicId = ref(null)
+const showModal = async (id) => {
 	open.value = true
-}
-const handleOk = (e) => {
-	console.log(e)
-	open.value = false
+	lookLikersTopicId.value = id
 }
 
 // 发布沸点
@@ -233,11 +232,13 @@ onMounted(() => {
 
 			&:hover {
 				background: #f7f8fa;
+
 				.icon {
 					path {
 						fill: #1e80ff;
 					}
 				}
+
 				span {
 					color: #1e80ff;
 				}
@@ -325,12 +326,14 @@ onMounted(() => {
 					display: flex;
 					flex-wrap: wrap;
 					column-gap: 15px;
-                    margin-top: 15px;
+					margin-top: 15px;
+
 					.picture {
 						width: 200px;
 						height: 200px;
 						border-radius: 4px;
 						object-fit: cover;
+
 						&.small {
 							width: 100px;
 							height: 100px;
@@ -346,23 +349,28 @@ onMounted(() => {
 				align-items: center;
 				padding: 10px;
 				z-index: 1;
-				column-gap: 10px;
-				cursor: pointer;
 
-				.list {
+				.like-list {
+					width: 150px;
+					cursor: pointer;
 					display: flex;
+					column-gap: 10px;
 
-					.avatar {
-						width: 22px;
-						height: 22px;
-						border-radius: 50%;
-						border: 2px solid #fff;
-						margin-right: -6px;
+					.list {
+						display: flex;
 
-						img {
-							width: 19px;
-							height: 19px;
+						.avatar {
+							width: 22px;
+							height: 22px;
 							border-radius: 50%;
+							border: 2px solid #fff;
+							margin-right: -6px;
+
+							img {
+								width: 19px;
+								height: 19px;
+								border-radius: 50%;
+							}
 						}
 					}
 				}

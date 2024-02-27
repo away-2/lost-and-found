@@ -25,3 +25,11 @@ export const removeHotById = (id) => {
         method: 'delete',
     })
 }
+
+// 查询指定沸点的所有点赞用户
+export const findLikeTopicAllUser = (id) => {
+    return request({
+        url: `/topicService/findLikeTopicUserList?topic_id=${id}`,
+        method: 'get',
+    })
+}
