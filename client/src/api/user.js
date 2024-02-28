@@ -25,3 +25,35 @@ export const getVerifyCodeByEmail = (data) => {
         method: 'get'
     })
 }
+
+// 查询当前用户是否关注了某个用户
+export const checkAlreadyConcernSomeone = (passiveUser) => {
+    return request({
+        url: `/userService/checkAlreadyConcernSomeone?passiveUser=${passiveUser}`,
+        method: 'get'
+    })
+}
+
+// 查询当前用户是否点赞了某个用户
+export const checkAlreadyLikeSomeone = (passiveUser) => {
+    return request({
+        url: `/userService/checkAlreadyLikeSomeone?passiveUser=${passiveUser}`,
+        method: 'get'
+    })
+}
+
+// 让当前用户关注某个用户
+export const concernSomeone = (params) => {
+    return request({
+        url: `/userService/concernSomeone?passiveUser=${params.passiveUser}&concern_way=${params.concernWay}`,
+        method: 'get'
+    })
+}
+
+// 让当前用户取消关注某个用户
+export const cancelConcernSomeone = (passiveUser) => {
+    return request({
+        url: `/userService/cancelConcernSomeone?passiveUser=${passiveUser}`,
+        method: 'get'
+    })
+}

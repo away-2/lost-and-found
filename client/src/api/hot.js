@@ -33,3 +33,44 @@ export const findLikeTopicAllUser = (id) => {
         method: 'get',
     })
 }
+
+// 点赞沸点
+export const likeTopicById = (id) => {
+    return request({
+        url:  `/topicService/likeTopic?topic_id=${id}`,
+        method: 'post'
+    })
+}
+
+// 取消点赞此沸点
+export const cancelTopicById = (id) => {
+    return request({
+        url: `/topicService/cancelLikeTopic?toipc_id=${id}`,
+        method: 'post'
+    })
+}
+
+// 修改沸点审核状态
+export const modifyTopicAuditStatus = (data) => {
+    return request({
+        url: '/topicService/changeTopicAuditStatus',
+        method: 'post',
+        data
+    })
+}
+
+// 查询指定沸点的所有点赞用户
+export const findLikeTopicUserList = (id) => {
+    return request({
+        url: `/topicService/findLikeTopicUserList?topic_id=${id}`,
+        method: 'get'
+    })
+}
+
+// 根据沸点id查询沸点详细信息
+export const findTopicInfoById = (id) => {
+    return request({
+        url: `/topicService/findTopicInfoById?topic_id=${id}`,
+        method: 'get'
+    })
+}

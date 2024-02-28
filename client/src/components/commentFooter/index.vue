@@ -7,18 +7,19 @@
             <span :style="{ 'color': isShowComment ? '#1e80ff' : '#a9a9a9' }">{{ isCommentNumber > 0 ?
                 isCommnetNumber : '评论' }}</span>
         </div>
-        <div class="like-action">
+        <div class="like-action" @click="handleLikeTopic(topicId)">
             <img v-if="!isAlreadyLike" src="@/assets/images/点赞.png" alt="" />
             <img v-else src="@/assets/images/点赞_active.png" />
             <span :style="{ 'color': isAlreadyLike ? '#1e80ff' : '#a9a9a9' }">{{ isLikeNumber > 0 ?
                 isLikeNumber : '点赞' }}</span>
         </div>
     </div>
-    <comment-list></comment-list>
+    <comment-list v-show="isShowComment"></comment-list>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { likeTopicById } from '@/api/hot'
 
 const isShowComment = ref(false)
 
@@ -43,11 +44,23 @@ const props = defineProps({
         require: false,
         default: '0'
     },
+    // 父组件沸点id
+    topicId: {
+        require: false,
+    }
 })
 
 // 展开评论区
 const handleShowComment = () => {
     isShowComment.value = !isShowComment.value
+}
+
+// 给这条沸点点赞
+const handleLikeTopic = async (id) => {
+    const res = await likeTopicById(id)
+    if(res.code == 200) {
+        
+    }
 }
 </script>
 

@@ -47,7 +47,15 @@ const routes = [
         path: '/hot',
         name: 'Hot',
         component: () => import('../views/hot/index.vue'),
-        
+        children: [
+          {
+            path: '/new',
+            name: 'New',
+          }
+
+
+        ]
+
       },
       {
         path: `/hot/:id`,

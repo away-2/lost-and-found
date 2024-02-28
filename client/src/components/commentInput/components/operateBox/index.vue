@@ -90,7 +90,7 @@ const triggleCustomEvent = (eventName) => {
 			cursor: pointer;
 			&:hover {
 				path {
-					fill: rgb(35, 136, 183);
+					fill: #1e80ff;
 				}
 			}
 		}
