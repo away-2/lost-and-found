@@ -43,9 +43,9 @@ export const likeTopicById = (id) => {
 }
 
 // 取消点赞此沸点
-export const cancelTopicById = (id) => {
+export const cancelLikeTopicById = (id) => {
     return request({
-        url: `/topicService/cancelLikeTopic?toipc_id=${id}`,
+        url: `/topicService/cancelLikeTopic?topic_id=${id}`,
         method: 'post'
     })
 }

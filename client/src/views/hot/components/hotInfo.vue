@@ -1,37 +1,13 @@
 <template>
 	<div class="mainContainer">
 		<div class="leftWrap">
-			<div class="hot-card">
-				<div class="hot-title-header">
-					<div class="hot-title-left">
-						<img :src="userInfo.avator" alt="" />
-						<div class="user-info">
-							<div class="user-name">{{ userInfo.nike_name || userInfo.real_name }}</div>
-							<div class="timestamp">{{ formatPast(publishHotInfo.createdAt) }}</div>
-						</div>
-					</div>
-					<div class="hot-title-right">
-						<a-popover placement="bottomRight">
-							<template #content>
-								<div class="delete-box" @click="toDeleteHot">
-									<img src="@/assets/images/删除.png" alt="" />
-									<div class="text">删除</div>
-								</div>
-							</template>
-							<img src="@/assets/images/three_point2.png" alt="" />
-						</a-popover>
-					</div>
-				</div>
-				<div class="hot-content">{{ publishHotInfo.content }}</div>
-				<comment-footer :isLikeNumber="publishHotInfo.like_number" :isAlreadyLike="false"
-                        :isShowComment="false" :isCommentNumber="publishHotInfo.remark_number"></comment-footer>
-			</div>
+			<hot-topic-item :hotTopic="hotTopic" :isNeedDelete="true" :supportShowComment="false" v-if="hotTopic.id" />
 			<div class="comment-wrap">
 				<div class="comment-container">
 					<div class="title">评论 0</div>
 					<comment-input @handleSubmit="handleSendComment" />
 				</div>
-				<div class="comment-empty" v-show="isEmpty">
+				<div class="comment-empty" v-show="hotTopic.remark_number === 0">
 					<img src="@/assets/images/暂无数据.png" alt="" />
 					<div class="text">暂无评论数据</div>
 				</div>
@@ -61,52 +37,37 @@
 import { GET_USERINFO } from '@/utils/token'
 import { formatPast } from '@/utils/time'
 import { message, Modal } from 'ant-design-vue'
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { removeHotById } from '@/api/hot'
-
-
-const $router = useRouter()
-
-const isEmpty = ref(true)
+import { onMounted, reactive, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { findTopicInfoById } from '@/api/hot'
 
 let userInfo = GET_USERINFO().user
-let publishHotInfo = JSON.parse(localStorage.getItem('newTopic'))
 
+const route = useRoute()
+
+const hotTopicId = ref(route.params.id)
+
+onMounted(() => {
+	searchHotTopicInfo()
+})
+
+const hotTopic = reactive({})
+
+const searchHotTopicInfo = async () => {
+	const res = await findTopicInfoById(hotTopicId.value)
+	if (res.code == 200) {
+		if (res.data.pictures) {
+			res.data.pictures = JSON.parse(res.data.pictures)
+		}
+		Object.assign(hotTopic, res.data)
+	}
+}
 
 // 发送评论
 const handleSendComment = (data) => {
 	message.success('数据过来了')
 	console.log(data)
 }
-
-// 删除此沸点
-const toDeleteHot = () => {
-	Modal.confirm({
-		title: '确认删除此沸点吗？',
-		content: null,
-		okText: '确认',
-		cancelText: '取消',
-		async onOk() {
-			const res = await removeHotById(publishHotInfo.id)
-			if (res.code == 200) {
-				message.success('删除成功')
-				localStorage.removeItem('newTopic');
-				$router.push('/home')
-			}
-		},
-		onCancel() { },
-	})
-}
-onMounted(() => {
-	// console.log(publishHotInfo);
-})
-
-// 在窗口关闭前监听 beforeunload 事件
-window.addEventListener('beforeunload', function(event) {
-    // 移除 localStorage 中的数据
-    localStorage.removeItem('newTopic');
-});
 </script>
 
 <style lang="less" scoped>
@@ -118,65 +79,6 @@ window.addEventListener('beforeunload', function(event) {
 	.leftWrap {
 		// background: #fff;
 		width: 70%;
-
-		.hot-card {
-			width: 100%;
-			background: #fff;
-			border-radius: 5px;
-			margin: 10px 0;
-
-			.hot-title-header {
-				display: flex;
-				justify-content: space-between;
-
-				.hot-title-left {
-					display: flex;
-					column-gap: 10px;
-					padding: 10px;
-
-					img {
-						height: 48px;
-						width: 48px;
-						border-radius: 50%;
-					}
-
-					.user-info {
-						.user-name {
-							font-weight: 500;
-							font-size: 16px;
-							padding: 8px 0;
-							color: #252933;
-						}
-
-						.timestamp {
-							font-size: 12px;
-							color: #a9a9a9;
-						}
-					}
-				}
-
-				.hot-title-right {
-					padding: 20px;
-					cursor: pointer;
-
-					img {
-						width: 20px;
-						height: 20px;
-
-						&:hover {
-							opacity: 0.6;
-						}
-					}
-				}
-			}
-
-			.hot-content {
-				height: 50px;
-				padding: 0 0 10px 70px;
-				color: #252933;
-				font-weight: 300;
-			}
-		}
 
 		.comment-wrap {
 			background: #fff;

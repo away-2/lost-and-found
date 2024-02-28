@@ -2,6 +2,8 @@ import CommentInput from '@/components/commentInput/index.vue'
 import CommentList from '@/components/commentList/index.vue'
 import CommentFooter from '@/components/commentFooter/index.vue'
 import LikeDetailModal from '@/components/likeDetailModal/index.vue'
+import HotTopicItem from '@/components/hotTopicItem/index.vue'
+import UserInfoPopover from '@/components/userInfoPopover/index.vue'
 
 export default {
     install(app) {
@@ -9,5 +11,7 @@ export default {
            .component('commentList',CommentList)
            .component('commentFooter',CommentFooter)
            .component('likeDetailModal',LikeDetailModal)
+           .component('hotTopicItem',HotTopicItem)
+           .component('userInfoPopover',UserInfoPopover)
     }
 }

@@ -74,7 +74,7 @@ import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { GET_USERINFO, REMOVE_USERINFO } from '@/utils/token'
 import { Modal } from 'ant-design-vue'
-const current = ref([''])
+const current = ref(localStorage.getItem('selectedMenuKeys') ? JSON.parse(localStorage.getItem('selectedMenuKeys')) : [])
 const items = ref([
 	{
 		key: '/home',
@@ -108,8 +108,8 @@ const userInfo = GET_USERINFO().user
 let $router = useRouter()
 let token = GET_USERINFO().token
 
-const selectedKeys = (item) => {
-	// console.log(item)
+const selectedKeys = ({ selectedKeys }) => {
+	localStorage.setItem('selectedMenuKeys',JSON.stringify(selectedKeys))
 }
 const toRoute = (current) => {
 	$router.push(current.key)
