@@ -7,7 +7,7 @@
 				</user-info-popover>
 				<div class="userInfo">
 					<user-info-popover :userInfo="_hotTopic.publish_user" :isConcern="_hotTopic.already_concern_publish_user" @operateIsConcern="handleOperateConcern">
-						<div class="username">{{ _hotTopic.publish_user.nike_name || _hotTopic.publish_user.real_name }}</div>
+						<div class="username">{{ _hotTopic.publish_user.nick_name || _hotTopic.publish_user.real_name }}</div>
 					</user-info-popover>
 					<div class="timestamp" @click="handleToTopicInfo">{{ formatPast(hotTopic.createdAt) }}</div>
 				</div>

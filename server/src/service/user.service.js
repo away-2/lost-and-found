@@ -5,6 +5,7 @@ const User = require('../model/user.model')
 const UserConcernRelation = require('../model/user_concern_relation.model')
 const UserLikeRelation = require('../model/user_like_relation.model')
 const IncreaseFansNotice = require('../model/increase_fans_notice.model')
+const HotTopic = require('../model/hot_topic.model')
 const StudentCode = require('../model/student_code.model')
 const School = require('../model/school.model')
 const { handleDotInFieldDueToJoinQuery } = require('../tools/index')
@@ -118,7 +119,37 @@ class UserService {
             }
         )
     }
+    // 查询指定用户的一些数量上的信息
+    async searchNumberInfoAboutUser(user_id) {
+        // 查询关注了多少用户
+        const concernNumber = await UserConcernRelation.count({
+            where: {
+                activeUserId: user_id
+            }
+        })
+        // 查询有多少粉丝
+        const fansNumber = await UserConcernRelation.count({
+            where: {
+                passiveUserId: user_id
+            }
+        })
+        // 查询发布了多少个沸点
+        const publishHotTopicNumber = await HotTopic.count({
+            where: {
+                user_id
+            }
+        })
+        // 查询收藏了多少个帖子(暂时不做)
+        const collectPostNumber = 0
 
+        return {
+            concernNumber,
+            fansNumber,
+            publishHotTopicNumber,
+            collectPostNumber
+        }
+        
+    }
     // 根据学号查询该学号以及学校的信息
     async findStudentInfoByStudentCode(code) {
         const res = handleDotInFieldDueToJoinQuery(await StudentCode.findOne({

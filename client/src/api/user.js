@@ -57,3 +57,10 @@ export const cancelConcernSomeone = (passiveUser) => {
         method: 'get'
     })
 }
+
+// 查询指定用户的一些数量信息
+export const findNumberInfoAboutUser = (user_id) => {
+    return request({
+        url: `/userService/findNumberInfoAboutUser?user_id=${user_id}`
+    })
+}

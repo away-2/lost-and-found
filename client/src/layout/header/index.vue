@@ -4,14 +4,14 @@
 			<img src="@/assets/images/logo.png" alt="Element logo" />
 			<div class="title">校园失物招领系统</div>
 		</div>
-		<a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @click="changeRouter" @select="selectedKeys" />
+		<a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @select="selectedKeys" />
 		<div class="header-right">
 			<div class="loginWrap" v-show="!token" @click="toLogin">登录</div>
 			<div class="avatorWrap" v-show="token">
 				<a-dropdown>
 					<img src="@/assets/images/通知.png" alt="" />
 					<template #overlay>
-						<a-menu>
+						<a-menu style="width: 130px;">
 							<a-menu-item key="1">评论</a-menu-item>
 							<a-menu-item key="2">赞和收藏</a-menu-item>
 							<a-menu-item key="3">新增粉丝</a-menu-item>
@@ -28,19 +28,19 @@
 								<div class="popoverWrap">
 									<div class="userInfo">
 										<a-avatar :src="userInfo?.avator" :size="46" />
-										<div class="username">{{ userInfo.nick_name || userInfo.real_name }}</div>
+										<div class="username text-ellipsis">{{ userInfo.nick_name || userInfo.real_name }}</div>
 									</div>
 									<div class="counts-item">
 										<div class="single-count-item">
-											<div class="count-num">{{ userInfo.concern_number }}</div>
+											<div class="count-num">{{ userNumberInfo.concernNumber }}</div>
 											<div class="count-text">关注</div>
 										</div>
 										<div class="single-count-item">
-											<div class="count-num">{{ userInfo.fans_number }}</div>
+											<div class="count-num">{{ userNumberInfo.fansNumber }}</div>
 											<div class="count-text">粉丝</div>
 										</div>
 										<div class="single-count-item">
-											<div class="count-num">{{ userInfo.collect_post_number }}</div>
+											<div class="count-num">{{ userNumberInfo.collectPostNumber }}</div>
 											<div class="count-text">收藏</div>
 										</div>
 									</div>
@@ -70,11 +70,28 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, reactive, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { GET_USERINFO, REMOVE_USERINFO } from '@/utils/token'
-import { Modal } from 'ant-design-vue'
-const current = ref(localStorage.getItem('selectedMenuKeys') ? JSON.parse(localStorage.getItem('selectedMenuKeys')) : [])
+import { message, Modal } from 'ant-design-vue'
+import { storeToRefs } from 'pinia'
+import useUserStore from '@/store/user'
+
+const route = useRoute()
+
+const userStore = useUserStore()
+
+const { userNumberInfo } = storeToRefs(userStore)
+
+const convertPathToKey = (path) => {
+	let key = path
+	if(path.includes('/hot')) {
+		key = '/hot'
+	}
+	return key
+}
+
+const current = ref([convertPathToKey(route.path)])
 const items = ref([
 	{
 		key: '/home',
@@ -105,16 +122,21 @@ const items = ref([
 
 const userInfo = GET_USERINFO().user
 
+onMounted(()=> {
+	const userInfo = GET_USERINFO().user
+	userStore.getuserNumberInfo(userInfo.id)
+})
+
 let $router = useRouter()
+
 let token = GET_USERINFO().token
 
-const selectedKeys = ({ selectedKeys }) => {
-	localStorage.setItem('selectedMenuKeys',JSON.stringify(selectedKeys))
-}
+watch(()=> route.path,() => {
+	current.value = [convertPathToKey(route.path)]
+})
 
-// 菜单栏路由跳转
-const changeRouter = (current) => {
-	$router.push(current.key)
+const selectedKeys = ({ key,selectedKeys }) => {
+	$router.push(key)
 }
 
 const toLogin = () => {
@@ -220,7 +242,7 @@ onMounted(() => {
 }
 
 .ant-dropdown-menu {
-	width: 180px;
+	width: 220px;
 	.dropdownMenu {
 		background-color: red;
 	}
@@ -239,15 +261,15 @@ onMounted(() => {
 			.username {
 				margin-left: 10px;
 				color: #252933;
+				width: 70%;
 			}
 		}
 
 		.counts-item {
 			display: flex;
-			justify-content: space-between;
+			justify-content:space-around;
 			align-items: center;
-			width: 150px;
-			margin: 5px 0;
+			margin: 8px 0;
 			.single-count-item {
 				.count-num {
 					color: #252933;
@@ -277,6 +299,7 @@ onMounted(() => {
 			display: flex;
 			column-gap: 15px;
 			align-items: center;
+			padding: 7px 0;
 			img {
 				width: 16px;
 				height: 16px;

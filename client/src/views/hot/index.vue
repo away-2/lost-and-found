@@ -5,29 +5,27 @@
 			<div class="inputWrap">
 				<comment-input shapeType="publish" :maxFileQuantity="2" @handleSubmit="handlePublishHot" :isNeedIncreaseHeight="false" allowInputCharQuantity="1000" />
 			</div>
-			<a-skeleton :loading="loading" active>
-				<hot-topic-item v-for="(item, index) in hotList" :key="index" :hotTopic="item" />
-			</a-skeleton>
+			<router-view></router-view>
 		</div>
 		<div class="rightWrap">
 			<div class="sider-content">
 				<div class="user-info-card">
 					<div class="card-header">
 						<img :src="userInfo.avator" alt="" />
-						<div class="user-name">{{ userInfo.nike_name || userInfo.real_name }}</div>
+						<div class="user-name text-ellipsis">{{ userInfo.nick_name || userInfo.real_name }}</div>
 					</div>
 					<div class="count-item">
 						<div class="single-count-item">
-							<div class="count-num">6</div>
+							<div class="count-num">{{ userNumberInfo.publishHotTopicNumber }}</div>
 							<div class="count-text">沸点</div>
 						</div>
 						<div class="single-count-item">
-							<div class="count-num">{{ userInfo.concern_number }}</div>
+							<div class="count-num">{{ userNumberInfo.concernNumber }}</div>
 							<div class="count-text">关注</div>
 						</div>
 						<div class="single-count-item">
-							<div class="count-num">{{ userInfo.fans_number }}</div>
-							<div class="count-text">关注者</div>
+							<div class="count-num">{{ userNumberInfo.fansNumber }}</div>
+							<div class="count-text">粉丝</div>
 						</div>
 					</div>
 				</div>
@@ -51,13 +49,15 @@ import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { publishHot, filndAllHotInfo } from '@/api/hot'
 import { GET_USERINFO } from '@/utils/token'
+import { storeToRefs } from 'pinia'
+import useUserStore from '@/store/user'
 import navigation from './components/navigation.vue'
 
+const userStore = useUserStore()
 const $router = useRouter()
 
-const hotList = ref([])
-const pageNum = ref(1)
-const pageSize = ref(10)
+const { userNumberInfo } = storeToRefs(userStore)
+
 const audit_state = ref('')
 const selectHotList = ref([])
 const loading = ref(false)
@@ -83,26 +83,6 @@ const handlePublishHot = async (data) => {
 	}
 }
 
-// 获取沸点列表
-const getAllHotInfo = async () => {
-	let data = { pageNum: pageNum.value, pageSize: pageSize.value, audit_state: 'pass' }
-	loading.value = true
-	const res = await filndAllHotInfo(data)
-	if (res.code == 200) {
-		loading.value = false
-		hotList.value = res.data.hotTopicList.map((item) => {
-			if (item.pictures) {
-				item.pictures = JSON.parse(item.pictures)
-			}
-			return item
-		})
-		selectHotList.value = res.data.hotTopicList.slice(0, 3)
-	}
-}
-
-onMounted(() => {
-	getAllHotInfo()
-})
 </script>
 
 <style lang="less" scoped>
@@ -151,6 +131,9 @@ onMounted(() => {
 						width: 48px;
 						height: 48px;
 						border-radius: 50%;
+					} 
+					.user-name {
+						width: 70%;
 					}
 				}
 

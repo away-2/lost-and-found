@@ -46,14 +46,24 @@ const routes = [
       {
         path: '/hot',
         name: 'Hot',
+        redirect: '/hot/new',
         component: () => import('../views/hot/index.vue'),
         children: [
           {
-            path: '/new',
+            path: 'new',
             name: 'New',
+            component: () => import('../views/hot/components/newHotTopic.vue')
+          },
+          {
+            path: 'popular',
+            name: 'Popular',
+            component: () => import('../views/hot/components/popularHotTopic.vue')
+          },
+          {
+            path: 'concern',
+            name: 'Concern',
+            component: () => import('../views/hot/components/concernHotTopic.vue')
           }
-
-
         ]
 
       },

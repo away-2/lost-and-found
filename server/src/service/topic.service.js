@@ -260,9 +260,9 @@ class HotTopicServices {
     likeTopicUserIds.forEach(likerId => {
       const obj = {}
       // 观看的用户是否关注了这个点赞者
-      obj.alreadyLike = false
+      obj.alreadyConcern = false
       if(concernList.find(item => item.passiveUserId === likerId)) {
-        obj.alreadyLike = true
+        obj.alreadyConcern = true
       }
       obj.likerInfo = userInfos.find(item => item.id === likerId)
       result.push(obj)

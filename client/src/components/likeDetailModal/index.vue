@@ -1,24 +1,26 @@
 <template>
 	<!-- <div class="modal-container"> -->
-		<a-modal v-model:open="saveIsOpen" :title="`点赞详情 (${likerList.length})`" :footer="null" @cancel="handleCancel" forceRender>
-			<div class="like-list">
-				<div class="like-list-item" v-for="(item, index) in likerList" :key="index">
-					<img :src="item.likerInfo.avator" alt="" />
-					<div class="user-info">
-						<div class="user-name">{{ item.likerInfo.nike_name || item.likerInfo.real_name }}</div>
-						<div class="user-school">{{ item.likerInfo.school_name }}</div>
-					</div>
-					<div class="concern-btn" @click="handleConcernSomeone(item.likerInfo.id)" v-show="item.likerInfo.id !== userOfSystemUsing.id" :class="{concerned: isConcern}">关注</div>
+	<a-modal v-model:open="saveIsOpen" :title="`点赞详情 (${likerList.length})`" :footer="null" @cancel="handleCancel" forceRender>
+		<div class="like-list">
+			<div class="like-list-item" v-for="(item, index) in likerList" :key="index">
+				<img :src="item.likerInfo.avator" alt="" />
+				<div class="user-info">
+					<div class="user-name">{{ item.likerInfo.nick_name || item.likerInfo.real_name }}</div>
+					<div class="user-school">{{ item.likerInfo.school_name }}</div>
+				</div>
+				<div class="concern-btn" @click="handleConcernSomeone(item)" v-show="item.likerInfo.id !== userOfSystemUsing.id" :class="{ concerned: item.alreadyConcern }">
+					{{ item.alreadyConcern ? '已关注' : '关注' }}
 				</div>
 			</div>
-		</a-modal>
+		</div>
+	</a-modal>
 	<!-- </div> -->
 </template>
 
 <script setup>
 import { ref, computed, watchEffect, reactive } from 'vue'
 import { findLikeTopicAllUser } from '@/api/hot'
-import { concernSomeone, checkAlreadyConcernSomeone } from '@/api/user'
+import { concernSomeone, cancelConcernSomeone } from '@/api/user'
 import { message } from 'ant-design-vue'
 import { GET_USERINFO } from '@/utils/token'
 
@@ -48,7 +50,6 @@ const handleCancel = (id) => {
 }
 
 const likerList = reactive([])
-const isConcern = ref(false)
 
 watchEffect(async () => {
 	if (props.isOpen) {
@@ -61,15 +62,22 @@ watchEffect(async () => {
 	}
 })
 
-
 // 去关注某个用户
-const handleConcernSomeone = async(id) => {
-	console.log(id, "concern");
-	let params = { passiveUser: id, concern_way: FD}
-	return
-	const res = await concernSomeone(params)
-	if (res.code == 200) {
-		message.success("concern success")
+const handleConcernSomeone = async (item) => {
+	if (item.alreadyConcern) {
+		// 取消关注
+		const res = await cancelConcernSomeone(item.likerInfo.id)
+		if (res.code == 200) {
+			const index = likerList.findIndex((r) => r.likerInfo.id === item.likerInfo.id)
+			likerList.splice(index, 1, Object.assign(likerList[index], { alreadyConcern: false }))
+		}
+	} else {
+		// 关注
+		const res = await concernSomeone({ passiveUser: item.likerInfo.id, concernWay: 'FD' })
+		if (res.code == 200) {
+			const index = likerList.findIndex((r) => r.likerInfo.id === item.likerInfo.id)
+			likerList.splice(index, 1, Object.assign(likerList[index], { alreadyConcern: true }))
+		}
 	}
 }
 </script>
@@ -100,7 +108,6 @@ const handleConcernSomeone = async(id) => {
 				font-size: 16px;
 				color: #282f38;
 				line-height: 22px;
-
 			}
 
 			.user-school {
@@ -113,9 +120,10 @@ const handleConcernSomeone = async(id) => {
 		.concern-btn {
 			width: 92px;
 			height: 36px;
+			line-height: 36px;
+			text-align: center;
 			color: #fff;
-			background: #1E80FF;
-			padding: 5px 32px;
+			background: #1e80ff;
 			border-radius: 5px;
 			cursor: pointer;
 
@@ -123,7 +131,7 @@ const handleConcernSomeone = async(id) => {
 				opacity: 0.6;
 			}
 		}
-		.concern {
+		.concerned {
 			background: #f6f6f7;
 			color: #8a919f;
 			border: 1px solid #e0e0e0;
@@ -133,11 +141,7 @@ const handleConcernSomeone = async(id) => {
 			background: #f7f8fa;
 			border-radius: 3px;
 		}
-
-
 	}
-
-
 }
 // :deep(.modal-container .ant-modal-content) {
 // 	padding: 20px 0 !important;
@@ -163,4 +167,3 @@ const handleConcernSomeone = async(id) => {
 	}
 }
 </style>
-

@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import '@/style/index.less'
 import './assets/style/reset.css'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'

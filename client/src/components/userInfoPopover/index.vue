@@ -5,7 +5,7 @@
 				<div class="user-popover-header">
 					<img :src="userInfo.avator" alt="" @click="toUserCenter(userInfo.id)" />
 					<div class="user-info">
-						<div class="user-name">{{ userInfo.nike_name || userInfo.real_name }}</div>
+						<div class="user-name">{{ userInfo.nick_name || userInfo.real_name }}</div>
 						<div class="user-school">{{ userInfo.school_name }}</div>
 					</div>
 				</div>
