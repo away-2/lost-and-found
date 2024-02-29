@@ -6,9 +6,6 @@
 				<img src="@/assets/images/backHome.png" alt="" @click="backLogin" />
 			</div>
 		</a-tooltip>
-		<!-- <div class="backImg">
-			<img src="@/assets/images/backHome.png" alt=""  />
-		</div> -->
 		<a-steps :current="current" :items="items" @change="onChange"></a-steps>
 		<div class="steps-content">
 			<div class="firstContent" v-if="steps[current].title === 'First'">
@@ -25,7 +22,7 @@
 					</div>
 					<div class="verifyBox">
 						<input type="text" placeholder="请输入验证码" />
-						<SIdentify :identifyCode="identifyCode" @getVerifyVal="getVerifyVal" />
+						 <verify-code :identifyCode="identifyCode" @getVerifyVal="getVerifyVal" />
 					</div>
 				</div>
 			</div>
@@ -78,7 +75,6 @@
 import { onMounted, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
-import SIdentify from '@/components/SIdentify.vue'
 import { countDecreaseHook } from '@/hooks/index'
 // 执行 countDown 函数，解构返回的数据和函数进行使用
 const { getCode, countDownTime, isCountDownDisabled, countDownText } = countDecreaseHook.setup()

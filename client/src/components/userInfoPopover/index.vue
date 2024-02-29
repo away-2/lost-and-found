@@ -3,23 +3,24 @@
 		<template #content>
 			<div class="wrapper">
 				<div class="user-popover-header">
-					<img :src="userInfo.avator" alt="" />
+					<img :src="userInfo.avator" alt="" @click="toUserCenter(userInfo.id)" />
 					<div class="user-info">
 						<div class="user-name">{{ userInfo.nike_name || userInfo.real_name }}</div>
 						<div class="user-school">{{ userInfo.school_name }}</div>
 					</div>
 				</div>
 				<div class="user-popover-btn" v-show="userInfo.id !== userOfSystemUsing.id">
-					<div class="concern-btn" :class="{ concerned: isConcern }">{{ isConcern ? '已关注' : '关注' }}</div>
+					<div class="concern-btn" :class="{ concerned: isConcern }" @click="handleConcernSomeone(userInfo)">{{
+						isConcern ? '已关注' : '关注' }}</div>
 					<div class="message-btn">私信</div>
 				</div>
 				<div class="user-popover-footer">
 					<div class="single-count-item">
-						<div class="count-num">1</div>
+						<div class="count-num">{{ userInfo.concern_number }}</div>
 						<div class="count-text">关注</div>
 					</div>
 					<div class="single-count-item">
-						<div class="count-num">2</div>
+						<div class="count-num">{{ userInfo.fans_number }}</div>
 						<div class="count-text">粉丝</div>
 					</div>
 				</div>
@@ -30,7 +31,11 @@
 </template>
 
 <script setup>
+import { concernSomeone, cancelConcernSomeone } from '@/api/user';
 import { GET_USERINFO } from '@/utils/token'
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
 
 const props = defineProps({
 	userInfo: {
@@ -44,23 +49,60 @@ const props = defineProps({
 })
 
 let userOfSystemUsing = GET_USERINFO().user
+
+const emits = defineEmits(['operateIsConcern'])
+
+// 让当前用户关注某个用户/取消关注某个用户
+const handleConcernSomeone = async (userInfo) => {
+	let params = { passiveUser: userInfo.id, concern_way: 'FD' }
+	let res = null
+	if (props.isConcern) {
+		// 取消关注用户
+		res = await cancelConcernSomeone(userInfo.id)
+		if (res.code == 200) {
+			emits('operateIsConcern', false)
+		}
+	} else {
+		// 关注用户
+		res = await concernSomeone(params)
+		if (res.code == 200) {
+			emits('operateIsConcern', true)
+		}
+	}
+
+}
+
+const $router = useRouter()
+
+// 前往个人主页
+const toUserCenter = (id) => {
+	$router.push({ path: `/user/${id}`})
+	
+}
+
+onMounted(() =>{
+	
+})
+
 </script>
 
 <style lang="less" scoped>
 .ant-popover-inner-content {
-    .wrapper {
-        min-width: 250px;
-    }
+	.wrapper {
+		min-width: 250px;
+	}
+
 	.user-popover-header {
 		display: flex;
 		column-gap: 10px;
 		padding: 10px 0;
-        padding-bottom: 13px;
+		padding-bottom: 13px;
 
 		img {
 			width: 48px;
 			height: 48px;
 			border-radius: 50%;
+			cursor: pointer;
 		}
 
 		.user-info {
@@ -95,6 +137,7 @@ let userOfSystemUsing = GET_USERINFO().user
 			text-align: center;
 			padding: 4px 20px;
 		}
+
 		.concerned {
 			background: #f6f6f7;
 			color: #8a919f;
@@ -149,5 +192,4 @@ let userOfSystemUsing = GET_USERINFO().user
 			}
 		}
 	}
-}
-</style>
+}</style>

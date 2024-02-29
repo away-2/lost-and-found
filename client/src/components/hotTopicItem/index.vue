@@ -2,12 +2,12 @@
 	<div class="contentWrap">
 		<div class="hot-header">
 			<div class="userInfo-wrap">
-				<user-info-popover :userInfo="hotTopic.publish_user" :isConcern="hotTopic.already_concern_publish_user">
-					<img class="avatar" :src="hotTopic.publish_user.avator" />
+				<user-info-popover :userInfo="_hotTopic.publish_user" :isConcern="_hotTopic.already_concern_publish_user" @operateIsConcern="handleOperateConcern">
+					<img class="avatar" :src="_hotTopic.publish_user.avator" @click="toUserCenter(_hotTopic.publish_user.id)"/>
 				</user-info-popover>
 				<div class="userInfo">
-					<user-info-popover :userInfo="hotTopic.publish_user" :isConcern="hotTopic.already_concern_publish_user">
-						<div class="username">{{ hotTopic.publish_user.nike_name || hotTopic.publish_user.real_name }}</div>
+					<user-info-popover :userInfo="_hotTopic.publish_user" :isConcern="_hotTopic.already_concern_publish_user" @operateIsConcern="handleOperateConcern">
+						<div class="username">{{ _hotTopic.publish_user.nike_name || _hotTopic.publish_user.real_name }}</div>
 					</user-info-popover>
 					<div class="timestamp" @click="handleToTopicInfo">{{ formatPast(hotTopic.createdAt) }}</div>
 				</div>
@@ -90,10 +90,10 @@ const showModal = async (id) => {
 
 const userOfSystemUsing = reactive(GET_USERINFO().user)
 
-const router = useRouter()
+const $router = useRouter()
 
 const handleToTopicInfo = () => {
-	router.push({
+	$router.push({
 		path: `/hot/${_hotTopic.id}`,
 	})
 }
@@ -117,6 +117,23 @@ const handleOperateLikeOk = (isLike) => {
 	}
 }
 
+// 关注和取消关注用户回调
+const handleOperateConcern = (isConcern) => {
+	if (isConcern) {
+		// 说明在关注用户
+		_hotTopic.already_concern_publish_user = true 
+	} else {
+		// 说明在关注用户
+		_hotTopic.already_concern_publish_user = false 
+	}
+}
+
+// 前往个人主页
+const toUserCenter = (id) => {
+	$router.push({ path: `/user/${id}`})
+	localStorage.removeItem("selectedMenuKeys")
+}
+
 // 删除此沸点
 const toDeleteHot = () => {
 	Modal.confirm({
@@ -125,7 +142,7 @@ const toDeleteHot = () => {
 		okText: '确认',
 		cancelText: '取消',
 		async onOk() {
-			const res = await removeHotById(__hotTopic.id)
+			const res = await removeHotById(_hotTopic.id)
 			if (res.code == 200) {
 				message.success('删除成功')
 				localStorage.removeItem('newTopic')

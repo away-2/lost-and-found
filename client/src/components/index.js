@@ -4,6 +4,7 @@ import CommentFooter from '@/components/commentFooter/index.vue'
 import LikeDetailModal from '@/components/likeDetailModal/index.vue'
 import HotTopicItem from '@/components/hotTopicItem/index.vue'
 import UserInfoPopover from '@/components/userInfoPopover/index.vue'
+import VerifyCode from '@/components/verifyCode/index.vue'
 
 export default {
     install(app) {
@@ -13,5 +14,6 @@ export default {
            .component('likeDetailModal',LikeDetailModal)
            .component('hotTopicItem',HotTopicItem)
            .component('userInfoPopover',UserInfoPopover)
+           .component('verifyCode', VerifyCode)
     }
 }

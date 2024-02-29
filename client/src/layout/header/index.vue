@@ -4,7 +4,7 @@
 			<img src="@/assets/images/logo.png" alt="Element logo" />
 			<div class="title">校园失物招领系统</div>
 		</div>
-		<a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @click="toRoute" @select="selectedKeys" />
+		<a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @click="changeRouter" @select="selectedKeys" />
 		<div class="header-right">
 			<div class="loginWrap" v-show="!token" @click="toLogin">登录</div>
 			<div class="avatorWrap" v-show="token">
@@ -40,14 +40,14 @@
 											<div class="count-text">粉丝</div>
 										</div>
 										<div class="single-count-item">
-											<div class="count-num">{{ userInfo.get_like_number }}</div>
+											<div class="count-num">{{ userInfo.collect_post_number }}</div>
 											<div class="count-text">收藏</div>
 										</div>
 									</div>
 								</div>
 							</a-menu-item>
 							<div class="user-func-list">
-								<a-menu-item key="2">
+								<a-menu-item key="2" @click="toUserCenter">
 									<img src="@/assets/images/个人中心.png" alt="" />
 									<div class="title">我的主页</div>
 								</a-menu-item>
@@ -111,12 +111,21 @@ let token = GET_USERINFO().token
 const selectedKeys = ({ selectedKeys }) => {
 	localStorage.setItem('selectedMenuKeys',JSON.stringify(selectedKeys))
 }
-const toRoute = (current) => {
+
+// 菜单栏路由跳转
+const changeRouter = (current) => {
 	$router.push(current.key)
 }
 
 const toLogin = () => {
 	$router.push('/login')
+}
+
+// 前往个人主页
+const toUserCenter = () => {
+	$router.push({ path: `/user/${userInfo.id}`})
+	localStorage.removeItem('selectedMenuKeys')
+	current.value = []
 }
 
 // 退出登录

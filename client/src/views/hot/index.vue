@@ -18,15 +18,15 @@
 					</div>
 					<div class="count-item">
 						<div class="single-count-item">
-							<div class="count-num">1</div>
+							<div class="count-num">6</div>
 							<div class="count-text">沸点</div>
 						</div>
 						<div class="single-count-item">
-							<div class="count-num">2</div>
+							<div class="count-num">{{ userInfo.concern_number }}</div>
 							<div class="count-text">关注</div>
 						</div>
 						<div class="single-count-item">
-							<div class="count-num">2</div>
+							<div class="count-num">{{ userInfo.fans_number }}</div>
 							<div class="count-text">关注者</div>
 						</div>
 					</div>
@@ -62,7 +62,6 @@ const audit_state = ref('')
 const selectHotList = ref([])
 const loading = ref(false)
 
-let userId = GET_USERINFO().user.id
 let userInfo = GET_USERINFO().user
 
 // 发布沸点
@@ -115,7 +114,7 @@ onMounted(() => {
 	column-gap: 20px;
 	background: #f1f1f1;
 	.centerWrap {
-		width: 720px;
+		width: 75%;
 		max-width: 100%;
 		flex-shrink: 0;
 		position: relative;

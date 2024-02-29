@@ -40,7 +40,7 @@ const handleShowComment = () => {
 	isShowComment.value = !isShowComment.value
 }
 
-// 给这条沸点点赞
+// 给这条沸点点赞/取消点赞
 const handleLikeTopic = async () => {
 	let res = null
 	if (props.hotTopic.already_like) {

@@ -61,6 +61,11 @@ const routes = [
         path: `/hot/:id`,
         name: 'hotInfo',
         component: () => import('../views/hot/components/hotInfo.vue')
+      },
+      {
+        path: '/user/:id',
+        name: 'User',
+        component: () => import('../views/user/index.vue')
       }
     ]
   },
