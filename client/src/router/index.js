@@ -48,8 +48,7 @@ const routes = [
         name: 'Hot',
         redirect: '/hot/new',
         component: () => import('../views/hot/index.vue'),
-        children: [
-          {
+        children: [{
             path: 'new',
             name: 'New',
             component: () => import('../views/hot/components/newHotTopic.vue')
@@ -75,7 +74,67 @@ const routes = [
       {
         path: '/user/:id',
         name: 'User',
-        component: () => import('../views/user/index.vue')
+        component: () => import('../views/user/index.vue'),
+        // redirect: '/user/dynamic',
+        children: [{
+            path: 'dynamic',
+            name: 'Dynamic',
+            component: () => import('../views/user/components/dynamic.vue')
+          },
+          {
+            path: 'like',
+            name: 'Like',
+            component: () => import('../views/user/components/like.vue')
+          },
+          {
+            path: 'collect',
+            name: 'Collect',
+            component: () => import('../views/user/components/collect.vue')
+          },
+          {
+            path: 'founds',
+            name: 'Founds',
+            component: () => import('../views/user/components/found.vue')
+          },
+          {
+            path: 'losts',
+            name: 'Losts',
+            component: () => import('../views/user/components/lost.vue')
+          },
+          {
+            path: 'following',
+            name: 'Following',
+            component: () => import('../views/user/components/following.vue')
+          },
+          {
+            path: 'like',
+            name: 'Like',
+            component: () => import('../views/user/components/like.vue')
+          },
+          {
+            path: 'topic',
+            name: 'Topic',
+            component: () => import('../views/user/components/topic.vue')
+          },
+        ]
+      },
+      {
+        path: '/setting',
+        name: 'Setting',
+        redirect: '/setting/prefile',
+        component: () => import('../views/setting/index.vue'),
+        children: [
+          {
+            path: 'prefile', 
+            name: 'Prefile',
+            component: () => import('../views/setting/components/prefile.vue')
+          },
+           {
+            path: 'account', 
+            name: 'Account',
+            component: () => import('../views/setting/components/account.vue')
+           }
+        ]
       }
     ]
   },

@@ -1,5 +1,16 @@
+// 单行文本溢出
 .text-ellipsis {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+}
+
+// 多行文本溢出
+.multiline-text-ellipsis {
+    display: -webkit-box; 
+	-webkit-line-clamp: 3; /* 显示的文本行数 */
+	-webkit-box-orient: vertical;
+	overflow: hidden; 
+	text-overflow: ellipsis;
+    // margin-bottom: 10px; /* 设置文本的上下外边距 */
 }

@@ -3,14 +3,15 @@
 		<navigation />
 		<div class="centerWrap">
 			<div class="inputWrap">
-				<comment-input shapeType="publish" :maxFileQuantity="2" @handleSubmit="handlePublishHot" :isNeedIncreaseHeight="false" allowInputCharQuantity="1000" />
+				<comment-input shapeType="publish" :maxFileQuantity="2" @handleSubmit="handlePublishHot"
+					:isNeedIncreaseHeight="false" allowInputCharQuantity="1000" />
 			</div>
 			<router-view></router-view>
 		</div>
 		<div class="rightWrap">
 			<div class="sider-content">
 				<div class="user-info-card">
-					<div class="card-header">
+					<div class="card-header" @click="toUserCenter">
 						<img :src="userInfo.avator" alt="" />
 						<div class="user-name text-ellipsis">{{ userInfo.nick_name || userInfo.real_name }}</div>
 					</div>
@@ -54,7 +55,7 @@ import useUserStore from '@/store/user'
 import navigation from './components/navigation.vue'
 
 const userStore = useUserStore()
-const $router = useRouter()
+const router = useRouter()
 
 const { userNumberInfo } = storeToRefs(userStore)
 
@@ -76,11 +77,16 @@ const handlePublishHot = async (data) => {
 		let id = res.data.newTopic.id
 		let newTopic = res.data.newTopic
 		localStorage.setItem('newTopic', JSON.stringify(newTopic))
-		const { href } = $router.resolve({
+		const { href } = router.resolve({
 			path: `/hot/${id}`,
 		})
 		window.open(href, '_blank')
 	}
+}
+
+// 通过右侧卡片进入个人中心
+const toUserCenter = () => {
+	router.push({ path: `/user/${userInfo.id}` })
 }
 
 </script>
@@ -93,6 +99,7 @@ const handlePublishHot = async (data) => {
 	display: flex;
 	column-gap: 20px;
 	background: #f1f1f1;
+
 	.centerWrap {
 		width: 75%;
 		max-width: 100%;
@@ -126,14 +133,25 @@ const handlePublishHot = async (data) => {
 					column-gap: 10px;
 					align-items: center;
 					margin-bottom: 20px;
+					cursor: pointer;
 
 					img {
 						width: 48px;
 						height: 48px;
 						border-radius: 50%;
-					} 
+						transition: all .3s;
+
+						&:hover {
+							opacity: 0.6;
+						}
+					}
+
 					.user-name {
 						width: 70%;
+
+						&:hover {
+							opacity: 0.6;
+						}
 					}
 				}
 
@@ -217,5 +235,4 @@ const handlePublishHot = async (data) => {
 	.centerWrap {
 		width: 100% !important;
 	}
-}
-</style>
+}</style>

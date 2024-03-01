@@ -11,7 +11,7 @@
 				<a-dropdown>
 					<img src="@/assets/images/通知.png" alt="" />
 					<template #overlay>
-						<a-menu style="width: 130px;">
+						<a-menu style="width: 150px; padding: 10px;">
 							<a-menu-item key="1">评论</a-menu-item>
 							<a-menu-item key="2">赞和收藏</a-menu-item>
 							<a-menu-item key="3">新增粉丝</a-menu-item>
@@ -127,7 +127,7 @@ onMounted(()=> {
 	userStore.getuserNumberInfo(userInfo.id)
 })
 
-let $router = useRouter()
+let router = useRouter()
 
 let token = GET_USERINFO().token
 
@@ -136,16 +136,16 @@ watch(()=> route.path,() => {
 })
 
 const selectedKeys = ({ key,selectedKeys }) => {
-	$router.push(key)
+	router.push(key)
 }
 
 const toLogin = () => {
-	$router.push('/login')
+	router.push('/login')
 }
 
 // 前往个人主页
 const toUserCenter = () => {
-	$router.push({ path: `/user/${userInfo.id}`})
+	router.push({ path: `/user/${userInfo.id}`})
 	localStorage.removeItem('selectedMenuKeys')
 	current.value = []
 }
@@ -159,7 +159,7 @@ const toLogout = () => {
 		cancelText: '取消',
 		onOk() {
 			REMOVE_USERINFO()
-			$router.push('/login')
+			router.push('/login')
 		},
 		onCancel() {},
 	})
@@ -167,10 +167,10 @@ const toLogout = () => {
 
 // 修改密码
 const updatePwd = () => {
-	$router.push('/updatePwd')
+	router.push('/updatePwd')
 }
 onMounted(() => {
-	// $router.push('/')
+	// router.push('/')
 })
 </script>
 
@@ -223,6 +223,9 @@ onMounted(() => {
 				width: 20px;
 				height: 20px;
 				margin-right: 15px;
+				&:hover {
+					opacity: 0.6;
+				}
 			}
 		}
 

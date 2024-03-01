@@ -17,7 +17,7 @@
             <div class="comment-list">
                 <div class="comment-card">
                     <div class="comment-avatar">
-                        <img src="@/assets/images/bg.jpg" alt="">
+                        <img src="@/assets/images/头像.jpg" alt="">
                     </div>
                     <div class="comment-wrapper">
                         <div class="comment-header">
@@ -44,7 +44,7 @@
                             <div class="reply-list">
                                 <div class="reply-card">
                                     <div class="reply-avatar">
-                                        <img src="@/assets/images/bg.jpg" alt="">
+                                        <img src="@/assets/images/头像.jpg" alt="">
                                     </div>
                                     <div class="reply-wrapper">
                                         <div class="reply-content">

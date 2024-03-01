@@ -59,7 +59,7 @@ import { SET_USERINFO } from '@/utils/token'
 const { getCode, countDownTime, isCountDownDisabled, countDownText } = countDecreaseHook.setup()
 
 // let userStore = useUserStore()
-const $router = useRouter()
+const router = useRouter()
 const isActive = ref(0)
 const tabList = reactive(['学生', '管理员'])
 const titleTab = reactive(['学号登录', '邮箱登录'])
@@ -91,7 +91,7 @@ const tabSelected = (index) => {
 }
 
 const backHomePage = () => {
-	$router.push('/home')
+	router.push('/home')
 }
 
 // 学号登录
@@ -110,7 +110,7 @@ const codeLogin = async () => {
 			SET_USERINFO(res.data)
 			isFreeze.value = res.data.userInfo.is_freeze
 			if (isFreeze.value === 0) {
-				$router.push('/home')
+				router.push('/home')
 				notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好` })
 			} else {
 				message.warn("账户已冻结，请联系管理员解除冻结")
@@ -146,7 +146,7 @@ const emailLogin = async () => {
 			SET_USERINFO(res.data)
 			isFreeze.value = res.data.userInfo.is_freeze
 			if (isFreeze.value === 0) {
-				$router.push('/home')
+				router.push('/home')
 				notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好`, duration: '2' })
 			} else {
 				message.warn("账户已冻结，请联系管理员解除冻结")
@@ -156,7 +156,7 @@ const emailLogin = async () => {
 	}
 }
 const toUpdatePwd = () => {
-	$router.push('/updatePwd')
+	router.push('/updatePwd')
 }
 </script>
 

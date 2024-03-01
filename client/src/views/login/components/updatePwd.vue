@@ -80,7 +80,7 @@ import { countDecreaseHook } from '@/hooks/index'
 const { getCode, countDownTime, isCountDownDisabled, countDownText } = countDecreaseHook.setup()
 
 
-const $router = useRouter()
+const router = useRouter()
 const current = ref(0)
 const verifyVal = ref('')
 const value = ref('1')
@@ -128,7 +128,7 @@ const items = steps.map((item) => ({
 }))
 
 const backLogin = () => {
-	$router.push('/login')
+	router.push('/login')
 }
 
 const onChange = (current) => {

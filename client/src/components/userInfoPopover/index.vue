@@ -72,11 +72,11 @@ const handleConcernSomeone = async (userInfo) => {
 
 }
 
-const $router = useRouter()
+const router = useRouter()
 
 // 前往个人主页
 const toUserCenter = (id) => {
-	$router.push({ path: `/user/${id}`})
+	router.push({ path: `/user/${id}`})
 	
 }
 
@@ -145,7 +145,7 @@ onMounted(() =>{
 		}
 
 		.concern-btn:hover {
-			opacity: 0.5;
+			opacity: 0.6;
 		}
 
 		.message-btn {
@@ -161,7 +161,7 @@ onMounted(() =>{
 		}
 
 		.message-btn:hover {
-			opacity: 0.5;
+			opacity: 0.6;
 		}
 	}
 

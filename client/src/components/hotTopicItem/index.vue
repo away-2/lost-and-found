@@ -90,10 +90,10 @@ const showModal = async (id) => {
 
 const userOfSystemUsing = reactive(GET_USERINFO().user)
 
-const $router = useRouter()
+const router = useRouter()
 
 const handleToTopicInfo = () => {
-	$router.push({
+	router.push({
 		path: `/hot/${_hotTopic.id}`,
 	})
 }
@@ -130,7 +130,7 @@ const handleOperateConcern = (isConcern) => {
 
 // 前往个人主页
 const toUserCenter = (id) => {
-	$router.push({ path: `/user/${id}`})
+	router.push({ path: `/user/${id}`})
 	localStorage.removeItem("selectedMenuKeys")
 }
 
@@ -146,7 +146,7 @@ const toDeleteHot = () => {
 			if (res.code == 200) {
 				message.success('删除成功')
 				localStorage.removeItem('newTopic')
-				$router.push('/home')
+				router.push('/home')
 			}
 		},
 		onCancel() {},
