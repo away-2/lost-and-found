@@ -2,6 +2,7 @@ const HotTopic = require("../model/hot_topic.model");
 const User = require("../model/user.model");
 const HotTopicLike = require("../model/hot_topic_like.model");
 const UserConcernRelation = require("../model/user_concern_relation.model");
+const HotTopicComment = require('../model/hot_topic_comment.model')
 const { Op, where, literal, Sequelize } = require("sequelize");
 const seq = require("../db/seq");
 
@@ -32,11 +33,11 @@ class HotTopicServices {
       whereArr.push({ user_id: { [Op.in]: concernUserIds } })
     }
     // 属于哪个用户的沸点
-    if(belong_user) {
+    if (belong_user) {
       whereArr.push({ user_id: belong_user })
     }
     // 只查询哪个沸点
-    if(topic_id) {
+    if (topic_id) {
       whereArr.push({ id: topic_id })
     }
     // 开始查询基础的沸点数据
@@ -231,7 +232,7 @@ class HotTopicServices {
     );
   }
   // 查询指定沸点的所有点赞用户
-  async searchAllUserOfLikeTopic(topic_id,view_user_id) {
+  async searchAllUserOfLikeTopic(topic_id, view_user_id) {
     const likeTopicUserIds = (await HotTopicLike.findAll({
       where: {
         hot_topic_id: topic_id
@@ -261,7 +262,7 @@ class HotTopicServices {
       const obj = {}
       // 观看的用户是否关注了这个点赞者
       obj.alreadyConcern = false
-      if(concernList.find(item => item.passiveUserId === likerId)) {
+      if (concernList.find(item => item.passiveUserId === likerId)) {
         obj.alreadyConcern = true
       }
       obj.likerInfo = userInfos.find(item => item.id === likerId)
@@ -269,10 +270,79 @@ class HotTopicServices {
     })
     return result
   }
-  
+  // 分页查询沸点的评论信息
+  async searchCommentByPaging({ pageNum, pageSize, topic_id, classify, view_user_id }) {
+    const offset = (pageNum - 1) * pageSize
+    const whereArr = []
+    whereArr.push({ hot_topic_id: topic_id }, { reply_id: null })
+    let order = [["createdAt", "desc"]]
+    if(classify === 'hot') {
+      order = [['remark_number', 'desc'], ['like_number', 'desc']]
+    }
+    const allFirstLevelComment = await HotTopicComment.findAndCountAll({
+      where: {
+        [Op.and]: whereArr
+      },
+      limit: pageSize,
+      offset,
+      order,
+      raw: true
+    })
+    const allSecondLevelComment = await HotTopicComment.findAll({
+      where: {
+        reply_id: {
+          [Op.in]: allFirstLevelComment.rows.map(item => item.id)
+        }
+      },
+      raw: true
+    })
+    // 组织所有用户id，一级和二级的
+    const allUserIds = [...allFirstLevelComment.rows.map(item => item.user_id), ...allSecondLevelComment.map(item => item.user_id)]
+    const allUserInfo = await User.findAll({
+      where: {
+        id: {
+          [Op.in]: allUserIds
+        }
+      },
+      raw: true
+    })
+    const concernUserIds = (await UserConcernRelation.findAll({
+      where: {
+        activeUserId: view_user_id,
+        passiveUserId: {
+          [Op.in]: allUserInfo.map(item => item.id)
+        }
+      },
+      raw: true
+    })).map(item => item.passiveUserId)
+    const result = allFirstLevelComment.rows.map(item => {
+      const obj = {}
+      Object.assign(obj,item)
+      obj.commentUserInfo = JSON.parse(JSON.stringify(allUserInfo.find(r => r.id === item.user_id)))
+      obj.commentUserInfo.alreadyConcern = concernUserIds.includes(item.user_id)
+      // 处理这个一级评论下所有的二级评论
+      const replyList = allSecondLevelComment.filter(r => r.reply_id === item.id).map(subItem => {
+        const secondCommentObj = {}
+        Object.assign(secondCommentObj,subItem)
+        secondCommentObj.commentUserInfo = JSON.parse(JSON.stringify(allUserInfo.find(r => r.id === subItem.user_id)))
+        secondCommentObj.commentUserInfo.alreadyConcern = concernUserIds.includes(subItem.user_id)
+        // 回复的哪个人的相关信息
+        secondCommentObj.replyUserInfo = JSON.parse(JSON.stringify(allUserInfo.find(r => r.id === subItem.reply_user_id)))
+        secondCommentObj.replyUserInfo.alreadyConcern = concernUserIds.includes(subItem.reply_user_id)
+        return secondCommentObj
+      })
+      obj.replyList = replyList
+      return obj
+    })
+    return {
+      topicCommentList: result,
+      total: allFirstLevelComment.count
+    }
+  }
 }
 
 const a = new HotTopicServices();
+// a.searchCommentByPaging({ pageNum: 1, pageSize: 3, topic_id: 8, view_user_id: 1 })
 // a.searchAllUserOfLikeTopic(2,1)
 // a.searchTopicsByPaging({ pageSize: 10, pageNum: 1, topic_id: 7, view_user_id: 1 });
 // a.insertOneTopic({ user_id: 1,content: '好好好好222222' })

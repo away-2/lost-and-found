@@ -2,11 +2,11 @@
 	<div class="contentWrap">
 		<div class="hot-header">
 			<div class="userInfo-wrap">
-				<user-info-popover :userInfo="_hotTopic.publish_user" :isConcern="_hotTopic.already_concern_publish_user" @operateIsConcern="handleOperateConcern">
+				<user-info-popover :userInfo="_hotTopic.publish_user">
 					<img class="avatar" :src="_hotTopic.publish_user.avator" @click="toUserCenter(_hotTopic.publish_user.id)"/>
 				</user-info-popover>
 				<div class="userInfo">
-					<user-info-popover :userInfo="_hotTopic.publish_user" :isConcern="_hotTopic.already_concern_publish_user" @operateIsConcern="handleOperateConcern">
+					<user-info-popover :userInfo="_hotTopic.publish_user">
 						<div class="username">{{ _hotTopic.publish_user.nick_name || _hotTopic.publish_user.real_name }}</div>
 					</user-info-popover>
 					<div class="timestamp" @click="handleToTopicInfo">{{ formatPast(hotTopic.createdAt) }}</div>
@@ -114,17 +114,6 @@ const handleOperateLikeOk = (isLike) => {
 		_hotTopic.like_number -= 1
 		const index = _hotTopic.rankLikeUsers.findIndex((item) => item.id === userOfSystemUsing.id)
 		_hotTopic.rankLikeUsers.splice(index, 1)
-	}
-}
-
-// 关注和取消关注用户回调
-const handleOperateConcern = (isConcern) => {
-	if (isConcern) {
-		// 说明在关注用户
-		_hotTopic.already_concern_publish_user = true 
-	} else {
-		// 说明在关注用户
-		_hotTopic.already_concern_publish_user = false 
 	}
 }
 

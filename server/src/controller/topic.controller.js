@@ -1,4 +1,4 @@
-const { searchTopicsByPaging, insertOneTopic, modifyTopic, deleteTopic, likeTopic, cancelLikeTopic, searchAllUserOfLikeTopic } = require("../service/topic.service");
+const { searchTopicsByPaging, insertOneTopic, modifyTopic, deleteTopic, likeTopic, cancelLikeTopic, searchAllUserOfLikeTopic, searchCommentByPaging } = require("../service/topic.service");
 
 class HotTopicController {
     // 根据分页查询沸点列表
@@ -73,7 +73,7 @@ class HotTopicController {
     // 根据沸点id查询沸点详细信息
     async findTopicInfoById(ctx, next) {
         const res = await searchTopicsByPaging({ pageSize: 10, pageNum: 1, topic_id: ctx.request.query.topic_id, view_user_id: ctx.state.user.id })
-        if(res.total === 0) {
+        if (res.total === 0) {
             ctx.body = {
                 code: 500,
                 message: '查询的沸点不存在'
@@ -84,6 +84,21 @@ class HotTopicController {
                 data: res.hotTopicList[0]
             }
         }
+    }
+    // 分页查询沸点的评论信息
+    async findTopicCommentByPaging(ctx,next) {
+        const view_user_id = ctx.state.user.id;
+        const res = await searchCommentByPaging({
+            pageNum: ctx.request.body.pageNum,
+            pageSize: ctx.request.body.pageSize,
+            topic_id: ctx.request.body.topic_id,
+            classify: ctx.request.body.classify,
+            view_user_id,
+        });
+        ctx.body = {
+            code: 200,
+            data: res,
+        };
     }
     // {
     //     id: 1,

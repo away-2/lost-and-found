@@ -1,5 +1,5 @@
 <template>
-	<a-popover>
+	<a-popover @openChange="handleOpenChange">
 		<template #content>
 			<div class="wrapper">
 				<div class="user-popover-header">
@@ -10,8 +10,9 @@
 					</div>
 				</div>
 				<div class="user-popover-btn" v-show="userInfo.id !== userOfSystemUsing.id">
-					<div class="concern-btn" :class="{ concerned: isConcern }" @click="handleConcernSomeone(userInfo)">{{
-						isConcern ? '已关注' : '关注' }}</div>
+					<a-spin :spinning="concernLoading">
+						<div class="concern-btn" :class="{ concerned: isConcernUser }" @click="handleConcernSomeone(userInfo)">{{ isConcernUser ? '已关注' : '关注' }}</div>
+					</a-spin>
 					<div class="message-btn">私信</div>
 				</div>
 				<div class="user-popover-footer">
@@ -31,59 +32,67 @@
 </template>
 
 <script setup>
-import { concernSomeone, cancelConcernSomeone } from '@/api/user';
+import { concernSomeone, cancelConcernSomeone, checkAlreadyConcernSomeone } from '@/api/user'
 import { GET_USERINFO } from '@/utils/token'
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-
+import { message } from 'ant-design-vue'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
 	userInfo: {
 		require: true,
 		default: {},
 	},
-	isConcern: {
-		require: false,
-		default: false,
-	},
 })
 
 let userOfSystemUsing = GET_USERINFO().user
 
-const emits = defineEmits(['operateIsConcern'])
+const isConcernUser = ref(false)
 
 // 让当前用户关注某个用户/取消关注某个用户
 const handleConcernSomeone = async (userInfo) => {
 	let params = { passiveUser: userInfo.id, concern_way: 'FD' }
 	let res = null
-	if (props.isConcern) {
+	if (isConcernUser.value) {
 		// 取消关注用户
 		res = await cancelConcernSomeone(userInfo.id)
-		if (res.code == 200) {
-			emits('operateIsConcern', false)
+		if(res.code == 200) {
+			isConcernUser.value = !isConcernUser.value
 		}
 	} else {
 		// 关注用户
 		res = await concernSomeone(params)
-		if (res.code == 200) {
-			emits('operateIsConcern', true)
+		if(res.code == 200) {
+			isConcernUser.value = !isConcernUser.value
 		}
 	}
-
 }
 
 const router = useRouter()
 
 // 前往个人主页
 const toUserCenter = (id) => {
-	router.push({ path: `/user/${id}`})
-	
+	router.push({ path: `/user/${id}` })
 }
 
-onMounted(() =>{
-	
-})
+const concernLoading = ref(false)
 
+const handleCheckIsConcernUser = async () => {
+	if (userOfSystemUsing.id !== props.userInfo.id) {
+		concernLoading.value = true
+		const res = await checkAlreadyConcernSomeone(props.userInfo.id)
+		concernLoading.value = false
+		if (res.code == 200) {
+			isConcernUser.value = res.data
+		}
+	}
+}
+
+const handleOpenChange = (visible) => {
+	if (visible) {
+		handleCheckIsConcernUser()
+	}
+}
 </script>
 
 <style lang="less" scoped>
@@ -192,4 +201,5 @@ onMounted(() =>{
 			}
 		}
 	}
-}</style>
+}
+</style>
