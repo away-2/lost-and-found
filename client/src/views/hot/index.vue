@@ -39,7 +39,7 @@
 						<div class="select-hot">
 							<div class="select-hot-item" v-for="(item, index) in hotList" :key="index" @click="toTopicDetail(item.id)">
 								<div class="select-hot-left">
-									<div class="content">{{ item.content }}</div>
+									<div class="content" v-html="item.content"></div>
 									<div class="count">{{ item.like_number }} 赞 · {{ item.remark_number }} 评论</div>
 								</div>
 								<div class="select-hot-right" v-show="item.pictures">

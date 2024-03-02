@@ -1,19 +1,14 @@
 <template>
 	<div class="contentWrap">
-		<div class="hot-header">
-			<div class="userInfo-wrap">
-				<user-info-popover :userInfo="_hotTopic.publish_user">
-					<img class="avatar" :src="_hotTopic.publish_user.avator" @click="toUserCenter(_hotTopic.publish_user.id)"/>
-				</user-info-popover>
-				<div class="userInfo">
+		<div class="hot-container">
+			<div class="hot-header">
+				<div class="userInfo-wrap">
 					<user-info-popover :userInfo="_hotTopic.publish_user">
-						<div class="username">{{ _hotTopic.publish_user.nick_name || _hotTopic.publish_user.real_name }}</div>
+						<img class="avatar" :src="_hotTopic.publish_user.avator" @click="toUserCenter(_hotTopic.publish_user.id)" />
 					</user-info-popover>
 					<div class="userInfo">
-						<user-info-popover :userInfo="_hotTopic.publish_user"
-							:isConcern="_hotTopic.already_concern_publish_user" @operateIsConcern="handleOperateConcern">
-							<div class="username">{{ _hotTopic.publish_user.nick_name || _hotTopic.publish_user.real_name }}
-							</div>
+						<user-info-popover :userInfo="_hotTopic.publish_user">
+							<div class="username">{{ _hotTopic.publish_user.nick_name || _hotTopic.publish_user.real_name }}</div>
 						</user-info-popover>
 						<div class="meta-box">
 							<div class="profile text-ellipsis">{{ _hotTopic.publish_user.profile }}</div>
@@ -36,14 +31,14 @@
 				</div>
 			</div>
 			<div class="hot-content">
-				<div class="text">{{ hotTopic.content }}</div>
+				<div class="text" v-html="hotTopic.content"></div>
 				<template v-if="hotTopic.pictures">
 					<div class="picture-list">
-						<img v-for="(picture, index) in hotTopic.pictures" :key="index" class="picture"
-							:class="{ small: hotTopic.pictures.length > 1 }" :src="picture" />
+						<img v-for="(picture, index) in hotTopic.pictures" :key="index" class="picture" :class="{ small: hotTopic.pictures.length > 1 }" :src="picture" />
 					</div>
 				</template>
 			</div>
+
 			<div class="hot-like" v-show="_hotTopic.like_number > 0">
 				<div class="isblank"></div>
 				<div class="like-list" @click="showModal(hotTopic.id)">
@@ -56,8 +51,7 @@
 				</div>
 			</div>
 		</div>
-		<comment-footer :supportShowComment="supportShowComment" :hotTopic="_hotTopic"
-			@operateLikeOk="handleOperateLikeOk" />
+		<comment-footer :supportShowComment="supportShowComment" :hotTopic="_hotTopic" @operateLikeOk="handleOperateLikeOk" />
 	</div>
 	<!-- 沸点点赞详情Modal -->
 	<like-detail-modal v-model:isOpen="open" :topicId="lookLikersTopicId" />
@@ -133,7 +127,7 @@ const handleOperateLikeOk = (isLike) => {
 // 前往个人主页
 const toUserCenter = (id) => {
 	router.push({ path: `/user/${id}` })
-	localStorage.removeItem("selectedMenuKeys")
+	localStorage.removeItem('selectedMenuKeys')
 }
 
 // 删除此沸点
@@ -181,7 +175,6 @@ const toDeleteHot = () => {
 					width: 48px;
 					border-radius: 50%;
 					cursor: pointer;
-
 				}
 
 				.userInfo {
@@ -192,7 +185,6 @@ const toDeleteHot = () => {
 						padding: 5px 0;
 						color: #252933;
 						cursor: pointer;
-
 					}
 
 					.meta-box {
@@ -204,14 +196,12 @@ const toDeleteHot = () => {
 							font-size: 12px;
 							color: #a9a9a9;
 							max-width: 288px;
-
 						}
 
 						.dot {
 							font-size: 12px;
 							color: #a9a9a9;
 							margin: 0 5px;
-
 						}
 
 						.timestamp {
@@ -220,13 +210,11 @@ const toDeleteHot = () => {
 							transition: all 0.3s;
 							cursor: pointer;
 
-
 							&:hover {
 								color: rgb(62, 126, 247);
 							}
 						}
 					}
-
 				}
 			}
 

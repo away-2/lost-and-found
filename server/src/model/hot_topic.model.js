@@ -11,7 +11,7 @@ const HotTopic = seq.define('laf_hot_topic',{
         comment: '沸点所属用户id'
     },
     content: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         comment: '内容, 前端限字数500'
     },
     pictures: {
