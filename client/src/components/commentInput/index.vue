@@ -234,6 +234,9 @@ const handleSubmit = () => {
 			outline: none;
 			border: 1px solid transparent;
 			border-radius: 5px;
+			font-size: 14px;
+			font-family: 'AliRegular' !important;
+			line-height: 23px;
 			overflow-y: scroll;
 			transition: all 0.3s;
 
