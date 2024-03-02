@@ -33,8 +33,8 @@
 				<div class="select-hot-card">
 					<div class="card-title">精选沸点</div>
 					<a-skeleton :loading="loading" active>
-						<div class="select-hot" v-for="(item, index) in hotList" :key="index">
-							<div class="select-hot-item">
+						<div class="select-hot">
+							<div class="select-hot-item" v-for="(item, index) in hotList" :key="index">
 								<div class="select-hot-left">
 									<div class="content">{{ item.content }}</div>
 									<div class="count">{{ item.like_number }} 赞 · {{ item.remark_number }} 评论</div>
@@ -232,7 +232,7 @@ onMounted(() => {
 					.select-hot-item {
 						display: flex;
 						justify-content: space-between;
-						padding: 8px;
+						padding: 12px 8px;
 						cursor: pointer;
 						.select-hot-left {
 							display: 1;
