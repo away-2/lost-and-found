@@ -29,7 +29,7 @@ const HotTopicComment = seq.define('laf_hot_topic_commnet',{
     //     comment: '回复的是评论里的哪个用户'
     // },
     content: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         comment: '评论内容'
     },
