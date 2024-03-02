@@ -87,7 +87,7 @@ const convertPathToKey = (path) => {
 	let key = path
 	if(path.includes('/hot')) {
 		key = '/hot'
-	}
+	}	
 	return key
 }
 
@@ -130,10 +130,6 @@ onMounted(()=> {
 let router = useRouter()
 
 let token = GET_USERINFO().token
-
-watch(()=> route.path,() => {
-	current.value = [convertPathToKey(route.path)]
-})
 
 const selectedKeys = ({ key,selectedKeys }) => {
 	router.push(key)

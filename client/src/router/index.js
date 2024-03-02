@@ -75,9 +75,8 @@ const routes = [
         path: '/user/:id',
         name: 'User',
         component: () => import('../views/user/index.vue'),
-        // redirect: '/user/dynamic',
         children: [{
-            path: 'dynamic',
+            path: '',
             name: 'Dynamic',
             component: () => import('../views/user/components/dynamic.vue')
           },

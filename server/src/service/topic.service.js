@@ -269,6 +269,7 @@ class HotTopicServices {
     })
     return result
   }
+  
 }
 
 const a = new HotTopicServices();
