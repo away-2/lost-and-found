@@ -115,7 +115,6 @@ const getAllHotInfo = async () => {
 			}
 			return item
 		})
-		console.log(hotList.value, "zsss");
 	}
 }
 

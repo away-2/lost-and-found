@@ -74,3 +74,12 @@ export const findTopicInfoById = (id) => {
         method: 'get'
     })
 }
+
+// 分页查询沸点评论
+export const findTopicCommentByPaging = (data) => {
+    return request({
+        url: `/topicService/findTopicCommentByPaging`,
+        method: 'post',
+        data
+    })
+}

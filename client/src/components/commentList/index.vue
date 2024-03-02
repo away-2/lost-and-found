@@ -13,62 +13,57 @@
 				</div>
 			</div>
 			<div class="comment-list">
-				<div class="comment-card">
-					<div class="comment-avatar">
-						<img src="@/assets/images/头像.jpg" alt="" />
-					</div>
-					<div class="comment-wrapper">
-						<div class="comment-header">
-							<div class="user-name">星期一</div>
-							<div class="author-tag">作者</div>
-							<div class="user-profile">东华理工大学</div>
+				<a-skeleton active :loading="loading">
+					<div class="comment-card" v-for="(item, index) in commentList" :key="index">
+						<div class="comment-avatar">
+							<img :src="item.commentUserInfo.avator" alt="" />
 						</div>
-						<div class="comment-content multiline-text-ellipsis">
-							首先，一线的机会肯定会比小城市的机会多，接触到的人也相对来说比较厉害一点，这样自己的视野也会开阔一点，不过这也要根据自己的能力来看，如果自己本身就啥也不是，那基本上也无缘接触到厉害的人！
-							其次，一线的人情世故不像小城市那么复杂，特别像深圳这样的城市，大家都是从外面来的，所以来了就是深圳人，包容性比较高，这样的话能够减少一些心理压力，而小城市则不然，因为好一点的单位，保安都会和你吹他家那个亲戚是省里的，不然他也谋不了这个职位，往上就更不用说，哈哈！
-							所以小城市的人因为地缘原因，就会产生一定的优越感，所以整体下来说，其实是不那么包容的，不那么开放的，在这样的环境下对自己或多或少有一定的影响，当然，大城市也会有，只是相对于小城市来说会轻很多！
-						</div>
-						<div class="comment-action">
-							<div class="action-time">43分钟前</div>
-							<div class="action-digg">
-								<img src="@/assets/images/点赞.png" alt="" />
-								<span>点赞</span>
+						<div class="comment-wrapper">
+							<div class="comment-header">
+								<div class="user-name">{{ item.commentUserInfo.nick_name || item.commentUserInfo.real_name }}</div>
+								<div class="author-tag" v-if="item.user_id === hotTopic.user_id">作者</div>
+								<div class="user-profile">{{ item.commentUserInfo.profile }}</div>
 							</div>
-							<div class="action-reply">
-								<img src="@/assets/images/评论.png" alt="" />
-								<span>评论</span>
+							<div class="comment-content multiline-text-ellipsis" v-html="item.content"></div>
+							<div class="comment-action">
+								<div class="action-time">{{ formatPast(item.createdAt) }}</div>
+								<div class="action-digg">
+									<img src="@/assets/images/点赞.png" alt="" />
+									<!-- <span></span> -->
+									<span>点赞</span>
+								</div>
+								<div class="action-reply">
+									<img src="@/assets/images/评论.png" alt="" />
+									<span>评论</span>
+								</div>
 							</div>
-						</div>
-						<div class="comment-reply-wrapper">
-							<div class="reply-list">
-								<div class="reply-card">
-									<div class="reply-avatar">
-										<img src="@/assets/images/头像.jpg" alt="" />
-									</div>
-									<div class="reply-wrapper">
-										<div class="reply-content">
-											<div class="content">
-												<div class="user-info">
-													<div class="user-name">小明</div>
-													<div class="author-tag">作者</div>
-													<div class="colon">:</div>
-												</div>
-												<div class="reply-content multiline-text-ellipsis">
-													首先，一线的机会肯定会比小城市的机会多，接触到的人也相对来说比较厉害一点，这样自己的视野也会开阔一点，不过这也要根据自己的能力来看，如果自己本身就啥也不是，那基本上也无缘接触到厉害的人！
-													其次，一线的人情世故不像小城市那么复杂，特别像深圳这样的城市，大家都是从外面来的，所以来了就是深圳人，包容性比较高，这样的话能够减少一些心理压力，而小城市则不然，因为好一点的单位，保安都会和你吹他家那个亲戚是省里的，不然他也谋不了这个职位，往上就更不用说，哈哈！
-													所以小城市的人因为地缘原因，就会产生一定的优越感，所以整体下来说，其实是不那么包容的，不那么开放的，在这样的环境下对自己或多或少有一定的影响，当然，大城市也会有，只是相对于小城市来说会轻很多！
-												</div>
-											</div>
+							<div class="comment-reply-wrapper">
+								<div class="reply-list">
+									<div class="reply-card" v-for="(replyItem, index) in item.replyList" :key="index">
+										<div class="reply-avatar">
+											<img :src="replyItem.replyUserInfo.avator" alt="" />
 										</div>
-										<div class="reply-action">
-											<div class="action-time">43分钟前</div>
-											<div class="action-digg">
-												<img src="@/assets/images/点赞.png" alt="" />
-												<span>点赞</span>
+										<div class="reply-wrapper">
+											<div class="reply-content">
+												<div class="content">
+													<div class="user-info">
+														<div class="user-name">{{ replyItem.replyUserInfo.nick_name || replyItem.replyUserInfo.real_name }}</div>
+														<div class="author-tag" v-if="replyItem.user_id === hotTopic.user_id">作者</div>
+														<div class="colon">:</div>
+													</div>
+													<div class="reply-content multiline-text-ellipsis" v-html="replyItem.content"></div>
+												</div>
 											</div>
-											<div class="action-reply">
-												<img src="@/assets/images/评论.png" alt="" />
-												<span>评论</span>
+											<div class="reply-action">
+												<div class="action-time">{{ formatPast(replyItem.createdAt) }}</div>
+												<div class="action-digg">
+													<img src="@/assets/images/点赞.png" alt="" />
+													<span>点赞</span>
+												</div>
+												<div class="action-reply">
+													<img src="@/assets/images/评论.png" alt="" />
+													<span>评论</span>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -76,20 +71,57 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</a-skeleton>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, reactive } from 'vue'
+import { findTopicCommentByPaging } from '@/api/hot'
+import { formatPast } from '@/utils/time'
 
+const props = defineProps({
+	isShowComment: {
+		default: false,
+	},
+	hotTopic: {
+		// default
+		require: true,
+	},
+})
+
+const pageNum = ref(1)
+const pageSize = ref(3)
+const commentList = reactive([])
 const isSortActive = ref('new')
+const loading = ref(false)
 
 const handleSelectedSort = (type) => {
 	isSortActive.value = type
 }
+
+const getAllCommentInfo = async () => {
+	loading.value = true
+	let params = { pageNum: pageNum.value, pageSize: pageSize.value, topic_id: props.hotTopic.id }
+	const res = await findTopicCommentByPaging(params)
+	loading.value = false
+	if (res.code == 200) {
+		commentList.push(...res.data.topicCommentList)
+	}
+}
+
+watch(
+	() => props.isShowComment,
+	async () => {
+		if (props.isShowComment) {
+			getAllCommentInfo()
+		} else {
+			commentList.splice(0, commentList.length)
+		}
+	}
+)
 </script>
 
 <style lang="less" scoped>
@@ -115,6 +147,7 @@ const handleSelectedSort = (type) => {
 
 			.sort {
 				display: block;
+				margin-bottom: 15px;
 
 				.item {
 					color: #515767;
@@ -142,8 +175,8 @@ const handleSelectedSort = (type) => {
 		}
 
 		.comment-list {
-			margin-top: 4px;
 			min-height: 104px;
+			padding-left: 6px;
 
 			.comment-card {
 				display: flex;
@@ -151,6 +184,7 @@ const handleSelectedSort = (type) => {
 				box-sizing: border-box;
 				font-style: normal;
 				position: relative;
+				margin-bottom: 15px;
 
 				.comment-avatar {
 					width: 32px;
@@ -315,11 +349,12 @@ const handleSelectedSort = (type) => {
 
 											.user-info {
 												display: flex;
+
 												.user-name {
 													color: #a9a9a9;
 													font-size: 14px;
 													line-height: 24px;
-													color: #252933;
+													color: #575757;
 													font-weight: 400;
 													min-width: max-content;
 												}
@@ -337,8 +372,9 @@ const handleSelectedSort = (type) => {
 													transform: translateY(4px);
 													margin-left: 3px;
 												}
+
 												.colon {
-													margin: 0 3px;
+													margin: 0 5px 0 3px;
 													transform: translateY(-4px);
 												}
 											}

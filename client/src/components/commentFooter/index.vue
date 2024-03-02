@@ -12,7 +12,7 @@
 			<span :style="{ color: hotTopic.already_like ? '#1e80ff' : '#a9a9a9' }">{{ hotTopic.like_number > 0 ? hotTopic.like_number : '点赞' }}</span>
 		</div>
 	</div>
-	<comment-list v-show="isShowComment && supportShowComment"></comment-list>
+	<comment-list v-show="isShowComment && supportShowComment" :isShowComment :hotTopic="hotTopic"></comment-list>
 </template>
 
 <script setup>
