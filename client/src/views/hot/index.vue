@@ -33,9 +33,16 @@
 				<div class="select-hot-card">
 					<div class="card-title">精选沸点</div>
 					<a-skeleton :loading="loading" active>
-						<div class="select-hot" v-for="(item, index) in selectHotList" :key="index">
-							<div class="content">{{ item.content }}</div>
-							<div class="count">{{ item.like_number }} 赞 · {{ item.remark_number }} 评论</div>
+						<div class="select-hot" v-for="(item, index) in hotList" :key="index">
+							<div class="select-hot-item">
+								<div class="select-hot-left">
+									<div class="content">{{ item.content }}</div>
+									<div class="count">{{ item.like_number }} 赞 · {{ item.remark_number }} 评论</div>
+								</div>
+								<div class="select-hot-right" v-show="item.pictures">
+									<img :src="item.pictures" alt="">
+								</div>
+							</div>
 						</div>
 					</a-skeleton>
 				</div>
@@ -62,6 +69,9 @@ const { userNumberInfo } = storeToRefs(userStore)
 const audit_state = ref('')
 const selectHotList = ref([])
 const loading = ref(false)
+const hotList = ref([])
+const pageNum = ref(1)
+const pageSize = ref(3)
 
 let userInfo = GET_USERINFO().user
 
@@ -84,14 +94,36 @@ const handlePublishHot = async (data) => {
 	}
 }
 
+// 获取右侧精选沸点
+const getAllHotInfo = async () => {
+	let data = { pageNum: pageNum.value, pageSize: pageSize.value, audit_state: 'pass', classify: 'hot' }
+	loading.value = true
+	const res = await filndAllHotInfo(data)
+	if (res.code == 200) {
+		loading.value = false
+		hotList.value = res.data.hotTopicList.map((item) => {
+			if (item.pictures) {
+				item.pictures = JSON.parse(item.pictures).splice(0, 1)
+			}
+			return item
+		})
+		console.log(hotList.value, "zsss");
+	}
+}
+
 // 通过右侧卡片进入个人中心
 const toUserCenter = () => {
 	router.push({ path: `/user/${userInfo.id}` })
 }
 
+onMounted(() => {
+	getAllHotInfo()
+})
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/style/custom.less';
+
 .mainContent {
 	height: 100%;
 	width: 100%;
@@ -116,7 +148,7 @@ const toUserCenter = () => {
 	}
 
 	.rightWrap {
-		width: 230px;
+		width: 260px;
 		border-radius: 5px;
 
 		.sider-content {
@@ -195,23 +227,56 @@ const toUserCenter = () => {
 				}
 
 				.select-hot {
-					padding: 10px 10px;
+					padding: 8px 12px;
 
-					.content {
-						font-weight: 300;
-						width: 100%;
-						display: -webkit-box;
-						-webkit-line-clamp: 2;
-						-webkit-box-orient: vertical;
-						overflow: hidden;
-						text-overflow: ellipsis;
+					.select-hot-item {
+						display: flex;
+						justify-content: space-between;
+						padding: 8px;
+						cursor: pointer;
+						.select-hot-left {
+							display: 1;
+
+							.content {
+								font-weight: 300;
+								color: #252933;
+								width: 100%;
+								line-height: 24px;
+								font-size: 14px;
+								display: -webkit-box;
+								-webkit-line-clamp: 2;
+								-webkit-box-orient: vertical;
+								overflow: hidden;
+								text-overflow: ellipsis;
+								transition: all .3s;
+							}
+
+							.count {
+								font-size: 12px;
+								color: #8a919f;
+								padding-top: 5px;
+							}
+						}
+
+						.select-hot-right {
+							img {
+								margin-left: 16px;
+								width: 64px;
+								height: 64px;
+								border-radius: 4px;
+								object-fit: cover;
+							}
+						}
+
+						&:hover {
+							background: #f7f8fa;
+							.content {
+								color: @base-blue-color;
+							}
+						}
 					}
 
-					.count {
-						font-size: 12px;
-						color: #8a919f;
-						padding-top: 5px;
-					}
+
 				}
 			}
 		}
@@ -235,4 +300,5 @@ const toUserCenter = () => {
 	.centerWrap {
 		width: 100% !important;
 	}
-}</style>
+}
+</style>
