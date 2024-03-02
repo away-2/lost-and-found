@@ -28,6 +28,6 @@ HotTopicComment.belongsToMany(User,{
     otherKey: 'user_id',
 })
 
-// HotTopicCommentLike.sync({ force: true })
+HotTopicCommentLike.sync({ force: true })
 
 module.exports = HotTopicCommentLike

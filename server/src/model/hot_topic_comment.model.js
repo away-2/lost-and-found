@@ -42,23 +42,32 @@ const HotTopicComment = seq.define('laf_hot_topic_commnet',{
         allowNull: false,
         defaultValue: 0,
         comment: '评论的点赞数'
-    }
+    },
+    remark_number: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        comment: '评论数,二级的都是0'
+    },
 })
 
 User.belongsToMany(HotTopic,{
     through: HotTopicComment,
     foreignKey: 'user_id',
-    otherKey: 'hot_topic_id'
+    otherKey: 'hot_topic_id',
+    uniqueKey: 'id'
 })
 HotTopic.belongsToMany(User,{
     through: HotTopicComment,
     foreignKey: 'hot_topic_id',
-    otherKey: 'user_id'
+    otherKey: 'user_id',
+    uniqueKey: 'id'
 })
 User.belongsToMany(HotTopic,{
     through: HotTopicComment,
     foreignKey: 'reply_user_id',
-    otherKey: 'hot_topic_id'
+    otherKey: 'hot_topic_id',
+    uniqueKey: 'id'
 })
 
 // HotTopicComment.sync({ force: true })
