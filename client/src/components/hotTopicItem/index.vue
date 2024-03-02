@@ -1,50 +1,62 @@
 <template>
 	<div class="contentWrap">
-		<div class="hot-header">
-			<div class="userInfo-wrap">
-				<user-info-popover :userInfo="_hotTopic.publish_user" :isConcern="_hotTopic.already_concern_publish_user" @operateIsConcern="handleOperateConcern">
-					<img class="avatar" :src="_hotTopic.publish_user.avator" @click="toUserCenter(_hotTopic.publish_user.id)"/>
-				</user-info-popover>
-				<div class="userInfo">
-					<user-info-popover :userInfo="_hotTopic.publish_user" :isConcern="_hotTopic.already_concern_publish_user" @operateIsConcern="handleOperateConcern">
-						<div class="username">{{ _hotTopic.publish_user.nick_name || _hotTopic.publish_user.real_name }}</div>
+		<div class="hot-container">
+			<div class="hot-header">
+				<div class="userInfo-wrap">
+					<user-info-popover :userInfo="_hotTopic.publish_user"
+						:isConcern="_hotTopic.already_concern_publish_user" @operateIsConcern="handleOperateConcern">
+						<img class="avatar" :src="_hotTopic.publish_user.avator"
+							@click="toUserCenter(_hotTopic.publish_user.id)" />
 					</user-info-popover>
-					<div class="timestamp" @click="handleToTopicInfo">{{ formatPast(hotTopic.createdAt) }}</div>
-				</div>
-			</div>
-
-			<div class="hot-title-right" v-if="userOfSystemUsing.id === hotTopic.publish_user.id && isNeedDelete">
-				<a-popover placement="bottomRight">
-					<template #content>
-						<div class="delete-box" @click="toDeleteHot">
-							<img src="@/assets/images/删除.png" alt="" />
-							<div class="text">删除</div>
+					<div class="userInfo">
+						<user-info-popover :userInfo="_hotTopic.publish_user"
+							:isConcern="_hotTopic.already_concern_publish_user" @operateIsConcern="handleOperateConcern">
+							<div class="username">{{ _hotTopic.publish_user.nick_name || _hotTopic.publish_user.real_name }}
+							</div>
+						</user-info-popover>
+						<div class="meta-box">
+							<div class="profile text-ellipsis">{{ _hotTopic.publish_user.profile }}</div>
+							<div class="dot">·</div>
+							<div class="timestamp" @click="handleToTopicInfo">{{ formatPast(hotTopic.createdAt) }}</div>
 						</div>
-					</template>
-					<img src="@/assets/images/three_point2.png" alt="" />
-				</a-popover>
-			</div>
-		</div>
-		<div class="hot-content">
-			<div class="text">{{ hotTopic.content }}</div>
-			<template v-if="hotTopic.pictures">
-				<div class="picture-list">
-					<img v-for="(picture, index) in hotTopic.pictures" :key="index" class="picture" :class="{ small: hotTopic.pictures.length > 1 }" :src="picture" />
-				</div>
-			</template>
-		</div>
-		<div class="hot-like" v-show="_hotTopic.like_number > 0">
-			<div class="isblank"></div>
-			<div class="like-list" @click="showModal(hotTopic.id)">
-				<div class="list">
-					<div class="avatar" v-for="(list, index) in _hotTopic.rankLikeUsers" :key="index">
-						<img :src="list.avator" alt="" />
 					</div>
 				</div>
-				<div class="label">{{ _hotTopic.like_number > 1 ? '等人赞过' : '赞过' }}</div>
+
+				<div class="hot-title-right" v-if="userOfSystemUsing.id === hotTopic.publish_user.id && isNeedDelete">
+					<a-popover placement="bottomRight">
+						<template #content>
+							<div class="delete-box" @click="toDeleteHot">
+								<img src="@/assets/images/删除.png" alt="" />
+								<div class="text">删除</div>
+							</div>
+						</template>
+						<img src="@/assets/images/three_point2.png" alt="" />
+					</a-popover>
+				</div>
+			</div>
+			<div class="hot-content">
+				<div class="text">{{ hotTopic.content }}</div>
+				<template v-if="hotTopic.pictures">
+					<div class="picture-list">
+						<img v-for="(picture, index) in hotTopic.pictures" :key="index" class="picture"
+							:class="{ small: hotTopic.pictures.length > 1 }" :src="picture" />
+					</div>
+				</template>
+			</div>
+			<div class="hot-like" v-show="_hotTopic.like_number > 0">
+				<div class="isblank"></div>
+				<div class="like-list" @click="showModal(hotTopic.id)">
+					<div class="list">
+						<div class="avatar" v-for="(list, index) in _hotTopic.rankLikeUsers" :key="index">
+							<img :src="list.avator" alt="" />
+						</div>
+					</div>
+					<div class="label">{{ _hotTopic.like_number > 1 ? '等人赞过' : '赞过' }}</div>
+				</div>
 			</div>
 		</div>
-		<comment-footer :supportShowComment="supportShowComment" :hotTopic="_hotTopic" @operateLikeOk="handleOperateLikeOk" />
+		<comment-footer :supportShowComment="supportShowComment" :hotTopic="_hotTopic"
+			@operateLikeOk="handleOperateLikeOk" />
 	</div>
 	<!-- 沸点点赞详情Modal -->
 	<like-detail-modal v-model:isOpen="open" :topicId="lookLikersTopicId" />
@@ -121,16 +133,16 @@ const handleOperateLikeOk = (isLike) => {
 const handleOperateConcern = (isConcern) => {
 	if (isConcern) {
 		// 说明在关注用户
-		_hotTopic.already_concern_publish_user = true 
+		_hotTopic.already_concern_publish_user = true
 	} else {
 		// 说明在关注用户
-		_hotTopic.already_concern_publish_user = false 
+		_hotTopic.already_concern_publish_user = false
 	}
 }
 
 // 前往个人主页
 const toUserCenter = (id) => {
-	router.push({ path: `/user/${id}`})
+	router.push({ path: `/user/${id}` })
 	localStorage.removeItem("selectedMenuKeys")
 }
 
@@ -149,7 +161,7 @@ const toDeleteHot = () => {
 				router.push('/home')
 			}
 		},
-		onCancel() {},
+		onCancel() { },
 	})
 }
 </script>
@@ -161,136 +173,169 @@ const toDeleteHot = () => {
 	border-radius: 5px;
 	margin: 10px 0;
 
-	.hot-header {
-		display: flex;
-		padding: 10px;
-		justify-content: space-between;
+	.hot-container {
+		margin-bottom: 10px;
 
-		.userInfo-wrap {
+		.hot-header {
 			display: flex;
-			align-items: center;
-			column-gap: 10px;
-			cursor: pointer;
+			padding: 10px;
+			justify-content: space-between;
 
-			img {
-				height: 48px;
-				width: 48px;
-				border-radius: 50%;
-			}
+			.userInfo-wrap {
+				display: flex;
+				align-items: center;
+				column-gap: 10px;
 
-			.userInfo {
-				transform: translateY(-2px);
-				.username {
-					font-weight: 500;
-					font-size: 16px;
-					padding: 8px 0;
-					color: #252933;
+				img {
+					height: 48px;
+					width: 48px;
+					border-radius: 50%;
+					cursor: pointer;
+
 				}
 
-				.timestamp {
-					font-size: 12px;
-					color: #a9a9a9;
-					margin-top: 4px;
-					transition: all 0.3s;
+				.userInfo {
+					transform: translateY(2px);
+
+					.username {
+						font-size: 14px;
+						padding: 5px 0;
+						color: #252933;
+						cursor: pointer;
+
+					}
+
+					.meta-box {
+						display: flex;
+						line-height: 24px;
+						align-items: center;
+
+						.profile {
+							font-size: 12px;
+							color: #a9a9a9;
+							max-width: 288px;
+
+						}
+
+						.dot {
+							font-size: 12px;
+							color: #a9a9a9;
+							margin: 0 5px;
+
+						}
+
+						.timestamp {
+							font-size: 12px;
+							color: #a9a9a9;
+							transition: all 0.3s;
+							cursor: pointer;
+
+
+							&:hover {
+								color: rgb(62, 126, 247);
+							}
+						}
+					}
+
+				}
+			}
+
+			.hot-title-right {
+				padding: 20px;
+				cursor: pointer;
+
+				img {
+					width: 13px;
+					height: 20px;
+
 					&:hover {
-						color: rgb(62, 126, 247);
+						opacity: 0.6;
 					}
 				}
 			}
 		}
 
-		.hot-title-right {
-			padding: 20px;
-			cursor: pointer;
+		.hot-content {
+			padding: 0 0 10px 70px;
+			color: #252933;
 
-			img {
-				width: 13px;
-				height: 20px;
+			.text {
+				padding-right: 40px;
+				font-size: 14px;
+				line-height: 23px;
+				width: 100%;
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.picture-list {
+				display: flex;
+				flex-wrap: wrap;
+				column-gap: 15px;
+				margin-top: 15px;
+
+				.picture {
+					width: 200px;
+					height: 200px;
+					border-radius: 4px;
+					object-fit: cover;
+
+					&.small {
+						width: 100px;
+						height: 100px;
+					}
+				}
+			}
+		}
+
+		.hot-like {
+			position: relative;
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			padding: 10px 20px;
+			z-index: 1;
+
+			.isblank {
+				flex: 1 1 auto;
+				display: block;
+			}
+
+			.like-list {
+				cursor: pointer;
+				display: flex;
+				column-gap: 10px;
+
+				.list {
+					display: flex;
+
+					.avatar {
+						width: 22px;
+						height: 22px;
+						border-radius: 50%;
+						border: 2px solid #fff;
+						margin-right: -6px;
+
+						img {
+							width: 19px;
+							height: 19px;
+							border-radius: 50%;
+						}
+					}
+				}
+			}
+
+			.label {
+				color: #8a919f;
+				font-size: 14px;
+				line-height: 24px;
 
 				&:hover {
 					opacity: 0.6;
 				}
-			}
-		}
-	}
-
-	.hot-content {
-		padding: 0 0 10px 70px;
-		color: #252933;
-		font-weight: 300;
-
-		.text {
-			padding-right: 40px;
-			width: 100%;
-			display: -webkit-box;
-			-webkit-line-clamp: 2;
-			-webkit-box-orient: vertical;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-
-		.picture-list {
-			display: flex;
-			flex-wrap: wrap;
-			column-gap: 15px;
-			margin-top: 15px;
-
-			.picture {
-				width: 200px;
-				height: 200px;
-				border-radius: 4px;
-				object-fit: cover;
-
-				&.small {
-					width: 100px;
-					height: 100px;
-				}
-			}
-		}
-	}
-
-	.hot-like {
-		position: relative;
-		display: flex;
-		justify-content: flex-end;
-		align-items: center;
-		padding: 10px 20px;
-		z-index: 1;
-		.isblank {
-			flex: 1 1 auto;
-			display: block;
-		}
-		.like-list {
-			cursor: pointer;
-			display: flex;
-			column-gap: 10px;
-
-			.list {
-				display: flex;
-
-				.avatar {
-					width: 22px;
-					height: 22px;
-					border-radius: 50%;
-					border: 2px solid #fff;
-					margin-right: -6px;
-
-					img {
-						width: 19px;
-						height: 19px;
-						border-radius: 50%;
-					}
-				}
-			}
-		}
-
-		.label {
-			color: #8a919f;
-			font-size: 14px;
-			line-height: 24px;
-
-			&:hover {
-				opacity: 0.6;
 			}
 		}
 	}

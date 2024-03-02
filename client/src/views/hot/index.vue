@@ -9,7 +9,9 @@
 			<router-view></router-view>
 		</div>
 		<div class="rightWrap">
+			
 			<div class="sider-content">
+				<!-- 个人信息卡片 -->
 				<div class="user-info-card">
 					<div class="card-header" @click="toUserCenter">
 						<img :src="userInfo.avator" alt="" />
@@ -30,11 +32,12 @@
 						</div>
 					</div>
 				</div>
+				<!-- 精选沸点 -->
 				<div class="select-hot-card">
 					<div class="card-title">精选沸点</div>
 					<a-skeleton :loading="loading" active>
 						<div class="select-hot">
-							<div class="select-hot-item" v-for="(item, index) in hotList" :key="index">
+							<div class="select-hot-item" v-for="(item, index) in hotList" :key="index" @click="toTopicDetail(item.id)">
 								<div class="select-hot-left">
 									<div class="content">{{ item.content }}</div>
 									<div class="count">{{ item.like_number }} 赞 · {{ item.remark_number }} 评论</div>
@@ -45,6 +48,11 @@
 							</div>
 						</div>
 					</a-skeleton>
+				</div>
+				<!-- 沸点 -->
+				<div class="hot-footer">
+					<img src="@/assets/images/hot_bg.png" alt="">
+					<span>如何玩转沸点</span>
 				</div>
 			</div>
 		</div>
@@ -111,6 +119,11 @@ const getAllHotInfo = async () => {
 	}
 }
 
+// 点击精选沸点前往详情页
+const toTopicDetail = (id) => {
+	router.push(`/hot/${id}`);
+}
+
 // 通过右侧卡片进入个人中心
 const toUserCenter = () => {
 	router.push({ path: `/user/${userInfo.id}` })
@@ -133,7 +146,7 @@ onMounted(() => {
 	background: #f1f1f1;
 
 	.centerWrap {
-		width: 75%;
+		width: 70%;
 		max-width: 100%;
 		flex-shrink: 0;
 		position: relative;
@@ -156,7 +169,7 @@ onMounted(() => {
 
 			.user-info-card {
 				background: #fff;
-				padding: 20px 20px;
+				padding: 24px 20px;
 				border-radius: 5px;
 				margin-bottom: 10px;
 
@@ -277,6 +290,23 @@ onMounted(() => {
 					}
 
 
+				}
+			}
+			.hot-footer {
+				height: 72px;
+				background: #fff;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin-top: 10px;
+				img {
+					width: 80px;
+					height: 80px;
+				}
+				span {
+					font-size: 16px;
+					transform: translateY(-5px);
+					
 				}
 			}
 		}
