@@ -7,7 +7,7 @@
 					:inputMinHeight="30"
 					:inputMaxHeight="150"
 					shapeType="comment"
-					@click="handleCommentClick({ reply_id: null, reply_user_id: null, type: 'top' })"
+					@click="handleCommentClick({ reply_id: null, reply_user_id: null, replyItem: null, type: 'top' })"
 					@handleSubmit="handlePublishComment"
 					ref="firstLevelCommentInputRef"
 				/>
@@ -55,16 +55,16 @@
 									:inputMaxHeight="150"
 									:isNeedIncreaseHeight="false"
 									:hintText="`回复${handleUserName(item.commentUserInfo)}...`"
-									@click="handleCommentClick({ reply_id: item.id, reply_user_id: item.commentUserInfo.id, type: 'replyTop' })"
+									@click="handleCommentClick({ reply_id: item.id, reply_user_id: item.commentUserInfo.id, replyItem: item, type: 'replyTop' })"
 									@handleSubmit="handlePublishComment"
-									ref="replyFirstLevelCommentInputRef"
+									:ref="(el) => (replyFirstLevelCommentInputRefs[index] = el)"
 								/>
 							</div>
 							<div class="comment-reply-wrapper">
 								<div class="reply-list">
 									<div class="reply-card" v-for="(replyItem, index) in item.replyList" :key="index">
 										<div class="reply-avatar">
-											<img :src="replyItem.replyUserInfo.avator" alt="" />
+											<img :src="replyItem.commentUserInfo.avator" />
 										</div>
 										<div class="reply-wrapper">
 											<div class="reply-content">
@@ -102,9 +102,9 @@
 													:inputMaxHeight="150"
 													:isNeedIncreaseHeight="false"
 													:hintText="`回复${handleUserName(replyItem.commentUserInfo)}...`"
-													@click="handleCommentClick({ reply_id: item.id, reply_user_id: replyItem.commentUserInfo.id, type: 'replySecond' })"
+													@click="handleCommentClick({ reply_id: item.id, reply_user_id: replyItem.commentUserInfo.id, replyItem, type: 'replySecond' })"
 													@handleSubmit="handlePublishComment"
-													ref="replySecondLevelCommentInputRef"
+													:ref="(el) => (replySecondLevelCommentInputRefs[index] = el)"
 												/>
 											</div>
 										</div>
@@ -136,6 +136,8 @@ const props = defineProps({
 		require: true,
 	},
 })
+
+const emits = defineEmits(['commentTotalChange'])
 
 const userStore = useUserStore()
 const { systemUserInfo } = storeToRefs(userStore)
@@ -197,12 +199,14 @@ const shouldShowCommentInput = (id) => {
 }
 
 const firstLevelCommentInputRef = ref(null)
-const replyFirstLevelCommentInputRef = ref(null)
-const replySecondLevelCommentInputRef = ref(null)
+const replyFirstLevelCommentInputRefs = ref([])
+const replySecondLevelCommentInputRefs = ref([])
 
 const publishLoading = ref(false)
 
 const currentCommentType = ref('')
+
+let inputBelongReplyItem = null
 
 let replyInfo = {
 	reply_id: null,
@@ -212,7 +216,9 @@ let replyInfo = {
 const handleCommentClick = (reply) => {
 	if (reply) {
 		currentCommentType.value = reply.type
-		Reflect.deleteProperty(reply,'type')
+		inputBelongReplyItem = reply.replyItem
+		Reflect.deleteProperty(reply, 'type')
+		Reflect.deleteProperty(reply, 'replyItem')
 		Object.assign(replyInfo, reply)
 	}
 }
@@ -231,16 +237,38 @@ const handlePublishComment = async (data) => {
 	publishLoading.value = false
 	if (res.code == 200) {
 		message.success('评论成功')
+		// 通知外部评论数更改
+		emits('commentTotalChange','add')
+		// 处理清空输入框
 		switch (currentCommentType.value) {
 			case 'top':
 				firstLevelCommentInputRef.value.refreshData()
-			break;
-			case 'replyFirst':
-				replyFirstLevelCommentInputRef.value.refreshData()
-			break;
+				break
+			case 'replyTop':
+				let index = commentList.findIndex(r => r.id === replyInfo.reply_id)
+				replyFirstLevelCommentInputRefs.value[index].refreshData()
+				break
 			case 'replySecond':
-				replySecondLevelCommentInputRef.value.refreshData()
-			break;
+				const belongFirstComment = commentList.find(r => r.id === replyInfo.reply_id)
+				let index2 = belongFirstComment.replyList.findIndex(r => r.id === inputBelongReplyItem.id)
+				replySecondLevelCommentInputRefs.value[index2].refreshData()
+				break
+		}
+		// 处理回显
+		const obj = res.data
+		obj.commentUserInfo = JSON.parse(JSON.stringify(systemUserInfo.value))
+		obj.alreadyLikeComment = false
+		if (Object.is(replyInfo.reply_id, null)) {
+			// 说明是在发布一级评论
+			obj.replyList = []
+			commentList.unshift(obj)
+		} else {
+			// 说明是在发布二级评论
+			obj.replyUserInfo = inputBelongReplyItem.commentUserInfo
+			const belongComment = JSON.parse(JSON.stringify(commentList.find((r) => r.id === replyInfo.reply_id)))
+			const belongCommentIndex = commentList.findIndex((r) => r.id === replyInfo.reply_id)
+			belongComment.replyList.unshift(obj)
+			commentList.splice(belongCommentIndex, 1, belongComment)
 		}
 	}
 }

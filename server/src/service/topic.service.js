@@ -295,6 +295,7 @@ class HotTopicServices {
           [Op.in]: allFirstLevelComment.rows.map(item => item.id)
         }
       },
+      order: [["createdAt", "desc"]],
       raw: true
     })
     // 组织所有评论id，一级和二级的
@@ -395,7 +396,7 @@ class HotTopicServices {
       // 如果发布的用户不是回复的自己，就发通知
       await CommentNotice.create(commentNoticeObj)
     }
-    return newHotTopicComment.id
+    return newHotTopicComment
   }
 }
 
