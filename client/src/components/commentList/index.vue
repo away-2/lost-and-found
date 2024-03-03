@@ -7,8 +7,9 @@
 					:inputMinHeight="30"
 					:inputMaxHeight="150"
 					shapeType="comment"
-					@click="handleCommentClick({ reply_id: null, reply_user_id: null })"
+					@click="handleCommentClick({ reply_id: null, reply_user_id: null, type: 'top' })"
 					@handleSubmit="handlePublishComment"
+					ref="firstLevelCommentInputRef"
 				/>
 			</a-spin>
 		</div>
@@ -54,8 +55,9 @@
 									:inputMaxHeight="150"
 									:isNeedIncreaseHeight="false"
 									:hintText="`回复${handleUserName(item.commentUserInfo)}...`"
-									@click="handleCommentClick({ reply_id: item.id, reply_user_id: item.commentUserInfo.id })"
+									@click="handleCommentClick({ reply_id: item.id, reply_user_id: item.commentUserInfo.id, type: 'replyTop' })"
 									@handleSubmit="handlePublishComment"
+									ref="replyFirstLevelCommentInputRef"
 								/>
 							</div>
 							<div class="comment-reply-wrapper">
@@ -100,8 +102,9 @@
 													:inputMaxHeight="150"
 													:isNeedIncreaseHeight="false"
 													:hintText="`回复${handleUserName(replyItem.commentUserInfo)}...`"
-													@click="handleCommentClick({ reply_id: item.id, reply_user_id: replyItem.commentUserInfo.id })"
+													@click="handleCommentClick({ reply_id: item.id, reply_user_id: replyItem.commentUserInfo.id, type: 'replySecond' })"
 													@handleSubmit="handlePublishComment"
+													ref="replySecondLevelCommentInputRef"
 												/>
 											</div>
 										</div>
@@ -193,7 +196,13 @@ const shouldShowCommentInput = (id) => {
 	return currentShowCommentInputId.value === id
 }
 
+const firstLevelCommentInputRef = ref(null)
+const replyFirstLevelCommentInputRef = ref(null)
+const replySecondLevelCommentInputRef = ref(null)
+
 const publishLoading = ref(false)
+
+const currentCommentType = ref('')
 
 let replyInfo = {
 	reply_id: null,
@@ -202,6 +211,8 @@ let replyInfo = {
 
 const handleCommentClick = (reply) => {
 	if (reply) {
+		currentCommentType.value = reply.type
+		Reflect.deleteProperty(reply,'type')
 		Object.assign(replyInfo, reply)
 	}
 }
@@ -220,6 +231,17 @@ const handlePublishComment = async (data) => {
 	publishLoading.value = false
 	if (res.code == 200) {
 		message.success('评论成功')
+		switch (currentCommentType.value) {
+			case 'top':
+				firstLevelCommentInputRef.value.refreshData()
+			break;
+			case 'replyFirst':
+				replyFirstLevelCommentInputRef.value.refreshData()
+			break;
+			case 'replySecond':
+				replySecondLevelCommentInputRef.value.refreshData()
+			break;
+		}
 	}
 }
 </script>

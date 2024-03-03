@@ -193,6 +193,17 @@ const handleSubmit = () => {
 	const data = { content: inputRef.value.innerHTML, pictures: pictureList }
 	emits('handleSubmit',data)
 }
+
+const refreshData = () => {
+	inputRef.value.innerHTML = ''
+	pictureList.splice(0,pictureList.length)
+	alreadyInputCharQuantity.value = 0
+}
+
+defineExpose({
+	refreshData
+})
+
 </script>
 
 <style lang="less" scoped>
