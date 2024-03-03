@@ -51,7 +51,7 @@ const isConcernUser = ref(false)
 
 // 让当前用户关注某个用户/取消关注某个用户
 const handleConcernSomeone = async (userInfo) => {
-	let params = { passiveUser: userInfo.id, concern_way: 'FD' }
+	let params = { passiveUser: userInfo.id, concernWay: 'FD' }
 	let res = null
 	if (isConcernUser.value) {
 		// 取消关注用户

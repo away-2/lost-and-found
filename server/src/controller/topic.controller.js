@@ -1,4 +1,4 @@
-const { searchTopicsByPaging, insertOneTopic, modifyTopic, deleteTopic, likeTopic, cancelLikeTopic, searchAllUserOfLikeTopic, searchCommentByPaging } = require("../service/topic.service");
+const { searchTopicsByPaging, insertOneTopic, modifyTopic, deleteTopic, likeTopic, cancelLikeTopic, searchAllUserOfLikeTopic, searchCommentByPaging, addCommentInHotTopic } = require("../service/topic.service");
 
 class HotTopicController {
     // 根据分页查询沸点列表
@@ -99,6 +99,15 @@ class HotTopicController {
             code: 200,
             data: res,
         };
+    }
+    // 沸点评论
+    async createHotTopicComment(ctx,next) {
+        const newCommentId = await addCommentInHotTopic(ctx.request.body)
+        ctx.body = {
+            code: 200,
+            message: '评论成功',
+            data: newCommentId
+        }
     }
     // {
     //     id: 1,

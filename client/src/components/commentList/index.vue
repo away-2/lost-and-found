@@ -2,7 +2,15 @@
 	<div class="comment-container">
 		<div class="comment-number">评论 {{ hotTopic.remark_number }}</div>
 		<div class="comment-form">
-			<comment-input :inputMinHeight="30" :inputMaxHeight="150" shapeType="comment" />
+			<a-spin :spinning="publishLoading">
+				<comment-input
+					:inputMinHeight="30"
+					:inputMaxHeight="150"
+					shapeType="comment"
+					@click="handleCommentClick({ reply_id: null, reply_user_id: null })"
+					@handleSubmit="handlePublishComment"
+				/>
+			</a-spin>
 		</div>
 		<div class="comment-list-wrapper" v-if="commentList.length > 0">
 			<div class="comment-list-header">
@@ -46,6 +54,8 @@
 									:inputMaxHeight="150"
 									:isNeedIncreaseHeight="false"
 									:hintText="`回复${handleUserName(item.commentUserInfo)}...`"
+									@click="handleCommentClick({ reply_id: item.id, reply_user_id: item.commentUserInfo.id })"
+									@handleSubmit="handlePublishComment"
 								/>
 							</div>
 							<div class="comment-reply-wrapper">
@@ -90,6 +100,8 @@
 													:inputMaxHeight="150"
 													:isNeedIncreaseHeight="false"
 													:hintText="`回复${handleUserName(replyItem.commentUserInfo)}...`"
+													@click="handleCommentClick({ reply_id: item.id, reply_user_id: replyItem.commentUserInfo.id })"
+													@handleSubmit="handlePublishComment"
 												/>
 											</div>
 										</div>
@@ -106,8 +118,11 @@
 
 <script setup>
 import { ref, watch, reactive } from 'vue'
-import { findTopicCommentByPaging } from '@/api/hot'
+import { findTopicCommentByPaging, publishHotTopicComment } from '@/api/hot'
 import { formatPast } from '@/utils/time'
+import { message } from 'ant-design-vue'
+import useUserStore from '@/store/user'
+import { storeToRefs } from 'pinia'
 
 const props = defineProps({
 	isShowComment: {
@@ -118,6 +133,9 @@ const props = defineProps({
 		require: true,
 	},
 })
+
+const userStore = useUserStore()
+const { systemUserInfo } = storeToRefs(userStore)
 
 const pageNum = ref(1)
 const pageSize = ref(3)
@@ -173,6 +191,36 @@ const handleClickReply = (id) => {
 
 const shouldShowCommentInput = (id) => {
 	return currentShowCommentInputId.value === id
+}
+
+const publishLoading = ref(false)
+
+let replyInfo = {
+	reply_id: null,
+	reply_user_id: null,
+}
+
+const handleCommentClick = (reply) => {
+	if (reply) {
+		Object.assign(replyInfo, reply)
+	}
+}
+
+const handlePublishComment = async (data) => {
+	const params = {
+		...replyInfo,
+		content: data.content,
+		picture: data.pictures[0] || null,
+		user_id: systemUserInfo.value.id,
+		hot_topic_id: props.hotTopic.id,
+		hotTopic: Object.assign({}, props.hotTopic, { pictures: JSON.stringify(props.hotTopic.pictures) }),
+	}
+	publishLoading.value = true
+	const res = await publishHotTopicComment(params)
+	publishLoading.value = false
+	if (res.code == 200) {
+		message.success('评论成功')
+	}
 }
 </script>
 

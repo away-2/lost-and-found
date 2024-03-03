@@ -83,3 +83,12 @@ export const findTopicCommentByPaging = (data) => {
         data
     })
 }
+
+// 发布沸点评论
+export const publishHotTopicComment = (data) => {
+    return request({
+        url: '/topicService/addHotTopicComment',
+        method: 'post',
+        data
+    })
+}

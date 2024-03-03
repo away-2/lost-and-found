@@ -12,11 +12,12 @@ const errorHandler = (error) => {
 	const response = error.response
     if(!response) {
         notification.error({ message: '请求失败', description: `网络错误` })
-        return
+        return { code: 500 }
     }
 	if (response && response.status !== 200 && response.status !== 401) {
 		// 服务器挂掉的情况，如果服务器返回了错误信息则显示错误信息，否则显示`服务器发生错误`
 		notification.error({ message: `返回状态码: ${response.status}`, description: response.data.message || '服务器发生错误' })
+		return { code: 500 }
 	}
 	return Promise.reject(error).catch((e) => {
 		if (response.status === 401) {

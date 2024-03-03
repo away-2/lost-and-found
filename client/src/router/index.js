@@ -140,9 +140,7 @@ const routes = [
         name: 'Notification',
         component: () => import('../views/notification/index.vue'),
         children: [
-          {
-            
-          }
+         
         ]
       }
     ]

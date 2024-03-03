@@ -4,6 +4,7 @@ const HotTopicLike = require("../model/hot_topic_like.model");
 const UserConcernRelation = require("../model/user_concern_relation.model");
 const HotTopicComment = require('../model/hot_topic_comment.model')
 const HotTopicCommentLike = require('../model/hot_topic_comment_like.model')
+const CommentNotice = require('../model/comment_notice.model')
 const { Op, where, literal, Sequelize } = require("sequelize");
 const seq = require("../db/seq");
 
@@ -276,7 +277,7 @@ class HotTopicServices {
     const whereArr = []
     whereArr.push({ hot_topic_id: topic_id }, { reply_id: null })
     let order = [["createdAt", "desc"]]
-    if(classify === 'hot') {
+    if (classify === 'hot') {
       order = [['remark_number', 'desc'], ['like_number', 'desc']]
     }
     const allFirstLevelComment = await HotTopicComment.findAndCountAll({
@@ -329,7 +330,7 @@ class HotTopicServices {
     })).map(item => item.passiveUserId)
     const result = allFirstLevelComment.rows.map(item => {
       const obj = {}
-      Object.assign(obj,item)
+      Object.assign(obj, item)
       // 处理是否点赞了这个评论
       obj.alreadyLikeComment = likeCommentIds.includes(obj.id)
       obj.commentUserInfo = JSON.parse(JSON.stringify(allUserInfo.find(r => r.id === item.user_id)))
@@ -337,7 +338,7 @@ class HotTopicServices {
       // 处理这个一级评论下所有的二级评论
       const replyList = allSecondLevelComment.filter(r => r.reply_id === item.id).map(subItem => {
         const secondCommentObj = {}
-        Object.assign(secondCommentObj,subItem)
+        Object.assign(secondCommentObj, subItem)
         // 处理是否点赞了这个评论
         secondCommentObj.alreadyLikeComment = likeCommentIds.includes(secondCommentObj.id)
         secondCommentObj.commentUserInfo = JSON.parse(JSON.stringify(allUserInfo.find(r => r.id === subItem.user_id)))
@@ -350,16 +351,34 @@ class HotTopicServices {
       obj.replyList = replyList
       return obj
     })
-    console.log(result);
     return {
       topicCommentList: result,
       total: allFirstLevelComment.count
     }
   }
+  // 点赞沸点评论
+  async likeTopicComment(user_id, comment_id) {
+
+  }
   // 添加一条沸点评论
   async addCommentInHotTopic(comment) {
+    // 整理评论通知字段
+    const commentNoticeObj = {
+      comment_user_id: comment.user_id,
+      receive_notice_user_id: comment.reply_id ? comment.reply_user_id : comment.hotTopic.user_id,
+      comment_content: comment.content,
+      source_pictures: comment.hotTopic.pictures,
+      source_title: comment.hotTopic.content,
+      source_id: comment.hotTopic.id,
+      comment_id: null,
+      reply_id: comment.reply_id || null,
+      comment_type: comment.reply_id ? 'FDPL' : 'FD'
+    }
+    // 删除不要的字段
+    Reflect.deleteProperty(comment, 'hotTopic')
     // 沸点评论表插入记录
-    await HotTopicComment.create(comment)
+    const newHotTopicComment = await HotTopicComment.create(comment)
+    commentNoticeObj.comment_id = newHotTopicComment.id
     // 给评论的沸点评论数+1
     await HotTopic.update(
       {
@@ -372,11 +391,16 @@ class HotTopicServices {
       }
     )
     // 评论通知表插入记录
+    if(comment.user_id !== comment.reply_user_id) {
+      // 如果发布的用户不是回复的自己，就发通知
+      await CommentNotice.create(commentNoticeObj)
+    }
+    return newHotTopicComment.id
   }
 }
 
 const a = new HotTopicServices();
-a.searchCommentByPaging({ pageNum: 1, pageSize: 3, topic_id: 8, view_user_id: 1 })
+// a.searchCommentByPaging({ pageNum: 1, pageSize: 3, topic_id: 8, view_user_id: 1 })
 // a.searchAllUserOfLikeTopic(2,1)
 // a.searchTopicsByPaging({ pageSize: 10, pageNum: 1, topic_id: 7, view_user_id: 1 });
 // a.insertOneTopic({ user_id: 1,content: '好好好好222222' })
