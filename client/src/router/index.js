@@ -134,6 +134,16 @@ const routes = [
             component: () => import('../views/setting/components/account.vue')
            }
         ]
+      }, 
+      {
+        path: '/notification',
+        name: 'Notification',
+        component: () => import('../views/notification/index.vue'),
+        children: [
+          {
+            
+          }
+        ]
       }
     ]
   },

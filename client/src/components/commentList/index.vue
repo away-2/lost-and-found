@@ -28,9 +28,9 @@
 							<div class="comment-action">
 								<div class="action-time">{{ formatPast(item.createdAt) }}</div>
 								<div class="action-digg">
-									<img src="@/assets/images/点赞.png" alt="" />
-									<!-- <span></span> -->
-									<span>点赞</span>
+									<img src="@/assets/images/点赞.png" v-show="item.like_number == 0" />
+									<img src="@/assets/images/点赞_active.png" v-show="item.like_number > 0" />
+									<span :class="{ 'active-blue': item.like_number > 0 }">{{ item.alreadyLikeComment ? item.like_number : '点赞' }} </span>
 								</div>
 								<div class="action-reply" @click="handleClickReply(item.id)">
 									<img src="@/assets/images/评论.png" v-show="!shouldShowCommentInput(item.id)" />
@@ -68,13 +68,16 @@
 											<div class="reply-action">
 												<div class="action-time">{{ formatPast(replyItem.createdAt) }}</div>
 												<div class="action-digg">
-													<img src="@/assets/images/点赞.png" alt="" />
-													<span>点赞</span>
+													<img src="@/assets/images/点赞.png" v-show="replyItem.like_number == 0" />
+													<img src="@/assets/images/点赞_active.png" v-show="replyItem.like_number > 0" />
+													<span :class="{ 'active-blue': replyItem.like_number > 0 }">
+														{{ replyItem.alreadyLikeComment ? replyItem.like_number : '点赞' }}
+													</span>
 												</div>
 												<div class="action-reply" @click="handleClickReply(replyItem.id)">
 													<img src="@/assets/images/评论.png" v-show="!shouldShowCommentInput(replyItem.id)" />
 													<img src="@/assets/images/评论_active.png" v-show="shouldShowCommentInput(replyItem.id)" />
-													<span :class="{ 'active-blue': shouldShowCommentInput(replyItem.id)}">
+													<span :class="{ 'active-blue': shouldShowCommentInput(replyItem.id) }">
 														{{ shouldShowCommentInput(replyItem.id) ? '取消回复' : '评论' }}
 													</span>
 												</div>
@@ -169,9 +172,8 @@ const handleClickReply = (id) => {
 }
 
 const shouldShowCommentInput = (id) => {
-    return currentShowCommentInputId.value === id
+	return currentShowCommentInputId.value === id
 }
-
 </script>
 
 <style lang="less" scoped>
