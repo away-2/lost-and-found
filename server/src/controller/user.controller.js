@@ -8,6 +8,7 @@ const {
   letSomeoneConcernOther,
   letSomeoneCancelConcernOther,
   searchNumberInfoAboutUser,
+  searchUserInfoById
 } = require("../service/user.service");
 
 class UserController {
@@ -155,6 +156,14 @@ class UserController {
     ctx.body = {
       code: 200,
       data: info
+    }
+  }
+  // 根据用户id查询用户信息
+  async findUserInfoById(ctx,next) {
+    const res = await searchUserInfoById(ctx.request.query.id)
+    ctx.body = {
+      code: 200,
+      data: res
     }
   }
 

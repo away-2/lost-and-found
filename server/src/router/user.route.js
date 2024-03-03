@@ -12,6 +12,7 @@ const {
   concernSomeone,
   cancelConcernSomeone,
   findNumberInfoAboutUser,
+  findUserInfoById
 } = require("../controller/user.controller");
 const { sendVarifyCode } = require("../controller/nodemailer.controller");
 // 引入一些要用到的中间件
@@ -61,5 +62,8 @@ router.get("/cancelConcernSomeone", auth, cancelConcernSomeone);
 
 // 查询指定用户的一些数量上的信息
 router.get('/findNumberInfoAboutUser',auth,findNumberInfoAboutUser)
+
+// 根据用户id查询用户信息
+router.get('/findUserInfoById',auth,findUserInfoById)
 
 module.exports = router;

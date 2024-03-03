@@ -1,10 +1,10 @@
 <template>
 	<div class="comment-container">
-		<div class="comment-number">评论 1</div>
+		<div class="comment-number">评论 {{ hotTopic.remark_number }}</div>
 		<div class="comment-form">
 			<comment-input :inputMinHeight="30" :inputMaxHeight="150" shapeType="comment" />
 		</div>
-		<div class="comment-list-wrapper">
+		<div class="comment-list-wrapper" v-if="commentList.length > 0">
 			<div class="comment-list-header">
 				<div class="sort">
 					<div class="item" :class="{ active: isSortActive === 'hot' }" @click="handleSelectedSort('hot')">最热</div>
@@ -20,7 +20,7 @@
 						</div>
 						<div class="comment-wrapper">
 							<div class="comment-header">
-								<div class="user-name">{{ item.commentUserInfo.nick_name || item.commentUserInfo.real_name }}</div>
+								<div class="user-name">{{ handleUserName(item.commentUserInfo) }}</div>
 								<div class="author-tag" v-if="item.user_id === hotTopic.user_id">作者</div>
 								<div class="user-profile">{{ item.commentUserInfo.profile }}</div>
 							</div>
@@ -32,10 +32,21 @@
 									<!-- <span></span> -->
 									<span>点赞</span>
 								</div>
-								<div class="action-reply">
-									<img src="@/assets/images/评论.png" alt="" />
-									<span>评论</span>
+								<div class="action-reply" @click="handleClickReply(item.id)">
+									<img src="@/assets/images/评论.png" v-show="!shouldShowCommentInput(item.id)" />
+									<img src="@/assets/images/评论_active.png" v-show="shouldShowCommentInput(item.id)" />
+									<span :class="{ 'active-blue': shouldShowCommentInput(item.id) }">{{ shouldShowCommentInput(item.id) ? '取消回复' : '评论' }}</span>
 								</div>
+							</div>
+							<!-- 一级评论组件 -->
+							<div class="comment-input-wrap">
+								<comment-input
+									v-show="currentShowCommentInputId === item.id"
+									:inputMinHeight="0"
+									:inputMaxHeight="150"
+									:isNeedIncreaseHeight="false"
+									:hintText="`回复${handleUserName(item.commentUserInfo)}...`"
+								/>
 							</div>
 							<div class="comment-reply-wrapper">
 								<div class="reply-list">
@@ -47,7 +58,7 @@
 											<div class="reply-content">
 												<div class="content">
 													<div class="user-info">
-														<div class="user-name">{{ replyItem.replyUserInfo.nick_name || replyItem.replyUserInfo.real_name }}</div>
+														<div class="user-name">{{ handleUserName(replyItem.commentUserInfo) }}</div>
 														<div class="author-tag" v-if="replyItem.user_id === hotTopic.user_id">作者</div>
 														<div class="colon">:</div>
 													</div>
@@ -60,10 +71,23 @@
 													<img src="@/assets/images/点赞.png" alt="" />
 													<span>点赞</span>
 												</div>
-												<div class="action-reply">
-													<img src="@/assets/images/评论.png" alt="" />
-													<span>评论</span>
+												<div class="action-reply" @click="handleClickReply(replyItem.id)">
+													<img src="@/assets/images/评论.png" v-show="!shouldShowCommentInput(replyItem.id)" />
+													<img src="@/assets/images/评论_active.png" v-show="shouldShowCommentInput(replyItem.id)" />
+													<span :class="{ 'active-blue': shouldShowCommentInput(replyItem.id)}">
+														{{ shouldShowCommentInput(replyItem.id) ? '取消回复' : '评论' }}
+													</span>
 												</div>
+											</div>
+											<!-- 二级评论组件 -->
+											<div class="comment-input-wrap">
+												<comment-input
+													v-show="shouldShowCommentInput(replyItem.id)"
+													:inputMinHeight="0"
+													:inputMaxHeight="150"
+													:isNeedIncreaseHeight="false"
+													:hintText="`回复${handleUserName(replyItem.commentUserInfo)}...`"
+												/>
 											</div>
 										</div>
 									</div>
@@ -112,6 +136,10 @@ const getAllCommentInfo = async () => {
 	}
 }
 
+const handleUserName = (user) => {
+	return user.nick_name || user.real_name
+}
+
 watch(
 	() => props.isShowComment,
 	async () => {
@@ -122,6 +150,28 @@ watch(
 		}
 	}
 )
+
+// 当前展示的回复评论组件的id,根据id判断哪个显示
+const currentShowCommentInputId = ref(null)
+
+// 处理点击回复按钮
+const handleClickReply = (id) => {
+	if (Object.is(currentShowCommentInputId.value, null)) {
+		// 说明没有任何一个回复评论组件在展示
+		currentShowCommentInputId.value = id
+	} else if (currentShowCommentInputId.value === id) {
+		// 说明是要取消回复组件的显示
+		currentShowCommentInputId.value = null
+	} else {
+		// 更换回复组件的显示
+		currentShowCommentInputId.value = id
+	}
+}
+
+const shouldShowCommentInput = (id) => {
+    return currentShowCommentInputId.value === id
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -304,6 +354,10 @@ watch(
 								font-size: 12px;
 							}
 						}
+					}
+
+					.comment-input-wrap {
+						margin: 15px 0;
 					}
 
 					.comment-reply-wrapper {

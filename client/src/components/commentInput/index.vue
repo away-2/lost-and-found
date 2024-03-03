@@ -1,7 +1,7 @@
 <template>
 	<div class="comment-form" :class="{ column: shapeType === 'publish' }">
 		<div class="avatar-box" v-if="shapeType === 'comment'">
-			<img :src="userInfo.avator" alt="" />
+			<img :src="systemUserInfo.avator" alt="" />
 		</div>
 		<div class="input-box" :class="{ focused: isFocusedOfInput }">
 			<!-- 输入框 -->
@@ -46,6 +46,8 @@ import { GET_USERINFO } from '@/utils/token'
 import { formatPast } from '@/utils/time'
 import { message, Modal } from 'ant-design-vue'
 import { fileUpload } from '@/api/upload'
+import { storeToRefs } from 'pinia'
+import useUserStore from '@/store/user'
 import OperateBox from './components/operateBox/index.vue'
 
 const props = defineProps({
@@ -81,6 +83,9 @@ const props = defineProps({
 })
 
 const emits = defineEmits(['handleSubmit'])
+
+const userStore = useUserStore()
+const { systemUserInfo } = storeToRefs(userStore)
 
 const pictureSize = ref(props.shapeType === 'comment' ? '65px' : '80px')
 

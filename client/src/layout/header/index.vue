@@ -27,20 +27,20 @@
 							<a-menu-item key="1">
 								<div class="popoverWrap">
 									<div class="userInfo">
-										<a-avatar :src="userInfo?.avator" :size="46" />
-										<div class="username text-ellipsis">{{ userInfo.nick_name || userInfo.real_name }}</div>
+										<a-avatar :src="systemUserInfo?.avator" :size="46" />
+										<div class="username text-ellipsis">{{ systemUserInfo.nick_name || systemUserInfo.real_name }}</div>
 									</div>
 									<div class="counts-item">
 										<div class="single-count-item">
-											<div class="count-num">{{ userNumberInfo.concernNumber }}</div>
+											<div class="count-num">{{ systemUserInfo.concern_number }}</div>
 											<div class="count-text">关注</div>
 										</div>
 										<div class="single-count-item">
-											<div class="count-num">{{ userNumberInfo.fansNumber }}</div>
+											<div class="count-num">{{ systemUserInfo.fans_number }}</div>
 											<div class="count-text">粉丝</div>
 										</div>
 										<div class="single-count-item">
-											<div class="count-num">{{ userNumberInfo.collectPostNumber }}</div>
+											<div class="count-num">{{ systemUserInfo.collect_post_number }}</div>
 											<div class="count-text">收藏</div>
 										</div>
 									</div>
@@ -81,7 +81,7 @@ const route = useRoute()
 
 const userStore = useUserStore()
 
-const { userNumberInfo } = storeToRefs(userStore)
+const { systemUserInfo } = storeToRefs(userStore)
 
 const convertPathToKey = (path) => {
 	let key = path
@@ -124,7 +124,7 @@ const userInfo = GET_USERINFO().user
 
 onMounted(()=> {
 	const userInfo = GET_USERINFO().user
-	userStore.getuserNumberInfo(userInfo.id)
+	userStore.getSystemUserInfo(userInfo.id)
 })
 
 let router = useRouter()

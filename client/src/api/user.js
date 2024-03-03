@@ -64,3 +64,10 @@ export const findNumberInfoAboutUser = (user_id) => {
         url: `/userService/findNumberInfoAboutUser?user_id=${user_id}`
     })
 }
+
+// 根据id查询用户信息
+export const findUserInfoById = (id) => {
+    return request({
+        url: `/userService/findUserInfoById?id=${id}`
+    })
+}

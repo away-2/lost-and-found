@@ -147,7 +147,6 @@ class HotTopicServices {
         hotTopic.already_concern_publish_user = true;
       }
     });
-    console.log(hotTopicList);
     return {
       hotTopicList,
       total,
@@ -338,6 +337,23 @@ class HotTopicServices {
       topicCommentList: result,
       total: allFirstLevelComment.count
     }
+  }
+  // 添加一条沸点评论
+  async addCommentInHotTopic(comment) {
+    // 沸点评论表插入记录
+    await HotTopicComment.create(comment)
+    // 给评论的沸点评论数+1
+    await HotTopic.update(
+      {
+        remark_number: literal('remark_number + 1')
+      },
+      {
+        where: {
+          id: comment.hot_topic_id
+        }
+      }
+    )
+    // 评论通知表插入记录
   }
 }
 

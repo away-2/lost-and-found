@@ -3,31 +3,29 @@
 		<navigation />
 		<div class="centerWrap">
 			<div class="inputWrap">
-				<comment-input shapeType="publish" :maxFileQuantity="2" @handleSubmit="handlePublishHot"
-					:isNeedIncreaseHeight="false" allowInputCharQuantity="1000" />
+				<comment-input shapeType="publish" :maxFileQuantity="2" @handleSubmit="handlePublishHot" :isNeedIncreaseHeight="false" allowInputCharQuantity="1000" />
 			</div>
 			<router-view></router-view>
 		</div>
 		<div class="rightWrap">
-			
 			<div class="sider-content">
 				<!-- 个人信息卡片 -->
 				<div class="user-info-card">
 					<div class="card-header" @click="toUserCenter">
-						<img :src="userInfo.avator" alt="" />
-						<div class="user-name text-ellipsis">{{ userInfo.nick_name || userInfo.real_name }}</div>
+						<img :src="systemUserInfo.avator" alt="" />
+						<div class="user-name text-ellipsis">{{ systemUserInfo.nick_name || systemUserInfo.real_name }}</div>
 					</div>
 					<div class="count-item">
 						<div class="single-count-item">
-							<div class="count-num">{{ userNumberInfo.publishHotTopicNumber }}</div>
+							<div class="count-num">{{ systemUserInfo.publishHotTopicNumber }}</div>
 							<div class="count-text">沸点</div>
 						</div>
 						<div class="single-count-item">
-							<div class="count-num">{{ userNumberInfo.concernNumber }}</div>
+							<div class="count-num">{{ systemUserInfo.concern_number }}</div>
 							<div class="count-text">关注</div>
 						</div>
 						<div class="single-count-item">
-							<div class="count-num">{{ userNumberInfo.fansNumber }}</div>
+							<div class="count-num">{{ systemUserInfo.fans_number }}</div>
 							<div class="count-text">粉丝</div>
 						</div>
 					</div>
@@ -43,7 +41,7 @@
 									<div class="count">{{ item.like_number }} 赞 · {{ item.remark_number }} 评论</div>
 								</div>
 								<div class="select-hot-right" v-show="item.pictures">
-									<img :src="item.pictures" alt="">
+									<img :src="item.pictures" alt="" />
 								</div>
 							</div>
 						</div>
@@ -51,8 +49,10 @@
 				</div>
 				<!-- 沸点 -->
 				<div class="hot-footer">
-					<img src="@/assets/images/hot_bg.png" alt="">
-					<span>如何玩转沸点</span>
+					<div class="center-wrap">
+						<img src="@/assets/images/hot_bg.png" alt="" />
+						<span>如何玩转沸点</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -72,7 +72,7 @@ import navigation from './components/navigation.vue'
 const userStore = useUserStore()
 const router = useRouter()
 
-const { userNumberInfo } = storeToRefs(userStore)
+const { systemUserInfo } = storeToRefs(userStore)
 
 const audit_state = ref('')
 const selectHotList = ref([])
@@ -120,7 +120,7 @@ const getAllHotInfo = async () => {
 
 // 点击精选沸点前往详情页
 const toTopicDetail = (id) => {
-	router.push(`/hot/${id}`);
+	router.push(`/hot/${id}`)
 }
 
 // 通过右侧卡片进入个人中心
@@ -183,7 +183,7 @@ onMounted(() => {
 						width: 48px;
 						height: 48px;
 						border-radius: 50%;
-						transition: all .3s;
+						transition: all 0.3s;
 
 						&:hover {
 							opacity: 0.6;
@@ -260,7 +260,7 @@ onMounted(() => {
 								-webkit-box-orient: vertical;
 								overflow: hidden;
 								text-overflow: ellipsis;
-								transition: all .3s;
+								transition: all 0.3s;
 							}
 
 							.count {
@@ -287,8 +287,6 @@ onMounted(() => {
 							}
 						}
 					}
-
-
 				}
 			}
 			.hot-footer {
@@ -298,14 +296,16 @@ onMounted(() => {
 				align-items: center;
 				justify-content: center;
 				margin-top: 10px;
-				img {
-					width: 80px;
-					height: 80px;
-				}
-				span {
-					font-size: 16px;
-					transform: translateY(-5px);
-					
+				.center-wrap {
+					transform: translateX(-15px);
+					img {
+						width: 80px;
+						height: 80px;
+					}
+					span {
+						font-size: 16px;
+						transform: translateY(-5px);
+					}
 				}
 			}
 		}

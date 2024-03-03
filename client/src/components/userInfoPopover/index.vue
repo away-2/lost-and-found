@@ -115,7 +115,9 @@ const handleOpenChange = (visible) => {
 		}
 
 		.user-info {
-			padding-top: 5px;
+			display: flex;
+			flex-direction: column;
+			row-gap: 5px;
 
 			.user-name {
 				font-weight: 500;

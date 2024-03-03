@@ -27,6 +27,7 @@ const errorHandler = (error) => {
 				window.location.replace(window.location.origin)
 			}, 500)
 		}
+		return { code: 500 }
 	})
 }
 

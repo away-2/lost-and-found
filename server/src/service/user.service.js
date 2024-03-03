@@ -9,6 +9,7 @@ const HotTopic = require('../model/hot_topic.model')
 const StudentCode = require('../model/student_code.model')
 const School = require('../model/school.model')
 const { handleDotInFieldDueToJoinQuery } = require('../tools/index')
+const { use } = require('../router/topic.route')
 
 class UserService {
     // 根据条件查找用户
@@ -19,6 +20,23 @@ class UserService {
             },
             raw: true
         })
+        return res
+    }
+    // 根据用户id查询用户信息
+    async searchUserInfoById(user_id) {
+        const res = await User.findOne({
+            where: {
+                id: user_id
+            },
+            raw: true
+        })
+        // 查询发布了多少个沸点
+        const publishHotTopicNumber = await HotTopic.count({
+            where: {
+                user_id
+            }
+        })
+        res.publishHotTopicNumber = publishHotTopicNumber
         return res
     }
     // 查询传入的activeUser是否已经关注了passiveUser
@@ -96,8 +114,8 @@ class UserService {
                 passiveUserId: passiveUser
             }
         })
-         // 给被关注的用户的粉丝量-1
-         await User.update(
+        // 给被关注的用户的粉丝量-1
+        await User.update(
             {
                 fans_number: literal("fans_number - 1")
             },
@@ -148,7 +166,7 @@ class UserService {
             publishHotTopicNumber,
             collectPostNumber
         }
-        
+
     }
     // 根据学号查询该学号以及学校的信息
     async findStudentInfoByStudentCode(code) {
@@ -166,6 +184,9 @@ class UserService {
         return res;
     }
 }
+
+const userService = new UserService()
+userService.searchUserInfoById(1)
 
 module.exports = new UserService()
 
