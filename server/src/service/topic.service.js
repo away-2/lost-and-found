@@ -3,6 +3,7 @@ const User = require("../model/user.model");
 const HotTopicLike = require("../model/hot_topic_like.model");
 const UserConcernRelation = require("../model/user_concern_relation.model");
 const HotTopicComment = require('../model/hot_topic_comment.model')
+const HotTopicCommentLike = require('../model/hot_topic_comment_like.model')
 const { Op, where, literal, Sequelize } = require("sequelize");
 const seq = require("../db/seq");
 
@@ -295,6 +296,18 @@ class HotTopicServices {
       },
       raw: true
     })
+    // 组织所有评论id，一级和二级的
+    const allCommentIds = [...allFirstLevelComment.rows.map(item => item.id), ...allSecondLevelComment.map(item => item.id)]
+    // 查询观看的用户对评论的点赞情况
+    const likeCommentIds = (await HotTopicCommentLike.findAll({
+      where: {
+        user_id: view_user_id,
+        comment_id: {
+          [Op.in]: allCommentIds
+        }
+      },
+      raw: true
+    })).map(item => item.comment_id)
     // 组织所有用户id，一级和二级的
     const allUserIds = [...allFirstLevelComment.rows.map(item => item.user_id), ...allSecondLevelComment.map(item => item.user_id)]
     const allUserInfo = await User.findAll({
@@ -317,12 +330,16 @@ class HotTopicServices {
     const result = allFirstLevelComment.rows.map(item => {
       const obj = {}
       Object.assign(obj,item)
+      // 处理是否点赞了这个评论
+      obj.alreadyLikeComment = likeCommentIds.includes(obj.id)
       obj.commentUserInfo = JSON.parse(JSON.stringify(allUserInfo.find(r => r.id === item.user_id)))
       obj.commentUserInfo.alreadyConcern = concernUserIds.includes(item.user_id)
       // 处理这个一级评论下所有的二级评论
       const replyList = allSecondLevelComment.filter(r => r.reply_id === item.id).map(subItem => {
         const secondCommentObj = {}
         Object.assign(secondCommentObj,subItem)
+        // 处理是否点赞了这个评论
+        secondCommentObj.alreadyLikeComment = likeCommentIds.includes(secondCommentObj.id)
         secondCommentObj.commentUserInfo = JSON.parse(JSON.stringify(allUserInfo.find(r => r.id === subItem.user_id)))
         secondCommentObj.commentUserInfo.alreadyConcern = concernUserIds.includes(subItem.user_id)
         // 回复的哪个人的相关信息
@@ -333,6 +350,7 @@ class HotTopicServices {
       obj.replyList = replyList
       return obj
     })
+    console.log(result);
     return {
       topicCommentList: result,
       total: allFirstLevelComment.count
@@ -358,7 +376,7 @@ class HotTopicServices {
 }
 
 const a = new HotTopicServices();
-// a.searchCommentByPaging({ pageNum: 1, pageSize: 3, topic_id: 8, view_user_id: 1 })
+a.searchCommentByPaging({ pageNum: 1, pageSize: 3, topic_id: 8, view_user_id: 1 })
 // a.searchAllUserOfLikeTopic(2,1)
 // a.searchTopicsByPaging({ pageSize: 10, pageNum: 1, topic_id: 7, view_user_id: 1 });
 // a.insertOneTopic({ user_id: 1,content: '好好好好222222' })
