@@ -120,13 +120,13 @@ const routes = [
       {
         path: '/setting',
         name: 'Setting',
-        redirect: '/setting/prefile',
+        redirect: '/setting/profile',
         component: () => import('../views/setting/index.vue'),
         children: [
           {
-            path: 'prefile', 
-            name: 'Prefile',
-            component: () => import('../views/setting/components/prefile.vue')
+            path: 'profile', 
+            name: 'Profile',
+            component: () => import('../views/setting/components/profile.vue')
           },
            {
             path: 'account', 
@@ -136,7 +136,7 @@ const routes = [
         ]
       }, 
       {
-        path: '/notification',
+        path: '/notification/:method',
         name: 'Notification',
         component: () => import('../views/notification/index.vue'),
         children: [

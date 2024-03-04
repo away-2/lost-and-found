@@ -28,7 +28,7 @@ import { useRouter, useRoute } from 'vue-router';
 const router = useRouter()
 const route = useRoute()
 
-const navigationList = reactive([{title: '用户信息', path: 'Prefile'}, {title: '账号设置', path: 'Account'}])
+const navigationList = reactive([{title: '用户信息', path: 'Profile'}, {title: '账号设置', path: 'Account'}])
 const isSelected = ref(route.name)
 
 watch(()=> route.path,()=> {

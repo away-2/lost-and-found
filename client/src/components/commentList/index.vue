@@ -1,6 +1,8 @@
 <template>
 	<div class="comment-container">
+		<!-- 评论总数量 -->
 		<div class="comment-number">评论 {{ hotTopic.remark_number }}</div>
+		<!-- 顶级评论输入框 -->
 		<div class="comment-form">
 			<a-spin :spinning="publishLoading">
 				<comment-input
@@ -13,7 +15,9 @@
 				/>
 			</a-spin>
 		</div>
+		<!-- 评论部分 -->
 		<div class="comment-list-wrapper" v-if="commentList.length > 0">
+			<!-- 评论分类tab栏 -->
 			<div class="comment-list-header">
 				<div class="sort">
 					<div class="item" :class="{ active: isSortActive === 'hot' }" @click="handleSelectedSort('hot')">最热</div>
@@ -21,8 +25,10 @@
 					<div class="item" :class="{ active: isSortActive === 'new' }" @click="handleSelectedSort('new')">最新</div>
 				</div>
 			</div>
+			<!-- 评论部分 -->
 			<div class="comment-list">
 				<a-skeleton active :loading="loading">
+					<!-- 一级评论 -->
 					<div class="comment-card" v-for="(item, index) in commentList" :key="index">
 						<div class="comment-avatar">
 							<img :src="item.commentUserInfo.avator" alt="" />
@@ -47,7 +53,7 @@
 									<span :class="{ 'active-blue': shouldShowCommentInput(item.id) }">{{ shouldShowCommentInput(item.id) ? '取消回复' : '评论' }}</span>
 								</div>
 							</div>
-							<!-- 一级评论组件 -->
+							<!-- 一级评论输入框组件 -->
 							<div class="comment-input-wrap">
 								<comment-input
 									v-show="currentShowCommentInputId === item.id"
@@ -60,6 +66,7 @@
 									:ref="(el) => (replyFirstLevelCommentInputRefs[index] = el)"
 								/>
 							</div>
+							<!-- 评论回复部分 -->
 							<div class="comment-reply-wrapper">
 								<div class="reply-list">
 									<div class="reply-card" v-for="(replyItem, index) in item.replyList" :key="index">
@@ -94,7 +101,7 @@
 													</span>
 												</div>
 											</div>
-											<!-- 二级评论组件 -->
+											<!-- 二级评论输入框组件 -->
 											<div class="comment-input-wrap">
 												<comment-input
 													v-show="shouldShowCommentInput(replyItem.id)"
@@ -238,19 +245,19 @@ const handlePublishComment = async (data) => {
 	if (res.code == 200) {
 		message.success('评论成功')
 		// 通知外部评论数更改
-		emits('commentTotalChange','add')
+		emits('commentTotalChange', 'add')
 		// 处理清空输入框
 		switch (currentCommentType.value) {
 			case 'top':
 				firstLevelCommentInputRef.value.refreshData()
 				break
 			case 'replyTop':
-				let index = commentList.findIndex(r => r.id === replyInfo.reply_id)
+				let index = commentList.findIndex((r) => r.id === replyInfo.reply_id)
 				replyFirstLevelCommentInputRefs.value[index].refreshData()
 				break
 			case 'replySecond':
-				const belongFirstComment = commentList.find(r => r.id === replyInfo.reply_id)
-				let index2 = belongFirstComment.replyList.findIndex(r => r.id === inputBelongReplyItem.id)
+				const belongFirstComment = commentList.find((r) => r.id === replyInfo.reply_id)
+				let index2 = belongFirstComment.replyList.findIndex((r) => r.id === inputBelongReplyItem.id)
 				replySecondLevelCommentInputRefs.value[index2].refreshData()
 				break
 		}
@@ -347,6 +354,7 @@ const handlePublishComment = async (data) => {
 						width: 32px;
 						height: 32px;
 						border-radius: 50%;
+						object-fit: cover;
 					}
 				}
 
@@ -447,6 +455,7 @@ const handlePublishComment = async (data) => {
 								width: 14px;
 								height: 14px;
 								margin-right: 4px;
+								object-fit: cover;
 							}
 
 							span {
@@ -485,6 +494,8 @@ const handlePublishComment = async (data) => {
 										width: 28px;
 										height: 28px;
 										border-radius: 50%;
+					object-fit: cover;
+										
 									}
 								}
 

@@ -5,7 +5,7 @@
 				<div class="user-popover-header">
 					<img :src="userInfo.avator" alt="" @click="toUserCenter(userInfo.id)" />
 					<div class="user-info">
-						<div class="user-name">{{ userInfo.nick_name || userInfo.real_name }}</div>
+						<div class="user-name" @click="toUserCenter(userInfo.id)">{{ userInfo.nick_name || userInfo.real_name }}</div>
 						<div class="user-school">{{ userInfo.school_name }}</div>
 					</div>
 				</div>
@@ -56,13 +56,13 @@ const handleConcernSomeone = async (userInfo) => {
 	if (isConcernUser.value) {
 		// 取消关注用户
 		res = await cancelConcernSomeone(userInfo.id)
-		if(res.code == 200) {
+		if (res.code == 200) {
 			isConcernUser.value = !isConcernUser.value
 		}
 	} else {
 		// 关注用户
 		res = await concernSomeone(params)
-		if(res.code == 200) {
+		if (res.code == 200) {
 			isConcernUser.value = !isConcernUser.value
 		}
 	}
@@ -72,7 +72,10 @@ const router = useRouter()
 
 // 前往个人主页
 const toUserCenter = (id) => {
-	router.push({ path: `/user/${id}` })
+	const { href } = router.resolve({
+		path: `/user/${id}`,
+	})
+	window.open(href, '_blank')
 }
 
 const concernLoading = ref(false)
@@ -112,6 +115,7 @@ const handleOpenChange = (visible) => {
 			height: 48px;
 			border-radius: 50%;
 			cursor: pointer;
+			object-fit: cover;
 		}
 
 		.user-info {
@@ -122,6 +126,7 @@ const handleOpenChange = (visible) => {
 			.user-name {
 				font-weight: 500;
 				font-size: 16px;
+				cursor: pointer;
 			}
 
 			.user-school {
@@ -138,42 +143,7 @@ const handleOpenChange = (visible) => {
 		justify-content: space-between;
 		column-gap: 15px;
 
-		.concern-btn {
-			width: 110px;
-			height: 32px;
-			background: #1e80ff;
-			color: #fff;
-			cursor: pointer;
-			border-radius: 3px;
-			text-align: center;
-			padding: 4px 20px;
-		}
-
-		.concerned {
-			background: #f6f6f7;
-			color: #8a919f;
-			border: 1px solid #e0e0e0;
-		}
-
-		.concern-btn:hover {
-			opacity: 0.6;
-		}
-
-		.message-btn {
-			width: 110px;
-			height: 32px;
-			background: #1e80ff0d;
-			color: #1e80ff;
-			cursor: pointer;
-			border-radius: 3px;
-			text-align: center;
-			padding: 4px 20px;
-			border: 1px solid rgba(30, 128, 255, 0.3);
-		}
-
-		.message-btn:hover {
-			opacity: 0.6;
-		}
+		
 	}
 
 	.user-popover-footer {

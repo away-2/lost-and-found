@@ -8,12 +8,12 @@
 					</user-info-popover>
 					<div class="userInfo">
 						<user-info-popover :userInfo="_hotTopic.publish_user">
-							<div class="username">{{ _hotTopic.publish_user.nick_name || _hotTopic.publish_user.real_name }}</div>
+							<div class="username" @click="toUserCenter(_hotTopic.publish_user.id)">{{ _hotTopic.publish_user.nick_name || _hotTopic.publish_user.real_name }}</div>
 						</user-info-popover>
 						<div class="meta-box">
 							<div class="profile text-ellipsis">{{ _hotTopic.publish_user.profile }}</div>
 							<div class="dot">·</div>
-							<div class="timestamp" @click="handleToTopicInfo">{{ formatPast(hotTopic.createdAt) }}</div>
+							<div class="timestamp" @click="handleToTopicInfo(_hotTopic.id)">{{ formatPast(hotTopic.createdAt) }}</div>
 						</div>
 					</div>
 				</div>
@@ -99,10 +99,12 @@ const userOfSystemUsing = reactive(GET_USERINFO().user)
 
 const router = useRouter()
 
-const handleToTopicInfo = () => {
-	router.push({
-		path: `/hot/${_hotTopic.id}`,
-	})
+// 点击发布日期进入沸点详情页
+const handleToTopicInfo = (id) => {
+	const { href } = router.resolve({
+		path: `/hot/${id}`
+	}) 
+	window.open(href, '_blank')
 }
 
 // 点赞和取消点赞沸点回调
@@ -126,8 +128,10 @@ const handleOperateLikeOk = (isLike) => {
 
 // 前往个人主页
 const toUserCenter = (id) => {
-	router.push({ path: `/user/${id}` })
-	localStorage.removeItem('selectedMenuKeys')
+	const { href } = router.resolve({
+		path: `/user/${id}`
+	}) 
+	window.open(href, '_blank')
 }
 
 // 删除此沸点
@@ -174,6 +178,7 @@ const toDeleteHot = () => {
 					height: 48px;
 					width: 48px;
 					border-radius: 50%;
+					object-fit: cover;
 					cursor: pointer;
 				}
 
@@ -301,6 +306,7 @@ const toDeleteHot = () => {
 							width: 19px;
 							height: 19px;
 							border-radius: 50%;
+							object-fit: cover;
 						}
 					}
 				}

@@ -98,6 +98,7 @@ const handleConcernSomeone = async (item) => {
 			width: 45px;
 			height: 45px;
 			border-radius: 50%;
+			object-fit: cover;
 		}
 
 		.user-info {
