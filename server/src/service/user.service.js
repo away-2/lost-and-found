@@ -30,6 +30,9 @@ class UserService {
             },
             raw: true
         })
+        if(res === null) {
+            return null
+        }
         // 查询发布了多少个沸点
         const publishHotTopicNumber = await HotTopic.count({
             where: {
@@ -186,7 +189,7 @@ class UserService {
 }
 
 const userService = new UserService()
-userService.searchUserInfoById(1)
+// userService.searchUserInfoById(1)
 
 module.exports = new UserService()
 
