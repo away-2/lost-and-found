@@ -361,6 +361,34 @@ class HotTopicServices {
   async likeTopicComment(user_id, comment_id) {
 
   }
+  // 根据沸点id检查沸点是否存在
+  async checkExistHotTopicById(id) {
+    let res = await HotTopic.findOne({
+      where: {
+        id,
+      },
+      raw: true
+    })
+    if (res === null) {
+      return false
+    } else {
+      return true
+    }
+  }
+  // 根据沸点评论id检查沸点评论是否存在
+  async checkExistHotTopicCommentById(id) {
+    let res = await HotTopicComment.findOne({
+      where: {
+        id,
+      },
+      raw: true
+    })
+    if (res === null) {
+      return false
+    } else {
+      return true
+    }
+  }
   // 添加一条沸点评论
   async addCommentInHotTopic(comment) {
     // 整理评论通知字段
@@ -392,7 +420,7 @@ class HotTopicServices {
       }
     )
     // 评论通知表插入记录
-    if(comment.user_id !== comment.reply_user_id) {
+    if (comment.user_id !== comment.reply_user_id) {
       // 如果发布的用户不是回复的自己，就发通知
       await CommentNotice.create(commentNoticeObj)
     }
@@ -401,6 +429,7 @@ class HotTopicServices {
 }
 
 const a = new HotTopicServices();
+// a.addCommentInHotTopic({ hotTopic: { id: 20 } }).then(res => console.log(res))
 // a.searchCommentByPaging({ pageNum: 1, pageSize: 3, topic_id: 8, view_user_id: 1 })
 // a.searchAllUserOfLikeTopic(2,1)
 // a.searchTopicsByPaging({ pageSize: 10, pageNum: 1, topic_id: 7, view_user_id: 1 });
