@@ -82,7 +82,7 @@ const tabList = reactive([
 const handleChangeTabContent = (activeKey) => {
     console.log(activeKey,"tab content")
     currentKey.value = activeKey
-    router.push({ name: 'Notification', params: { id: activeKey } })
+    router.push({ name: 'Notification', params: { method: activeKey } })
 }
 
 onMounted(() => {

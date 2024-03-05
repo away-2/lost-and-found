@@ -39,10 +39,10 @@
 								<!-- <img v-else src="@/assets/images/点赞_active.png" /> -->
 								<span>{{ '点赞' }}</span>
 							</div>
-							<div class="comment-action" @click="handleShowCommentInput">
-								<img src="@/assets/images/评论.png" v-if="!isShowCommentInput" />
+							<div class="comment-action" @click="handleShowCommentInput(index)">
+								<img src="@/assets/images/评论.png" v-if="!isShowCommentInput[index]" />
 								<img v-else src="@/assets/images/评论_active.png" alt="" />
-								<span>{{!isShowCommentInput ? '评论' : '取消评论'}}</span>
+								<span :style="{ color: isShowCommentInput[index] ? '#1e80ff' : '#a9a9a9' }">{{!isShowCommentInput[index] ? '评论' : '取消评论'}}</span>
 							</div>
 						</div>
 					</div>
@@ -54,7 +54,7 @@
 
 			</div>
 			<div class="input-box">
-				<comment-input v-show="isShowCommentInput" :inputMinHeight="0" :isNeedIncreaseHeight="false"/>
+				<comment-input v-show="isShowCommentInput[index]" :inputMinHeight="0" :isNeedIncreaseHeight="false"/>
 			</div>
 		</div>
 	</div>
@@ -66,7 +66,7 @@ import { findUserCommentNotice } from '@/api/notification'
 import { formatPast } from '@/utils/time'
 
 const commentList = reactive([])
-const isShowCommentInput = ref(false)
+const isShowCommentInput = ref(Array(commentList.length).fill(false))
 
 // 处理评论通知图片
 const handlePictures = (pic) => {
@@ -104,8 +104,8 @@ const getAllUserCommentNotice = async () => {
 }
 
 // 展开输入框
-const handleShowCommentInput = () => {
-	isShowCommentInput.value = !isShowCommentInput.value
+const handleShowCommentInput = (index) => {
+	isShowCommentInput.value[index] = !isShowCommentInput.value[index]
 }
 
 onMounted(() => {
@@ -154,6 +154,12 @@ onMounted(() => {
 						.user-name {
 							font-size: 14px;
 						}
+						.user-operate {
+							margin-left: 8px;
+                            span {
+                                color: #515767;
+                            }
+                        }
 					}
 
 					.main-content {
@@ -236,7 +242,7 @@ onMounted(() => {
 			}
 		}
 		.input-box {
-			padding-left: 50px;
+			padding: 0 0 15px 50px;
 		}
 	}
 }

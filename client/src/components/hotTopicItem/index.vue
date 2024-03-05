@@ -162,7 +162,7 @@ const toDeleteHot = () => {
 	margin: 10px 0;
 
 	.hot-container {
-		margin-bottom: 10px;
+		padding: 20px 20px 10px 20px;
 
 		.hot-header {
 			display: flex;
@@ -224,12 +224,12 @@ const toDeleteHot = () => {
 			}
 
 			.hot-title-right {
-				padding: 20px;
+				padding: 10px 20px 0 0;
 				cursor: pointer;
 
 				img {
-					width: 13px;
-					height: 20px;
+					width: 16px;
+					height: 16px;
 
 					&:hover {
 						opacity: 0.6;
@@ -239,7 +239,7 @@ const toDeleteHot = () => {
 		}
 
 		.hot-content {
-			padding: 0 0 10px 70px;
+			padding-left: 70px;
 			color: #252933;
 
 			.text {
@@ -279,7 +279,7 @@ const toDeleteHot = () => {
 			display: flex;
 			justify-content: flex-end;
 			align-items: center;
-			padding: 10px 20px;
+			padding: 0px 20px;
 			z-index: 1;
 
 			.isblank {

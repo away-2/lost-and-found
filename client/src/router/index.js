@@ -132,7 +132,22 @@ const routes = [
             path: 'account', 
             name: 'Account',
             component: () => import('../views/setting/components/account.vue')
-           }
+           }, 
+           {
+            path: 'common', 
+            name: 'Common',
+            component: () => import('../views/setting/components/common.vue')
+           }, 
+           {
+            path: 'block', 
+            name: 'Block',
+            component: () => import('../views/setting/components/block.vue')
+           }, 
+           {
+            path: 'messages', 
+            name: 'Messages',
+            component: () => import('../views/setting/components/message.vue')
+           }, 
         ]
       }, 
       {

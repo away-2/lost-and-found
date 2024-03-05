@@ -123,8 +123,8 @@ const items = ref([
 
 // 消息下拉框点击回调
 const handleClickMenuItem = ({ item, key, keyPath }) => {
-	// console.log(item,"item", key,"key", keyPath, "keypath");
 	router.push({ name: 'Notification', params: {method: key} })
+	current.value = []
 }
 const userInfo = GET_USERINFO().user
 
@@ -148,7 +148,6 @@ const toLogin = () => {
 // 前往个人主页
 const toUserCenter = () => {
 	router.push({ path: `/user/${userInfo.id}`})
-	localStorage.removeItem('selectedMenuKeys')
 	current.value = []
 }
 

@@ -96,8 +96,6 @@ const handlePublishHot = async (data) => {
 		message.success('发布成功')
 		getAllHotInfo()
 		let id = res.data.newTopic.id
-		let newTopic = res.data.newTopic
-		localStorage.setItem('newTopic', JSON.stringify(newTopic))
 		const { href } = router.resolve({
 			path: `/hot/${id}`,
 		})

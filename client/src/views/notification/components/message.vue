@@ -126,7 +126,7 @@ const userName = ref('')
             border-bottom: 1px solid #f1f1f1;
         }
         .bottom-box {
-
+            height: 100px;
         }
 
 
