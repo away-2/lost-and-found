@@ -1,5 +1,4 @@
 // service层要操作数据库, 这里面的方法会经常被 controoler调用以完成某些功能, 因此这里肯定要引model层来操作表
-const { convertFindResult } = require('../tools/index')
 const { Op, literal } = require('sequelize')
 const User = require('../model/user.model')
 const UserConcernRelation = require('../model/user_concern_relation.model')
@@ -9,7 +8,6 @@ const HotTopic = require('../model/hot_topic.model')
 const StudentCode = require('../model/student_code.model')
 const School = require('../model/school.model')
 const { handleDotInFieldDueToJoinQuery } = require('../tools/index')
-const { use } = require('../router/topic.route')
 
 class UserService {
     // 根据条件查找用户

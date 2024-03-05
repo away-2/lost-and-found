@@ -14,6 +14,8 @@ const {
   findTopicInfoById,
   findTopicCommentByPaging,
   createHotTopicComment,
+  handleLikeTopicComment,
+  handleCancelLikeTopicComment
 } = require("../controller/topic.controller");
 // 引入一些要用到的中间件
 const { auth } = require("../middleware/auth.middleware");
@@ -47,5 +49,11 @@ router.post("/findTopicCommentByPaging", auth, findTopicCommentByPaging);
 
 // 发布沸点评论
 router.post('/addHotTopicComment',auth, createHotTopicComment)
+
+// 点赞沸点评论
+router.get('/likeTopicComment',auth,handleLikeTopicComment)
+
+// 取消点赞沸点评论
+router.get('/cancelLikeTopicComment',auth,handleCancelLikeTopicComment)
 
 module.exports = router;

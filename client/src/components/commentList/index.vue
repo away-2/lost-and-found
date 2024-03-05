@@ -42,15 +42,17 @@
 							<div class="comment-content multiline-text-ellipsis" v-html="item.content"></div>
 							<div class="comment-action">
 								<div class="action-time">{{ formatPast(item.createdAt) }}</div>
-								<div class="action-digg">
-									<img src="@/assets/images/点赞.png" v-show="item.like_number == 0" />
-									<img src="@/assets/images/点赞_active.png" v-show="item.like_number > 0" />
-									<span :class="{ 'active-blue': item.like_number > 0 }">{{ item.alreadyLikeComment ? item.like_number : '点赞' }} </span>
+								<div class="action-digg" @click="handleClickLikeComment(item)">
+									<img src="@/assets/images/点赞.png" v-show="!item.alreadyLikeComment" />
+									<img src="@/assets/images/点赞_active.png" v-show="item.alreadyLikeComment" />
+									<span :class="{ 'active-blue': item.alreadyLikeComment }">{{ item.like_number > 0 ? item.like_number : '点赞' }} </span>
 								</div>
 								<div class="action-reply" @click="handleClickReply(item.id)">
 									<img src="@/assets/images/评论.png" v-show="!shouldShowCommentInput(item.id)" />
 									<img src="@/assets/images/评论_active.png" v-show="shouldShowCommentInput(item.id)" />
-									<span :class="{ 'active-blue': shouldShowCommentInput(item.id) }">{{ shouldShowCommentInput(item.id) ? '取消回复' : '评论' }}</span>
+									<span :class="{ 'active-blue': shouldShowCommentInput(item.id) }">{{
+										shouldShowCommentInput(item.id) ? '取消回复' : `${item.remark_number ? item.remark_number : '评论'}`
+									}}</span>
 								</div>
 							</div>
 							<!-- 一级评论输入框组件 -->
@@ -86,11 +88,11 @@
 											</div>
 											<div class="reply-action">
 												<div class="action-time">{{ formatPast(replyItem.createdAt) }}</div>
-												<div class="action-digg">
-													<img src="@/assets/images/点赞.png" v-show="replyItem.like_number == 0" />
-													<img src="@/assets/images/点赞_active.png" v-show="replyItem.like_number > 0" />
-													<span :class="{ 'active-blue': replyItem.like_number > 0 }">
-														{{ replyItem.alreadyLikeComment ? replyItem.like_number : '点赞' }}
+												<div class="action-digg" @click="handleClickLikeComment(item, replyItem)">
+													<img src="@/assets/images/点赞.png" v-show="!replyItem.alreadyLikeComment" />
+													<img src="@/assets/images/点赞_active.png" v-show="replyItem.alreadyLikeComment" />
+													<span :class="{ 'active-blue': replyItem.alreadyLikeComment }">
+														{{ replyItem.like_number > 0 ? replyItem.like_number : '点赞' }}
 													</span>
 												</div>
 												<div class="action-reply" @click="handleClickReply(replyItem.id)">
@@ -128,7 +130,7 @@
 
 <script setup>
 import { ref, watch, reactive } from 'vue'
-import { findTopicCommentByPaging, publishHotTopicComment } from '@/api/hot'
+import { findTopicCommentByPaging, publishHotTopicComment, likeTopicComment, cancelLikeTopicComment } from '@/api/hot'
 import { formatPast } from '@/utils/time'
 import { message } from 'ant-design-vue'
 import useUserStore from '@/store/user'
@@ -156,12 +158,18 @@ const isSortActive = ref('new')
 const loading = ref(false)
 
 const handleSelectedSort = (type) => {
-	isSortActive.value = type
+	if (type !== isSortActive.value) {
+		isSortActive.value = type
+		pageNum.value = 1
+		pageSize.value = 3
+		commentList.splice(0, commentList.length)
+		getAllCommentInfo()
+	}
 }
 
 const getAllCommentInfo = async () => {
 	loading.value = true
-	let params = { pageNum: pageNum.value, pageSize: pageSize.value, topic_id: props.hotTopic.id }
+	let params = { pageNum: pageNum.value, pageSize: pageSize.value, topic_id: props.hotTopic.id, classify: isSortActive.value }
 	const res = await findTopicCommentByPaging(params)
 	loading.value = false
 	if (res.code == 200) {
@@ -220,6 +228,7 @@ let replyInfo = {
 	reply_user_id: null,
 }
 
+// 处理点击了发布评论的组件
 const handleCommentClick = (reply) => {
 	if (reply) {
 		currentCommentType.value = reply.type
@@ -230,6 +239,7 @@ const handleCommentClick = (reply) => {
 	}
 }
 
+// 发布评论
 const handlePublishComment = async (data) => {
 	const params = {
 		...replyInfo,
@@ -244,6 +254,7 @@ const handlePublishComment = async (data) => {
 	publishLoading.value = false
 	if (res.code == 200) {
 		message.success('评论成功')
+		currentShowCommentInputId.value = null
 		// 通知外部评论数更改
 		emits('commentTotalChange', 'add')
 		// 处理清空输入框
@@ -274,8 +285,38 @@ const handlePublishComment = async (data) => {
 			obj.replyUserInfo = inputBelongReplyItem.commentUserInfo
 			const belongComment = JSON.parse(JSON.stringify(commentList.find((r) => r.id === replyInfo.reply_id)))
 			const belongCommentIndex = commentList.findIndex((r) => r.id === replyInfo.reply_id)
+			belongComment.remark_number += 1
 			belongComment.replyList.unshift(obj)
 			commentList.splice(belongCommentIndex, 1, belongComment)
+		}
+	}
+}
+
+// 处理点击一级或二级评论的点赞
+const handleClickLikeComment = async (item, replyItem) => {
+	const comment_id = replyItem?.id || item.id
+	const alreadyLike = replyItem ? replyItem.alreadyLikeComment : item.alreadyLikeComment
+	let res
+	if (!alreadyLike) {
+		res = await likeTopicComment(comment_id)
+	} else {
+		res = await cancelLikeTopicComment(comment_id)
+	}
+	if (res.code === 200) {
+		message.success(alreadyLike ? '取消点赞成功!' : '点赞成功!')
+		// 处理回显
+		const topIndex = commentList.findIndex((r) => r.id === item.id)
+		if (!replyItem) {
+			// 点赞或取消点赞的是一级评论
+			commentList[topIndex].alreadyLikeComment = !alreadyLike
+			const originLikeNumber = commentList[topIndex].like_number
+			commentList[topIndex].like_number = alreadyLike ? originLikeNumber - 1 : originLikeNumber + 1
+		} else {
+			// 点赞或取消点赞的是二级评论
+			const secondIndex = commentList[topIndex].replyList.findIndex((r) => r.id === replyItem.id)
+			commentList[topIndex].replyList[secondIndex].alreadyLikeComment = !alreadyLike
+			const originLikeNumber = commentList[topIndex].replyList[secondIndex].like_number
+			commentList[topIndex].replyList[secondIndex].like_number = alreadyLike ? originLikeNumber - 1 : originLikeNumber + 1
 		}
 	}
 }
@@ -494,8 +535,7 @@ const handlePublishComment = async (data) => {
 										width: 28px;
 										height: 28px;
 										border-radius: 50%;
-					object-fit: cover;
-										
+										object-fit: cover;
 									}
 								}
 

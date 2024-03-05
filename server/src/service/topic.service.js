@@ -5,6 +5,7 @@ const UserConcernRelation = require("../model/user_concern_relation.model");
 const HotTopicComment = require('../model/hot_topic_comment.model')
 const HotTopicCommentLike = require('../model/hot_topic_comment_like.model')
 const CommentNotice = require('../model/comment_notice.model')
+const LikeConcernNotice = require('../model/like_conern_notice.model')
 const { Op, where, literal, Sequelize } = require("sequelize");
 const seq = require("../db/seq");
 
@@ -198,6 +199,37 @@ class HotTopicServices {
         },
       }
     );
+    // 最后: 发起赞和收藏通知
+    const num = await LikeConcernNotice.count({
+      where: {
+        active_user_id: user_id,
+        source_id: topic_id,
+        type: 'DZFD'
+      }
+    })
+    // 如果已经有该用户点赞该沸点的通知了，则不发通知
+    if (num > 0) {
+      return
+    }
+    const hotTopic = await HotTopic.findOne({
+      where: {
+        id: topic_id
+      },
+      raw: true
+    })
+    // 如果用户点赞的是自己的沸点，则不发通知
+    if (user_id === hotTopic.user_id) {
+      return
+    }
+    const comment = {
+      active_user_id: user_id,
+      receive_notice_user_id: hotTopic.user_id,
+      source_id: hotTopic.id,
+      source_title: hotTopic.content,
+      source_pictures: hotTopic.pictures,
+      type: 'DZFD'
+    }
+    await LikeConcernNotice.create(comment)
   }
   // 取消点赞沸点
   async cancelLikeTopic(user_id, topic_id) {
@@ -295,7 +327,6 @@ class HotTopicServices {
           [Op.in]: allFirstLevelComment.rows.map(item => item.id)
         }
       },
-      order: [["createdAt", "desc"]],
       raw: true
     })
     // 组织所有评论id，一级和二级的
@@ -359,7 +390,104 @@ class HotTopicServices {
   }
   // 点赞沸点评论
   async likeTopicComment(user_id, comment_id) {
-
+    // 查出这个用户对这个评论是否已点赞
+    const res = await HotTopicCommentLike.count({
+      where: {
+        user_id,
+        comment_id
+      }
+    })
+    // 如果该用户已经点赞该评论了，则不管
+    if (res > 0) {
+      return
+    }
+    // 第一步: 点赞沸点评论关系表中存入记录
+    await HotTopicCommentLike.create({
+      user_id,
+      comment_id
+    })
+    // 第二步: 给所属评论点赞数+1
+    await HotTopicComment.update(
+      {
+        like_number: literal("like_number + 1")
+      },
+      {
+        where: {
+          id: comment_id
+        }
+      }
+    )
+    // 发起赞和收藏通知
+    const num = await LikeConcernNotice.count({
+      where: {
+        active_user_id: user_id,
+        comment_id,
+        type: 'DZFDPL'
+      }
+    })
+    // 如果已经有该用户点赞该沸点的该评论的通知了，则不发通知
+    if (num > 0) {
+      return
+    }
+    const hotTopicComment = await HotTopicComment.findOne({
+      where: {
+        id: comment_id
+      },
+      raw: true
+    })
+    // 如果用户点赞的是自己的评论，则不发通知
+    if (user_id === hotTopicComment.user_id) {
+      return
+    }
+    const hotTopic = await HotTopic.findOne({
+      where: {
+        id: hotTopicComment.hot_topic_id
+      },
+      raw: true
+    })
+    const comment = {
+      active_user_id: user_id,
+      receive_notice_user_id: hotTopicComment.user_id,
+      source_id: hotTopic.id,
+      source_title: hotTopic.content,
+      source_pictures: hotTopic.pictures,
+      comment_id,
+      comment_content: hotTopicComment.content,
+      type: 'DZFDPL'
+    }
+    await LikeConcernNotice.create(comment)
+  }
+  // 取消点赞沸点评论
+  async cancelLikeTopicComment(user_id, comment_id) {
+    // 查出这个用户对这个沸点是否已点赞
+    const res = await HotTopicCommentLike.count({
+      where: {
+        user_id,
+        comment_id
+      }
+    })
+    // 如果该用户本来就没点赞这个沸点，则不管
+    if(res === 0) {
+      return
+    }
+    // 第一步: 沸点评论点赞关系表中删除记录
+    await HotTopicCommentLike.destroy({
+      where: {
+        user_id,
+        comment_id
+      }
+    })
+    // 第二步: 给点赞数-1
+    await HotTopicComment.update(
+      {
+        like_number: literal("like_number - 1")
+      },
+      {
+        where: {
+          id: comment_id
+        }
+      }
+    )
   }
   // 根据沸点id检查沸点是否存在
   async checkExistHotTopicById(id) {
@@ -419,8 +547,21 @@ class HotTopicServices {
         }
       }
     )
+    // 如果是回复的评论，那就给所在的一级评论的评论数+1
+    if (comment.reply_id) {
+      await HotTopicComment.update(
+        {
+          remark_number: literal('remark_number + 1')
+        },
+        {
+          where: {
+            id: comment.reply_id
+          }
+        }
+      )
+    }
     // 评论通知表插入记录
-    if (comment.user_id !== comment.reply_user_id) {
+    if (comment.user_id !== comment.reply_user_id || comment.user_id !== comment.hotTopic.user_id) {
       // 如果发布的用户不是回复的自己，就发通知
       await CommentNotice.create(commentNoticeObj)
     }

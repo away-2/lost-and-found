@@ -3,7 +3,15 @@
 		<navigation />
 		<div class="centerWrap">
 			<div class="inputWrap">
-				<comment-input shapeType="publish" :maxFileQuantity="2" @handleSubmit="handlePublishHot" :isNeedIncreaseHeight="false" allowInputCharQuantity="1000" />
+				<comment-input
+					hintText="快和同学一起分享新鲜事~"
+					shapeType="publish"
+					:maxFileQuantity="2"
+					@handleSubmit="handlePublishHot"
+					:isNeedIncreaseHeight="false"
+					allowInputCharQuantity="1000"
+					ref="topicInputRef"
+				/>
 			</div>
 			<router-view></router-view>
 		</div>
@@ -75,6 +83,8 @@ import navigation from './components/navigation.vue'
 const userStore = useUserStore()
 const router = useRouter()
 
+const topicInputRef = ref(null)
+
 const { systemUserInfo } = storeToRefs(userStore)
 
 const audit_state = ref('')
@@ -94,6 +104,7 @@ const handlePublishHot = async (data) => {
 	const res = await publishHot(params)
 	if (res.code == 200) {
 		message.success('发布成功')
+		topicInputRef.value.refreshData()
 		getAllHotInfo()
 		let id = res.data.newTopic.id
 		const { href } = router.resolve({

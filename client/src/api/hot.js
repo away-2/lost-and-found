@@ -92,3 +92,19 @@ export const publishHotTopicComment = (data) => {
         data
     })
 }
+
+// 点赞沸点评论
+export const likeTopicComment = (comment_id) => {
+    return request({
+        url: `/topicService/likeTopicComment?comment_id=${comment_id}`,
+        method: 'get',
+    })
+}
+
+// 取消点赞沸点评论
+export const cancelLikeTopicComment = (comment_id) => {
+    return request({
+        url: `/topicService/cancelLikeTopicComment?comment_id=${comment_id}`,
+        method: 'get',
+    })
+}

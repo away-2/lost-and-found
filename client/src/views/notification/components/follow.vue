@@ -73,6 +73,7 @@ onMounted(() => {
 @import '@/assets/style/custom.less';
 .container-wrap {
 	padding: 10px 20px;
+	padding-top: 20px;
 	.digg-list {
 		border-bottom: 1px solid #f1f1f1;
 		margin-bottom: 15px;
@@ -98,24 +99,24 @@ onMounted(() => {
 						display: flex;
 						align-items: center;
 						.user-name {
-							font-size: 14px;
+							font-size: 15px;
 							max-width: 150px;
 						}
 						.user-operate {
 							display: flex;
 							span {
 								margin: 0 10px;
-								font-size: 12xp;
-						color: #8a919f;
+								font-size: 14px;
+								color: #8a919f;
 							}
 						}
 					}
 					.main-content {
-						font-size: 12xp;
+						font-size: 13px;
 						color: #8a919f;
 					}
 					.timestamp {
-						font-size: 12xp;
+						font-size: 13px;
 						color: #8a919f;
 						margin: 5px 0;
 					}

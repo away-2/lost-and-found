@@ -10,6 +10,8 @@ const {
   addCommentInHotTopic,
   checkExistHotTopicById,
   checkExistHotTopicCommentById,
+  likeTopicComment,
+  cancelLikeTopicComment
 } = require("../service/topic.service");
 const { searchUserInfoById } = require("../service/user.service");
 
@@ -174,6 +176,22 @@ class HotTopicController {
         message: newComment.msg,
       };
     }
+  }
+  // 点赞沸点评论
+  async handleLikeTopicComment(ctx,next) {
+    await likeTopicComment(ctx.state.user.id, ctx.request.query.comment_id);
+    ctx.body = {
+      code: 200,
+      message: "点赞沸点评论成功",
+    };
+  }
+  // 取消点赞沸点评论
+  async handleCancelLikeTopicComment(ctx,next) {
+    await cancelLikeTopicComment(ctx.state.user.id, ctx.request.query.comment_id)
+    ctx.body = {
+      code: 200,
+      message: "取消点赞沸点评论成功",
+    };
   }
   // {
   //     id: 1,

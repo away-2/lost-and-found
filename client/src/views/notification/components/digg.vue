@@ -56,6 +56,7 @@ const type = ref(1)
 @import '@/assets/style/custom.less';
 .container-wrap {
     padding: 10px 20px;
+    padding-top: 20px;
     .digg-list {
         border-bottom: 1px solid #f1f1f1;
         .digg-item {

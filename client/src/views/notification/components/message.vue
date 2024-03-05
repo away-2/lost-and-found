@@ -48,6 +48,7 @@ const userName = ref('')
 @import '@/assets/style/custom.less';
 .main-container {
     display: flex;
+    padding-top: 10px;
     .left-box {
         width: 20%;
         border-right: 1px solid #f1f1f1;

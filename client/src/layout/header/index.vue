@@ -12,12 +12,12 @@
 					<img src="@/assets/images/通知.png" alt="" />
 					<template #overlay>
 						<a-menu style="width: 150px; padding: 10px;" @click="handleClickMenuItem">
-							<a-menu-item key="comment">评论</a-menu-item>
-							<a-menu-item key="digg">赞和收藏</a-menu-item>
-							<a-menu-item key="follow">新增粉丝</a-menu-item>
-							<a-menu-item key="message">私信</a-menu-item>
-							<a-menu-item key="system">系统通知</a-menu-item>
-							<a-menu-item key="setting">消息设置</a-menu-item>
+							<a-menu-item key="comment" style="padding: 8px 15px;">评论</a-menu-item>
+							<a-menu-item key="digg" style="padding: 8px 15px;">赞和收藏</a-menu-item>
+							<a-menu-item key="follow" style="padding: 8px 15px;">新增粉丝</a-menu-item>
+							<a-menu-item key="message" style="padding: 8px 15px;">私信</a-menu-item>
+							<a-menu-item key="system" style="padding: 8px 15px;">系统通知</a-menu-item>
+							<a-menu-item key="setting" style="padding: 8px 15px;">消息设置</a-menu-item>
 						</a-menu>
 					</template>
 				</a-dropdown>

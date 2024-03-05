@@ -1,43 +1,43 @@
-import { DataTypes } from 'sequelize'
-import seq from '../db/seq'
+const { DataTypes } = require('sequelize')
+const seq = require('../db/seq') 
 
 // 赞和收藏通知表
-const LikeConcernNotice = seq.define('laf_like_concern_post_notice',{
+const LikeConcernNotice = seq.define('laf_like_concern_notice',{
     // id会被自动创建
     active_user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         comment: '主动点赞评论或收藏帖子的用户id'
     },
-    passive_user_id: {
+    receive_notice_user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        comment: '被点赞评论或收藏帖子的用户id'
+        comment: '收到通知的用户id'
     },
-    source_topic_id: {
+    source_id: {
         type: DataTypes.INTEGER,
         comment: '沸点的id'
     },
-    source_post_id: {
+    source_title: {
+        type: DataTypes.TEXT,
+        comment: '所在沸点或帖子的内容'
+    },
+    source_pictures: {
+        type: DataTypes.STRING,
+        comment: '所在沸点或帖子的图片'
+    },
+    comment_id: {
         type: DataTypes.INTEGER,
-        comment: '帖子的id'
+        comment: '评论id'
     },
-    picture: {
-        type: DataTypes.STRING,
-        comment: '图片'
-    },
-    title: {
-        type: DataTypes.STRING,
-        comment: '标题'
-    },
-    comment: {
-        type: DataTypes.STRING,
+    comment_content: {
+        type: DataTypes.TEXT,
         comment: '评论内容'
     },
-    op_str: {
+    type: {
         type: DataTypes.STRING,
         allowNull: false,
-        comment: '操作类型, 所有取值, "like,topic"、"concern,post"、"like,topic,comment"、"like,post,commnet", 不是前端传入, 在帖子收藏接口和评论点赞接口里自己调'
+        comment: '赞和收藏的类型'
     }
 })
 

@@ -92,12 +92,13 @@ onMounted(() => {
 
 <style lang="less" scoped>
 .container-wrapper {
-    padding: 50px 150px;
+    padding: 20px 150px;
 
     .content-wrapper {
         background: #fff;
         border-radius: 2px;
         padding: 20px;
+        padding-bottom: 0;
 
         .top-box {
             display: flex;
@@ -126,5 +127,9 @@ onMounted(() => {
             }
         }
     }
+}
+
+.ant-tabs-tab-btn {
+    cursor: pointer;
 }
 </style>
