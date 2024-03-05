@@ -13,7 +13,10 @@
 				<div class="user-info-card">
 					<div class="card-header" @click="toUserCenter">
 						<img :src="systemUserInfo.avator" alt="" />
-						<div class="user-name text-ellipsis">{{ systemUserInfo.nick_name || systemUserInfo.real_name }}</div>
+						<div class="user-info">
+							<div class="user-name text-ellipsis">{{ systemUserInfo.nick_name || systemUserInfo.real_name }}</div>
+							<div class="user-school">{{ systemUserInfo.school_name }}</div>
+						</div>
 					</div>
 					<div class="count-item">
 						<div class="single-count-item">
@@ -177,7 +180,6 @@ onMounted(() => {
 					column-gap: 10px;
 					align-items: center;
 					margin-bottom: 20px;
-					cursor: pointer;
 
 					img {
 						width: 48px;
@@ -185,17 +187,18 @@ onMounted(() => {
 						border-radius: 50%;
 						object-fit: cover;
 						transition: all 0.3s;
-
-						&:hover {
-							opacity: 0.6;
-						}
+						cursor: pointer;
 					}
-
-					.user-name {
-						width: 70%;
-
-						&:hover {
-							opacity: 0.6;
+					.user-info {
+						width: 100%;
+						.user-name {
+							width: 70%;
+							cursor: pointer;
+						}
+						.user-school {
+							margin-top: 8px;
+							font-size: 12px;
+							color: #8a919f;
 						}
 					}
 				}

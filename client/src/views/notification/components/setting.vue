@@ -1,6 +1,6 @@
 <template>
     <div>
-        系统通知
+        消息设置
     </div>
 </template>
 

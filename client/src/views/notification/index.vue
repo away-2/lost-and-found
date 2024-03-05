@@ -74,7 +74,7 @@ const tabList = reactive([
     },
     {
         key: 'setting',
-        tab: '消息通知',
+        tab: '消息设置',
     },
 ])
 
@@ -119,6 +119,9 @@ onMounted(() => {
 
                 .setting-text {
                     font-size: 14px;
+                }
+                &:hover {
+                    opacity: 0.7;
                 }
             }
         }

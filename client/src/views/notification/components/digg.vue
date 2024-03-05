@@ -61,6 +61,8 @@ const type = ref(1)
         .digg-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
             .left-box {
                 display: flex;
                 column-gap: 15px;
