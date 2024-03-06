@@ -9,7 +9,6 @@ import { reactive, ref, onMounted } from 'vue'
 import { filndAllHotInfo } from '@/api/hot'
 import { useRoute } from 'vue-router'
 
-
 const hotList = ref([])
 const pageNum = ref(1)
 const pageSize = ref(10)
@@ -20,7 +19,7 @@ const route = useRoute()
 
 // 获取沸点列表
 const getAllHotInfo = async (id) => {
-	let data = { pageNum: pageNum.value, pageSize: pageSize.value, audit_state: '' }
+	let data = { pageNum: pageNum.value, pageSize: pageSize.value, audit_state: '', belong_user: id }
 	loading.value = true
 	const res = await filndAllHotInfo(data)
 	if (res.code == 200) {
@@ -30,13 +29,13 @@ const getAllHotInfo = async (id) => {
 				item.pictures = JSON.parse(item.pictures)
 			}
 			return item
-		}).filter(r => r.user_id == id)
+		})
 	}
 }
 
 onMounted(() => {
 	const userId = route.params.id.split('/')[0]
-	getAllHotInfo(userId)
+	getAllHotInfo(parseInt(userId))
 })
 </script>
 

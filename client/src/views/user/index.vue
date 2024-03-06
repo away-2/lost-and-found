@@ -340,8 +340,7 @@ onMounted(() => {
 
 	.main-wrapper {
 		width: 100%;
-		height: 100px;
-		background: #fff;
+		margin-bottom: 10px;
 	}
 }
 </style>

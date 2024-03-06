@@ -8,7 +8,9 @@ const {
   letSomeoneConcernOther,
   letSomeoneCancelConcernOther,
   searchNumberInfoAboutUser,
-  searchUserInfoById
+  searchUserInfoById,
+  modifyUserInfo,
+  searchAllConcernUser,
 } = require("../service/user.service");
 
 class UserController {
@@ -151,22 +153,39 @@ class UserController {
     };
   }
   // 查询指定用户的一些数量上的信息
-  async findNumberInfoAboutUser(ctx,next) {
-    const info = await searchNumberInfoAboutUser(ctx.request.query.user_id)
+  async findNumberInfoAboutUser(ctx, next) {
+    const info = await searchNumberInfoAboutUser(ctx.request.query.user_id);
     ctx.body = {
       code: 200,
-      data: info
-    }
+      data: info,
+    };
   }
   // 根据用户id查询用户信息
-  async findUserInfoById(ctx,next) {
-    const res = await searchUserInfoById(ctx.request.query.id)
+  async findUserInfoById(ctx, next) {
+    const res = await searchUserInfoById(ctx.request.query.id);
     ctx.body = {
       code: 200,
-      data: res
+      data: res,
+    };
+  }
+  // 修改用户信息
+  async updateUserInfo(ctx, next) {
+    const id = ctx.state.user.id;
+    const updateInfo = ctx.request.body;
+    await modifyUserInfo({ updateObj: updateInfo, whereObj: { id } });
+    ctx.body = {
+      code: 200,
+      message: "修改用户信息成功",
+    };
+  }
+  // 查询某个用户的所有关注的用户
+  async findSomeOneAllConcernUser(ctx, next) {
+    const concernUserList = await searchAllConcernUser(ctx.request.query.user_id,ctx.state.user.id);
+    ctx.body = {
+      code: 200,
+      data: concernUserList
     }
   }
-
   // 通过学号查找学生信息
   // async findStudentInfoByStudentCode(ctx, next) {
   //   const { student_code } = ctx.query

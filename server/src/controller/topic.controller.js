@@ -24,6 +24,7 @@ class HotTopicController {
       pageSize: ctx.request.body.pageSize,
       audit_state: ctx.request.body.audit_state,
       classify: ctx.request.body.classify,
+      belong_user: ctx.request.body.belong_user,
       view_user_id,
     });
     ctx.body = {

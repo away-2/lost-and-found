@@ -71,6 +71,8 @@ onMounted(() => {
 
 <style lang="less" scoped>
 @import '@/assets/style/custom.less';
+@import url('@/style/index.less');
+
 .container-wrap {
 	padding: 10px 20px;
 	padding-top: 20px;
@@ -125,6 +127,9 @@ onMounted(() => {
 			.operate-box {
 				height: 20px;
 				transform: translateY(-10px);
+				.concern-btn {
+					.common-concern-btn(@width: 90px,@bg: #f5f8ff,@color: #2d88ff,@borderColor: rgba(30,128,255,0.3));
+				}
 			}
 		}
 	}

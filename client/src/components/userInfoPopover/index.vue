@@ -99,6 +99,8 @@ const handleOpenChange = (visible) => {
 </script>
 
 <style lang="less" scoped>
+@import url('../../style/index.less');
+
 .ant-popover-inner-content {
 	.wrapper {
 		min-width: 250px;
@@ -142,8 +144,9 @@ const handleOpenChange = (visible) => {
 		padding-bottom: 10px;
 		justify-content: space-between;
 		column-gap: 15px;
-
-		
+		.concern-btn {
+			.common-concern-btn()
+		}
 	}
 
 	.user-popover-footer {

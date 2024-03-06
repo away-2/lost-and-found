@@ -29,15 +29,16 @@ body {
 }
 
 // 未被关注时按钮样式
-.concern-btn {
-    width: 110px;
-    line-height: 32px;
-    background: #1e80ff;
-    color: #fff;
+.common-concern-btn(@width: 110px,@height: 35px,@bg: #1e80ff,@color: #fff,@borderColor: #1e80ff) {
+    width: @width;
+    height: @height;
+    line-height: @height;
+    background: @bg;
+    color: @color;
     cursor: pointer;
     border-radius: 3px;
+    border: 1px solid @borderColor;
     text-align: center;
-    padding: 4px 20px;
     &:hover {
         opacity: 0.6;
     }
@@ -45,21 +46,21 @@ body {
 
 // 被关注时按钮样式
 .concerned {
-    background: #f6f6f7;
-    color: #8a919f;
-    border: 1px solid #e0e0e0;
+    background: #f6f6f7 !important;
+    color: #8a919f !important;
+    border: 1px solid #e0e0e0 !important;
 }
 
 // 私信按钮样式
 .message-btn {
     width: 110px;
-    line-height: 32px;
+    height: 35px;
+    line-height: 35px;
     background: #1e80ff0d;
     color: #1e80ff;
     cursor: pointer;
     border-radius: 3px;
     text-align: center;
-    padding: 4px 20px;
     border: 1px solid rgba(30, 128, 255, 0.3);
     &:hover {
         opacity: 0.6;

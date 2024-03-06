@@ -1,4 +1,4 @@
-const { searchUserIncreaseFansNotice, searchUserCommentNotice } = require('../service/notice.service')
+const { searchUserIncreaseFansNotice, searchUserCommentNotice, searchUserLikeAndCollectNotice } = require('../service/notice.service')
 
 class NoticeController {
     // 查询登录用户所有新增粉丝通知
@@ -12,6 +12,14 @@ class NoticeController {
     // 查询登录用户所有评论通知
     async findUserCommentNotice(ctx,next) {
         const notices = await searchUserCommentNotice(ctx.state.user.id)
+        ctx.body = {
+            code: 200,
+            data: notices
+        }
+    }
+    // 查询登录用户所有赞和收藏通知
+    async findUserLikeAndCollectNotice(ctx,next) {
+        const notices = await searchUserLikeAndCollectNotice(ctx.state.user.id)
         ctx.body = {
             code: 200,
             data: notices

@@ -2,6 +2,7 @@ const CommentNotice = require("../model/comment_notice.model")
 const IncreaseFansNotice = require("../model/increase_fans_notice.model")
 const User = require('../model/user.model')
 const UserConcernRelation = require("../model/user_concern_relation.model");
+const LikeConcernNotice = require('../model/like_conern_notice.model')
 const { Op } = require('sequelize')
 
 class CommentService {
@@ -64,6 +65,34 @@ class CommentService {
             obj.commentUserInfo = { real_name: '已注销用户', avator: 'http://localhost:3100/upload/init_avator.jpg' }
             if(commentUserInfo) {
                 obj.commentUserInfo = commentUserInfo
+            }
+            return obj
+        })
+        return result
+    }
+    // 查询指定用户所有赞和收藏通知
+    async searchUserLikeAndCollectNotice(user_id) {
+        const notices = await LikeConcernNotice.findAll({
+            where: {
+                receive_notice_user_id: user_id
+            },
+            raw: true
+        })
+        const allActiveUserInfo = await User.findAll({
+            where: {
+                id: {
+                    [Op.in]: notices.map(r => r.active_user_id)
+                }
+            },
+            raw: true
+        })
+        const result = notices.map(notice => {
+            const obj = {}
+            Object.assign(obj,notice)
+            const activeUserInfo = allActiveUserInfo.find(r => r.id === notice.active_user_id)
+            obj.activeUserInfo = { real_name: '已注销用户', avator: 'http://localhost:3100/upload/init_avator.jpg' }
+            if(activeUserInfo) {
+                obj.activeUserInfo = activeUserInfo
             }
             return obj
         })

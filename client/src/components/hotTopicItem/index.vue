@@ -159,7 +159,7 @@ const toDeleteHot = () => {
 	width: 100%;
 	background: #fff;
 	border-radius: 5px;
-	margin: 10px 0;
+	margin-bottom: 10px;
 
 	.hot-container {
 		padding: 20px 20px 10px 20px;

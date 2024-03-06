@@ -12,7 +12,9 @@ const {
   concernSomeone,
   cancelConcernSomeone,
   findNumberInfoAboutUser,
-  findUserInfoById
+  findUserInfoById,
+  updateUserInfo,
+  findSomeOneAllConcernUser
 } = require("../controller/user.controller");
 const { sendVarifyCode } = require("../controller/nodemailer.controller");
 // 引入一些要用到的中间件
@@ -65,5 +67,11 @@ router.get('/findNumberInfoAboutUser',auth,findNumberInfoAboutUser)
 
 // 根据用户id查询用户信息
 router.get('/findUserInfoById',auth,findUserInfoById)
+
+// 修改用户信息
+router.post('/updateUserInfo',auth,updateUserInfo)
+
+// 查询某个用户的所有关注的用户
+router.get('/findSomeoneAllConcernUser',auth,findSomeOneAllConcernUser)
 
 module.exports = router;

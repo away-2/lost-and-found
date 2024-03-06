@@ -92,7 +92,7 @@ const { systemUserInfo } = storeToRefs(userStore)
 
 const convertPathToKey = (path) => {
 	let key = path
-	if (path.includes('/hot')) {
+	if (path.includes('/hot') && !parseInt(path.split('/').pop())) {
 		key = '/hot'
 	}
 	return key
@@ -127,10 +127,13 @@ const items = ref([
 	},
 ])
 
+watch(()=>route.path,() => {
+	current.value = [convertPathToKey(route.path)]
+})
+
 // 消息下拉框点击回调
 const handleClickMenuItem = ({ item, key, keyPath }) => {
 	router.push({ name: 'Notification', params: { method: key } })
-	current.value = []
 }
 const userInfo = GET_USERINFO().user
 
@@ -154,7 +157,6 @@ const toLogin = () => {
 // 前往个人主页
 const toUserCenter = () => {
 	router.push({ path: `/user/${userInfo.id}` })
-	current.value = []
 }
 
 // 退出登录

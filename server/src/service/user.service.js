@@ -184,6 +184,47 @@ class UserService {
         }))
         return res;
     }
+    // 更新用户信息
+    async modifyUserInfo({ whereObj, updateObj }) {
+        await User.update(updateObj,{ where: whereObj })
+    }
+    // 查询某个用户的所有关注的用户
+    async searchAllConcernUser(user_id,view_user_id) {
+        const concernUserList = await UserConcernRelation.findAll({
+            where: {
+                activeUserId: user_id
+            },
+            raw: true
+        })
+        const concernUserInfoList = await User.findAll({
+            where: {
+                id: {
+                    [Op.in]: concernUserList.map(r => r.passiveUserId)
+                }
+            },
+            raw: true
+        })
+        let viewUserConcernUserIds = concernUserList.map(r => r.passiveUserId)
+        if(user_id !== view_user_id) {
+            viewUserConcernUserIds = (await UserConcernRelation.findAll({
+                where: {
+                    activeUserId: view_user_id,
+                    passiveUserId: {
+                        [Op.in]: concernUserList.map(r => r.passiveUserId)
+                    }
+                },
+                raw: true
+            })).map(r => r.passiveUserId)
+        } 
+        return concernUserList.map(item => {
+            const concernUserInfo = concernUserInfoList.find(r => r.id === item.passiveUserId)
+            return {
+                ...item,
+                concernUserInfo,
+                alreadyConcern: viewUserConcernUserIds.includes(item.passiveUserId)
+            }
+        })   
+    }
 }
 
 const userService = new UserService()

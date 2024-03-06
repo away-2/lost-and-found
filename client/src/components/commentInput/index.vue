@@ -231,6 +231,7 @@ defineExpose({
 		background: #f2f3f5;
 		padding: 10px;
 		padding-bottom: 15px;
+		outline: none;
 		position: relative;
 		transition: all 0.3s;
 
@@ -256,6 +257,7 @@ defineExpose({
 			font-family: 'AliRegular' !important;
 			line-height: 23px;
 			overflow-y: scroll;
+			padding-bottom: 15px;
 			transition: all 0.3s;
 
 			&:empty::before {
