@@ -71,3 +71,10 @@ export const findUserInfoById = (id) => {
         url: `/userService/findUserInfoById?id=${id}`
     })
 }
+
+// 查询某个用户所有关注的用户
+export const findSomeoneAllConcernUser = (user_id) => {
+    return request({
+        url: `/userService/findSomeoneAllConcernUser?user_id=${user_id}`
+    })
+}

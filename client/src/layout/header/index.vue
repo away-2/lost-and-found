@@ -9,15 +9,21 @@
 			<div class="loginWrap" v-show="!token" @click="toLogin">登录</div>
 			<div class="avatorWrap" v-show="token">
 				<a-dropdown>
-					<img src="@/assets/images/通知.png" alt="" />
+					<svg t="1709695143893" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1908" width="24" height="22">
+						<path
+							d="M594.7 143.1c0-43.9-36.8-79.7-82.2-79.7-45.3 0-82.2 35.7-82.2 79.7 0 4.5 0.4 8.9 1.1 13.2-113.5 38.3-206.7 156.1-206.7 295.4v109.6s0 157.9-40 159.3c-23.9 0-42.2 17.8-42.2 39.8 0 22.1 18.4 39.8 41.1 39.8h657.8c22.8 0 41.1-17.8 41.1-39.8 0-22.2-18.4-39.8-41.1-39.8-41.1 0-41.1-158.2-41.1-158.2V451.6c0-139.4-87.1-257.2-206.7-295.5 0.7-4.2 1.1-8.6 1.1-13z m41.1 696.8c-0.1 66.1-54.8 119.5-123.3 119.5-68 0-123.2-53.3-123.3-119.5"
+							p-id="1909"
+							fill="#8a919f"
+						></path>
+					</svg>
 					<template #overlay>
-						<a-menu style="width: 150px; padding: 10px;" @click="handleClickMenuItem">
-							<a-menu-item key="comment" style="padding: 8px 15px;">评论</a-menu-item>
-							<a-menu-item key="digg" style="padding: 8px 15px;">赞和收藏</a-menu-item>
-							<a-menu-item key="follow" style="padding: 8px 15px;">新增粉丝</a-menu-item>
-							<a-menu-item key="message" style="padding: 8px 15px;">私信</a-menu-item>
-							<a-menu-item key="system" style="padding: 8px 15px;">系统通知</a-menu-item>
-							<a-menu-item key="setting" style="padding: 8px 15px;">消息设置</a-menu-item>
+						<a-menu style="width: 150px; padding: 10px" @click="handleClickMenuItem">
+							<a-menu-item key="comment" style="padding: 8px 15px">评论</a-menu-item>
+							<a-menu-item key="digg" style="padding: 8px 15px">赞和收藏</a-menu-item>
+							<a-menu-item key="follow" style="padding: 8px 15px">新增粉丝</a-menu-item>
+							<a-menu-item key="message" style="padding: 8px 15px">私信</a-menu-item>
+							<a-menu-item key="system" style="padding: 8px 15px">系统通知</a-menu-item>
+							<a-menu-item key="setting" style="padding: 8px 15px">消息设置</a-menu-item>
 						</a-menu>
 					</template>
 				</a-dropdown>
@@ -86,9 +92,9 @@ const { systemUserInfo } = storeToRefs(userStore)
 
 const convertPathToKey = (path) => {
 	let key = path
-	if(path.includes('/hot')) {
+	if (path.includes('/hot')) {
 		key = '/hot'
-	}	
+	}
 	return key
 }
 
@@ -123,12 +129,12 @@ const items = ref([
 
 // 消息下拉框点击回调
 const handleClickMenuItem = ({ item, key, keyPath }) => {
-	router.push({ name: 'Notification', params: {method: key} })
+	router.push({ name: 'Notification', params: { method: key } })
 	current.value = []
 }
 const userInfo = GET_USERINFO().user
 
-onMounted(()=> {
+onMounted(() => {
 	const userInfo = GET_USERINFO().user
 	userStore.getSystemUserInfo(userInfo.id)
 })
@@ -137,7 +143,7 @@ let router = useRouter()
 
 let token = GET_USERINFO().token
 
-const selectedKeys = ({ key,selectedKeys }) => {
+const selectedKeys = ({ key, selectedKeys }) => {
 	router.push(key)
 }
 
@@ -147,7 +153,7 @@ const toLogin = () => {
 
 // 前往个人主页
 const toUserCenter = () => {
-	router.push({ path: `/user/${userInfo.id}`})
+	router.push({ path: `/user/${userInfo.id}` })
 	current.value = []
 }
 
@@ -168,7 +174,7 @@ const toLogout = () => {
 
 // 修改密码
 const updatePwd = () => {
-	router.push('/updatePwd')
+	// router.push('/updatePwd')
 }
 onMounted(() => {
 	// router.push('/')
@@ -214,20 +220,20 @@ onMounted(() => {
 			padding-top: 6px;
 			border-radius: 2px;
 		}
+		.icon {
+			margin-right: 20px;
+			&:hover {
+				opacity: 0.6;
+				path {
+					fill: black;
+				}
+			}
+		}
 
 		.avatorWrap {
 			display: flex;
 			align-items: center;
 			cursor: pointer;
-
-			img {
-				width: 20px;
-				height: 20px;
-				margin-right: 15px;
-				&:hover {
-					opacity: 0.6;
-				}
-			}
 		}
 
 		.isLogin {
@@ -271,7 +277,7 @@ onMounted(() => {
 
 		.counts-item {
 			display: flex;
-			justify-content:space-around;
+			justify-content: space-around;
 			align-items: center;
 			margin: 8px 0;
 			.single-count-item {

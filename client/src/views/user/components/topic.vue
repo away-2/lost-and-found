@@ -17,29 +17,27 @@ const loading = ref(false)
 
 const route = useRoute()
 
-let userId = route.params.id.split('/')[0]
 
 // 获取沸点列表
-const getAllHotInfo = async () => {
+const getAllHotInfo = async (id) => {
 	let data = { pageNum: pageNum.value, pageSize: pageSize.value, audit_state: '' }
 	loading.value = true
 	const res = await filndAllHotInfo(data)
 	if (res.code == 200) {
 		loading.value = false
-		hotList.value = res.data.hotTopicList.map((item) => {
+		 hotList.value = res.data.hotTopicList.map((item) => {
 			if (item.pictures) {
 				item.pictures = JSON.parse(item.pictures)
 			}
 			return item
-		})
+		}).filter(r => r.user_id == id)
 	}
 }
 
 onMounted(() => {
-	getAllHotInfo()
-    console.log(userId,"1111");
+	const userId = route.params.id.split('/')[0]
+	getAllHotInfo(userId)
 })
 </script>
 
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

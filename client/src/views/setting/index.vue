@@ -1,14 +1,14 @@
 <template>
 	<div class="setting-container">
 		<div class="top-wrapper">
-			<div class="navigation" @click="backUserCenter">
+			<div class="navigation" @click="backUserCenter(systemUserInfo.id)">
 				<img src="@/assets/images/返回.png" alt="" />
 				<span>返回个人主页</span>
 			</div>
 		</div>
 		<div class="main-wrapper">
 			<div class="sider-bar-wrap">
-				<div class="sider-bar-text" v-for="(item, index) in navigationList" :key="index" :class="{ selected: isSelected == item.path }" @click="handleClickSiderbar(item.path)">
+				<div class="sider-bar-text" v-for="(item, index) in navigationList" :key="index" :class="{ selected: isSelected == item.path }" @click="handleClickSidebar(item.path)">
 					<span>{{ item.title }}</span>
 				</div>
 			</div>
@@ -22,16 +22,20 @@
 <script setup>
 import { reactive, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { storeToRefs } from 'Pinia'
+import useUserStore from '@/store/user'
 
+const userStore = useUserStore()
+const { systemUserInfo } = storeToRefs(userStore)
 const router = useRouter()
 const route = useRoute()
 
 const navigationList = reactive([
 	{ title: '用户信息', path: 'Profile' },
 	{ title: '账号设置', path: 'Account' },
-    { title: '通用设置', path: 'Common' },
-    { title: '消息设置', path: 'Messages' },
-    { title: '屏蔽管理', path: 'Block' }
+	{ title: '通用设置', path: 'Common' },
+	{ title: '消息设置', path: 'Messages' },
+	{ title: '屏蔽管理', path: 'Block' },
 ])
 const isSelected = ref(route.name)
 
@@ -42,12 +46,11 @@ watch(
 	}
 )
 // 返回上一级
-const backUserCenter = () => {
-	window.history.back()
+const backUserCenter = (id) => {
+	router.push({ path: `/user/${id}` })
 }
 
-const handleClickSiderbar = (name) => {
-	// isSelected.value = name
+const handleClickSidebar = (name) => {
 	router.push({ name })
 }
 </script>
@@ -57,6 +60,8 @@ const handleClickSiderbar = (name) => {
 
 .setting-container {
 	padding: 20px 150px;
+	position: sticky;
+	top: 20px;
 
 	.top-wrapper {
 		background: #fff;
@@ -91,7 +96,7 @@ const handleClickSiderbar = (name) => {
 		.sider-bar-wrap {
 			background: #fff;
 			width: 20%;
-			height: 500px;
+			height: 600px;
 			border-radius: 4px;
 			padding: 8px;
 
@@ -121,7 +126,7 @@ const handleClickSiderbar = (name) => {
 		.main-content-wrap {
 			background: #fff;
 			width: 80%;
-			height: 100px;
+			height: 600px;
 			border-radius: 4px;
 		}
 	}

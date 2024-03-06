@@ -74,9 +74,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="bottom-image">
+		<!-- <div class="bottom-image">
 			<img src="@/assets/images/bg.gif" alt="" />
-		</div>
+		</div> -->
 		<div class="main-wrapper">
 			<a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @select="selectedKeys" />
 			<router-view></router-view>
@@ -171,6 +171,12 @@ const getUserInfo = async () => {
 		Object.assign(userInfo, res.data)
 	}
 }
+watch(
+	() => route.path,
+	() => {
+		getUserInfo()
+	}
+)
 
 onMounted(() => {
 	getUserInfo()
