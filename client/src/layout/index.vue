@@ -1,6 +1,6 @@
 <template>
     <div class="layout_container">
-        <div class="layout_header">
+        <div class="layout_header" v-if="!showScrollTop">
             <Header />
         </div>
         <div class="layout_main">
@@ -12,6 +12,16 @@
 <script setup>
 import Header from './header/index.vue'
 import Main from './main/index.vue'
+import { ref, onMounted } from 'vue'
+
+const showScrollTop = ref(false)
+
+onMounted(() => {
+    window.addEventListener('scroll', () => {
+        const scrollHeight = document.documentElement.scrollTop
+        showScrollTop.value = scrollHeight > 200
+    })
+})
 
 </script>
 

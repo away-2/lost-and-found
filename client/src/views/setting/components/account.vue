@@ -105,6 +105,10 @@ onMounted(() => {})
 			.device-bind {
 				color: @base-blue-color;
 				font-size: 14px;
+				cursor: pointer;
+				&:hover {
+					opacity: 0.7;
+				}
 			}
 		}
 	}

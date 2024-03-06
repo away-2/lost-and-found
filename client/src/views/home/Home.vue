@@ -8,7 +8,8 @@
 </template>
 
 <script setup>
-import backTop from '@/components/backTop/index.vue'
+
+
 </script>
 
 <style lang="less" scoped>
