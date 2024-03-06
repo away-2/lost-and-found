@@ -3,14 +3,18 @@
 		<div class="bottom-image">
 			<img src="@/assets/images/bg.gif" alt="" />
 		</div>
+        <back-top />
 	</div>
 </template>
 
-<script setup></script>
+<script setup>
+import backTop from '@/components/backTop/index.vue'
+</script>
 
 <style lang="less" scoped>
 .container-wrapper {
     padding: 0 50px;
+    height: 1000px;
 	.bottom-image {
 		img {
 			max-width: 100%;
