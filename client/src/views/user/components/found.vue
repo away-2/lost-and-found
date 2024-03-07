@@ -1,7 +1,6 @@
 <template>
-    <div>
-        招领
-    </div>
+     <empty-status title="暂无招领帖子哦~" :isShow="true"/>
+
 </template>
 
 <script setup>

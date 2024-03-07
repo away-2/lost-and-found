@@ -1,7 +1,6 @@
 <template>
-    <div>
-        动态
-    </div>
+     <empty-status title="暂无动态哦~" :isShow="true"/>
+
 </template>
 
 <script setup>

@@ -78,3 +78,10 @@ export const findSomeoneAllConcernUser = (user_id) => {
         url: `/userService/findSomeoneAllConcernUser?user_id=${user_id}`
     })
 }
+
+// 查询某个用户所有粉丝
+export const findSomeoneAllFans = (user_id) => {
+    return request({
+        url: `/userService/findSomeoneAllFans?user_id=${user_id}`
+    })
+}
