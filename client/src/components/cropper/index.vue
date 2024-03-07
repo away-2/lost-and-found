@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<a-modal title="图片剪裁" v-model:visible="visible" width="1000px">
+		<a-modal title="图片剪裁" v-model:open="visible" width="1000px">
 			<div class="cropper-content">
 				<div class="cropper" style="text-align: center">
 					<vue-cropper
@@ -99,6 +99,11 @@ const confirm = () => {
 const cancel = () => {
 	visible.value = false
 }
+
+defineExpose({
+	showModal
+})
+
 </script>
 
 <style lang="less" scoped>

@@ -7,6 +7,7 @@ import UserInfoPopover from '@/components/userInfoPopover/index.vue'
 import VerifyCode from '@/components/verifyCode/index.vue'
 import BackTop from '@/components/backTop/index.vue'
 import EmptyStatus from '@/components/emptyStatus/index.vue'
+import Cropper from '@/components/cropper/index.vue'
 
 
 export default {
@@ -20,5 +21,6 @@ export default {
            .component('verifyCode', VerifyCode)
            .component('backTop', BackTop)
            .component('emptyStatus', EmptyStatus)
+           .component('cropper',Cropper)
     }
 }

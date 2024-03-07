@@ -7,24 +7,24 @@
 			<div class="left-box">
 				<div class="base-info">基本信息</div>
 				<div class="form-box">
-					<a-form :model="formState" v-bind="layout" name="nest-messages" :validate-messages="validateMessages" @finish="onFinish">
+					<a-form :model="userInfo" v-bind="layout" name="nest-messages" :validate-messages="validateMessages" @finish="onFinish">
 						<a-form-item :name="real_name" label="用户名">
-							<a-input v-model:value="systemUserInfo.real_name" disabled />
+							<a-input v-model:value="userInfo.real_name" disabled />
 						</a-form-item>
 						<a-form-item :name="nick_name" label="昵称">
-							<a-input v-model:value="formState.nick_name" />
+							<a-input v-model:value="userInfo.nick_name" />
 						</a-form-item>
 						<a-form-item :name="school" label="学校" :rules="[{ type: 'email' }]">
-							<a-input v-model:value="systemUserInfo.school_name" disabled />
+							<a-input v-model:value="userInfo.school_name" disabled />
 						</a-form-item>
 						<a-form-item :name="grade" label="年级" :rules="[{ type: 'number', min: 0, max: 99 }]">
-							<a-input v-model:value="systemUserInfo.grade" disabled />
+							<a-input v-model:value="userInfo.grade" disabled />
 						</a-form-item>
 						<a-form-item :name="department" label="学院">
-							<a-input v-model:value="systemUserInfo.department" disabled />
+							<a-input v-model:value="userInfo.department" disabled />
 						</a-form-item>
 						<a-form-item :name="profile" label="个人简介">
-							<a-textarea v-model:value="formState.profile" :rows="5" />
+							<a-textarea v-model:value="userInfo.profile" :rows="5" />
 						</a-form-item>
 						<a-form-item :wrapper-col="{ ...layout.wrapperCol, offset: 8 }">
 							<a-button type="primary" html-type="submit">保存修改</a-button>
@@ -34,8 +34,9 @@
 			</div>
 			<div class="right-box">
 				<div class="content-box">
-					<div class="avatar-box">
-						<img :src="systemUserInfo.avator" alt="" />
+					<div class="avatar-box" @click="handleUploadAvatar">
+						<img :src="avatar" alt="" />
+						<input ref="avatorUploadRef" type="file" v-show="false" accept=".jpg,.png" @change="handleAvatarUploadChange" />
 					</div>
 					<div class="text">上传头像</div>
 					<div class="notes">
@@ -46,17 +47,42 @@
 			</div>
 		</div>
 	</div>
+	<cropper ref="cropperRef" />
 </template>
 
 <script setup>
-import { reactive, onMounted, ref } from 'vue'
+import { reactive, onMounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import useUserStore from '@/store/user'
+import { message } from 'ant-design-vue'
+
+const cropperRef = ref(null)
+const avatorUploadRef = ref(null)
 
 const userStore = useUserStore()
 const { systemUserInfo } = storeToRefs(userStore)
 
-let userInfo = ref(systemUserInfo)
+let userInfo = reactive({
+	real_name: '',
+	nick_name: '',
+	school_name: '',
+	grade: '',
+	department: '',
+	profile: '',
+})
+
+const avatar = ref('')
+
+watch(
+	() => systemUserInfo.value,
+	() => {
+		Object.keys(userInfo).forEach(key => {
+			userInfo[key] = systemUserInfo.value[key]
+		})
+		avatar.value = systemUserInfo.value.avator
+	},
+	{ immediate: true }
+)
 
 const layout = {
 	labelCol: {
@@ -66,15 +92,38 @@ const layout = {
 		span: 16,
 	},
 }
-const formState = reactive({
-	nick_name: `${userInfo.value.nick_name}`,
-	profile: `${userInfo.value.profile}`,
-})
 const onFinish = (values) => {
 	console.log('Success:', values)
 }
 
 onMounted(() => {})
+
+const handleUploadAvatar = () => {
+	avatorUploadRef.value.click()
+}
+
+const handleAvatarUploadChange = (e) => {
+	const files = e.target.files
+	const rawFile = files[0]
+	const src = URL.createObjectURL(rawFile)
+	e.target.value = null
+	handleCropImg(src)
+}
+
+const handleCropImg = (imgSrc) => {
+	console.log(cropperRef.value)
+	cropperRef.value.showModal({
+		img: imgSrc,
+		success: (res) => {
+			// 裁剪完成 拿到的是一个blob对象
+			const reader = new FileReader()
+			reader.readAsDataURL(res.img)
+			reader.onload = () => {
+				avatar.value = reader.result
+			}
+		},
+	})
+}
 </script>
 
 <style lang="less" scoped>
@@ -113,15 +162,36 @@ onMounted(() => {})
 				.avatar-box {
 					width: 90px;
 					height: 90px;
+					position: relative;
+					cursor: pointer;
+					&:hover {
+						&::after {
+							opacity: 1;
+						}
+					}
+					&::after {
+						content: '编辑头像';
+						position: absolute;
+						width: 100%;
+						height: 100%;
+						background: rgba(0, 0, 0, 0.6);
+						left: 0;
+						top: 0;
+						border-radius: 50%;
+						color: white;
+						font-size: 13px;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						opacity: 0;
+						transition: all 0.3s;
+					}
 					img {
-						width: 90px;
-						height: 90px;
+						width: 100%;
+						height: 100%;
 						border-radius: 50%;
 						object-fit: cover;
 						cursor: pointer;
-						:hover {
-							opacity: 0.7;
-						}
 					}
 				}
 				.text {

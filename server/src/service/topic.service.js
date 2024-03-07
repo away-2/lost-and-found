@@ -532,9 +532,10 @@ class HotTopicServices {
       comment_type: comment.reply_id ? 'FDPL' : 'FD'
     }
     // 删除不要的字段
-    Reflect.deleteProperty(comment, 'hotTopic')
+    const reallyComment = JSON.parse(JSON.stringify(comment))
+    Reflect.deleteProperty(reallyComment, 'hotTopic')
     // 沸点评论表插入记录
-    const newHotTopicComment = await HotTopicComment.create(comment)
+    const newHotTopicComment = await HotTopicComment.create(reallyComment)
     commentNoticeObj.comment_id = newHotTopicComment.id
     // 给评论的沸点评论数+1
     await HotTopic.update(
