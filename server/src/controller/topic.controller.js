@@ -11,7 +11,8 @@ const {
   checkExistHotTopicById,
   checkExistHotTopicCommentById,
   likeTopicComment,
-  cancelLikeTopicComment
+  cancelLikeTopicComment,
+  deleteCommentInHotTopic
 } = require("../service/topic.service");
 const { searchUserInfoById } = require("../service/user.service");
 
@@ -193,6 +194,14 @@ class HotTopicController {
       code: 200,
       message: "取消点赞沸点评论成功",
     };
+  }
+  // 删除沸点评论
+  async removeHotTopicCommentById(ctx,next) {
+    await deleteCommentInHotTopic(ctx.request.query.comment_id)
+    ctx.body = {
+      code: 200, 
+      message: '删除评论成功'
+    }
   }
   // {
   //     id: 1,

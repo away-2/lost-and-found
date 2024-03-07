@@ -567,9 +567,60 @@ class HotTopicServices {
     }
     return newHotTopicComment
   }
+  // 删除一条沸点评论
+  async deleteCommentInHotTopic(comment_id) {
+    const res = await HotTopicComment.findOne({
+      where: {
+        id: comment_id
+      },
+      raw: true
+    })
+    // 如果这条评论本来就不存在,则不管
+    if(!res) {
+      return
+    }
+    let decreaseLikeNum = 1
+    // 如果是一级评论,则要删除它下面所有的二级评论
+    if(!res.reply_id) {
+      const replyNum = await HotTopicComment.count({
+        where: {
+          reply_id: res.id
+        }
+      })
+      decreaseLikeNum += replyNum
+      await HotTopicComment.destroy({ where: { reply_id: res.id } })
+    } 
+    // 删除本评论
+    await HotTopicComment.destroy({ where: { id: comment_id } })
+    // 所在沸点评论数减少
+    await HotTopic.update(
+      {
+        remark_number: literal(`remark_number - ${decreaseLikeNum}`)
+      },
+      {
+        where: {
+          id: res.hot_topic_id
+        }
+      }
+    )
+    // 如果删除的是二级评论,还得把对应的一级评论的评论数-1
+    if(res.reply_id) {
+      await HotTopicComment.update(
+        {
+          remark_number: literal('remark_number - 1')
+        },
+        {
+          where: {
+            id: res.reply_id
+          }
+        }
+      )
+    }
+  }
 }
 
 const a = new HotTopicServices();
+// a.deleteCommentInHotTopic(4)
 // a.addCommentInHotTopic({ hotTopic: { id: 20 } }).then(res => console.log(res))
 // a.searchCommentByPaging({ pageNum: 1, pageSize: 3, topic_id: 8, view_user_id: 1 })
 // a.searchAllUserOfLikeTopic(2,1)
