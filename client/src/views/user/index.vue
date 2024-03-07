@@ -68,7 +68,7 @@
 						</div>
 					</div>
 					<div class="operate-box" v-if="systemUserInfo.id !== userInfo.id">
-						<div class="concern-btn">关注</div>
+						<div class="concern-btn" :class="{concerned: isConcernUser}" @click="handleConcernSomeone">关注</div>
 						<div class="message-btn">私信</div>
 					</div>
 				</div>
@@ -89,9 +89,10 @@
 <script setup>
 import { ref, onMounted, watch, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { findUserInfoById } from '@/api/user'
+import { findUserInfoById, checkAlreadyConcernSomeone, concernSomeone, cancelConcernSomeone } from '@/api/user'
 import { storeToRefs } from 'Pinia'
 import useUserStore from '@/store/user'
+import { message } from 'ant-design-vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -99,7 +100,8 @@ const route = useRoute()
 const userStore = useUserStore()
 const { systemUserInfo } = storeToRefs(userStore)
 
-// const userInfo = GET_USERINFO().user
+const userInfo = reactive({})
+const isConcernUser = ref(false)
 
 const keyAdapter = (key) => {
 	if (!isNaN(Number(key))) {
@@ -165,7 +167,6 @@ const toSettingPage = () => {
 	router.push({ path: '/setting' })
 }
 
-const userInfo = reactive({})
 // 获取用户信息
 const getUserInfo = async () => {
 	const res = await findUserInfoById(route.params.id)
@@ -173,6 +174,40 @@ const getUserInfo = async () => {
 		Object.assign(userInfo, res.data)
 	}
 }
+
+// 查询该用户是否被登录用户关注过
+const handleCheckIsConcernUser = async () => {
+	if (systemUserInfo.value.id !== route.params.id) {
+		const res = await checkAlreadyConcernSomeone(route.params.id)
+		if (res.code == 200) {
+			console.log(res.data);
+			isConcernUser.value = res.data
+		}
+	}
+}
+
+// 让当前用户关注某个用户/取消关注某个用户
+const handleConcernSomeone = async () => {
+	let params = { passiveUser: route.params.id, concernWay: 'FD' }
+	let res = null
+	if (isConcernUser.value) {
+		// 取消关注用户
+		res = await cancelConcernSomeone(route.params.id)
+		if (res.code == 200) {
+			isConcernUser.value = !isConcernUser.value
+			message.success("取消关注成功")
+		}
+	} else {
+		// 关注用户
+		res = await concernSomeone(params)
+		if (res.code == 200) {
+			isConcernUser.value = !isConcernUser.value
+			message.success("关注成功")
+		}
+	}
+}
+
+
 watch(
 	() => route.path,
 	() => {
@@ -182,12 +217,12 @@ watch(
 
 onMounted(() => {
 	getUserInfo()
+	handleCheckIsConcernUser()
 })
 </script>
 
 <style lang="less" scoped>
 @import '@/assets/style/custom.less';
-
 .user-container {
 	padding: 20px 150px;
 
@@ -326,6 +361,20 @@ onMounted(() => {
 					padding-bottom: 10px;
 					justify-content: space-between;
 					column-gap: 15px;
+					.concern-btn {
+						width: 110px;
+						height: 35px;
+						line-height: 35px;
+						background: #1e80ff;
+						color: #fff;
+						cursor: pointer;
+						border-radius: 3px;
+						text-align: center;
+						border: 1px solid rgba(30, 128, 255, 0.3);
+						&:hover {
+							opacity: 0.6;
+						}
+					}
 				}
 			}
 		}

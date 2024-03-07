@@ -1,7 +1,5 @@
 <template>
-    <div>
-        收藏
-    </div>
+  <empty-status title="暂无收藏哦~" :isShow="true"/>
 </template>
 
 <script setup>

@@ -8,6 +8,7 @@
                  <div class="fans-user" :class="{active: concernType == 'topic'}" @click="handleConcernType('topic')">沸点</div>
              </div>
          </div>
+  <empty-status title="暂无点赞哦~" :isShow="true"/>
       
     </div>
  </template>
@@ -43,8 +44,7 @@
          padding: 0 20px;
          border-bottom: 1px solid #f1f1f1;
          .title {
-             font-size: 16px;
-             font-weight: 600;
+             font-size: 18px;
              color: #000;
          }
          .type {

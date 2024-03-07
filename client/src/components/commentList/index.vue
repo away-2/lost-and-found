@@ -31,29 +31,79 @@
 					<!-- 一级评论 -->
 					<div class="comment-card" v-for="(item, index) in commentList" :key="index">
 						<div class="comment-avatar">
-							<img :src="item.commentUserInfo.avator" alt="" />
+							<user-info-popover :userInfo="item.commentUserInfo">
+								<img :src="item.commentUserInfo.avator" alt="" />
+							</user-info-popover>
 						</div>
 						<div class="comment-wrapper">
 							<div class="comment-header">
-								<div class="user-name">{{ handleUserName(item.commentUserInfo) }}</div>
+								<user-info-popover :userInfo="item.commentUserInfo">
+									<div class="user-name">{{ handleUserName(item.commentUserInfo) }}</div>
+								</user-info-popover>
 								<div class="author-tag" v-if="item.user_id === hotTopic.user_id">作者</div>
 								<div class="user-profile">{{ item.commentUserInfo.profile }}</div>
 							</div>
 							<div class="comment-content multiline-text-ellipsis" v-html="item.content"></div>
-							<div class="comment-action">
-								<div class="action-time">{{ formatPast(item.createdAt) }}</div>
-								<div class="action-digg" @click="handleClickLikeComment(item)">
-									<img src="@/assets/images/点赞.png" v-show="!item.alreadyLikeComment" />
-									<img src="@/assets/images/点赞_active.png" v-show="item.alreadyLikeComment" />
-									<span :class="{ 'active-blue': item.alreadyLikeComment }">{{ item.like_number > 0 ? item.like_number : '点赞' }} </span>
+							<div class="comment-bottom">
+								<div class="comment-action">
+									<div class="action-time">{{ formatPast(item.createdAt) }}</div>
+									<div class="action-digg" @click="handleClickLikeComment(item)">
+										<img src="@/assets/images/点赞.png" v-show="!item.alreadyLikeComment" />
+										<img src="@/assets/images/点赞_active.png" v-show="item.alreadyLikeComment" />
+										<span :class="{ 'active-blue': item.alreadyLikeComment }">{{ item.like_number > 0 ? item.like_number : '点赞' }} </span>
+									</div>
+									<div class="action-reply" @click="handleClickReply(item.id)">
+										<img src="@/assets/images/评论.png" v-show="!shouldShowCommentInput(item.id)" />
+										<img src="@/assets/images/评论_active.png" v-show="shouldShowCommentInput(item.id)" />
+										<span :class="{ 'active-blue': shouldShowCommentInput(item.id) }">{{
+											shouldShowCommentInput(item.id) ? '取消回复' : `${item.remark_number ? item.remark_number : '评论'}`
+										}}</span>
+									</div>
 								</div>
-								<div class="action-reply" @click="handleClickReply(item.id)">
-									<img src="@/assets/images/评论.png" v-show="!shouldShowCommentInput(item.id)" />
-									<img src="@/assets/images/评论_active.png" v-show="shouldShowCommentInput(item.id)" />
-									<span :class="{ 'active-blue': shouldShowCommentInput(item.id) }">{{
-										shouldShowCommentInput(item.id) ? '取消回复' : `${item.remark_number ? item.remark_number : '评论'}`
-									}}</span>
-								</div>
+								<!-- 一级评论底部右侧图标气泡 -->
+								<a-popover placement="bottomRight">
+									<template #content>
+										<div class="delete-box" @click="toDeleteHot" v-if="item.user_id == systemUserInfo.id">
+											<img src="@/assets/images/删除.png" alt="" />
+											<div class="text">删除</div>
+										</div>
+										<div class="operate-box" v-else>
+											<div class="item-box">
+												<div class="icon-box">
+													<svg t="1709804743167" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1620" width="14" height="14">
+														<path
+															d="M645.376 320a174.933333 174.933333 0 1 1-349.866667 0 174.933333 174.933333 0 0 1 349.866667 0z m-64 206.848a234.666667 234.666667 0 1 0-224.128-1.237333C198.613333 577.408 85.333333 738.048 85.333333 924.117333a32 32 0 0 0 64 0c0-197.248 145.237333-352 318.293334-352 65.066667 0 125.738667 21.546667 176.384 58.965334a32 32 0 0 0 37.973333-51.498667 368.64 368.64 0 0 0-100.565333-52.736z m118.741333 124.586667a32 32 0 1 0-47.274666 43.136l84.736 92.928-84.736 92.885333a32 32 0 1 0 47.274666 43.093333l80.810667-88.490666 80.768 88.533333a32 32 0 0 0 47.274667-43.136l-84.736-92.885333 84.736-92.928a32 32 0 0 0-47.274667-43.093334l-80.768 88.533334-80.810667-88.533334z"
+															fill="#232121"
+															p-id="1621"
+														></path>
+													</svg>
+												</div>
+												<div class="text">{{ `屏蔽作者：${handleUserName(item.commentUserInfo)}` }}</div>
+											</div>
+											<div class="item-box">
+												<div class="icon-box">
+													<svg t="1709803615063" class="icon" viewBox="0 0 1088 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1923" width="12" height="12">
+														<path
+															d="M566.224 10.032a48 48 0 0 1 20.32 20.32l480.768 920.32a48 48 0 0 1-42.544 70.24H63.232a48 48 0 0 1-42.56-70.24l480.784-920.32a48 48 0 0 1 64.768-20.32zM544 52.576L63.232 972.896h961.536L544 52.576z m16 712.32a48 48 0 1 1 0 96 48 48 0 0 1 0-96z m0-416a44.272 44.272 0 0 1 44.128 47.84l-24.72 305.456a16 16 0 0 1-15.936 14.72h-7.36a16 16 0 0 1-15.952-14.736l-24.352-305.424A44.32 44.32 0 0 1 560 348.912z"
+															p-id="1924"
+															fill="#232121"
+														></path>
+													</svg>
+												</div>
+												<div class="text">举报</div>
+											</div>
+										</div>
+									</template>
+									<div class="operate-icon">
+										<svg t="1709802541849" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1530" width="18" height="18">
+											<path
+												d="M170.666667 437.333333c-41.386667 0-74.666667 33.28-74.666667 74.666667s33.28 74.666667 74.666667 74.666667 74.666667-33.28 74.666666-74.666667-33.28-74.666667-74.666666-74.666667zM512 437.333333c-41.386667 0-74.666667 33.28-74.666667 74.666667s33.28 74.666667 74.666667 74.666667 74.666667-33.28 74.666667-74.666667-33.28-74.666667-74.666667-74.666667zM853.333333 437.333333c-41.386667 0-74.666667 33.28-74.666666 74.666667s33.28 74.666667 74.666666 74.666667 74.666667-33.28 74.666667-74.666667-33.28-74.666667-74.666667-74.666667z"
+												fill="#8D9297"
+												p-id="1531"
+											></path>
+										</svg>
+									</div>
+								</a-popover>
 							</div>
 							<!-- 一级评论输入框组件 -->
 							<div class="comment-input-wrap">
@@ -73,35 +123,120 @@
 								<div class="reply-list">
 									<div class="reply-card" v-for="(replyItem, index) in item.replyList" :key="index">
 										<div class="reply-avatar">
-											<img :src="replyItem.commentUserInfo.avator" />
+											<user-info-popover :userInfo="replyItem.commentUserInfo">
+												<img :src="replyItem.commentUserInfo.avator" />
+											</user-info-popover>
 										</div>
 										<div class="reply-wrapper">
 											<div class="reply-content">
 												<div class="content">
 													<div class="user-info">
-														<div class="user-name">{{ handleUserName(replyItem.commentUserInfo) }}</div>
+														<user-info-popover :userInfo="replyItem.commentUserInfo">
+															<div class="user-name">{{ handleUserName(replyItem.commentUserInfo) }}</div>
+														</user-info-popover>
+
 														<div class="author-tag" v-if="replyItem.user_id === hotTopic.user_id">作者</div>
+														<div class="reply" v-if="replyItem.replyUserInfo.id !== replyItem.commentUserInfo.id || replyItem.replyUserInfo.id !== item.user_id">回复</div>
+														<user-info-popover :userInfo="replyItem.replyUserInfo">
+															<div class="reply-user" v-if="replyItem.replyUserInfo.id !== replyItem.commentUserInfo.id || replyItem.replyUserInfo.id !== item.user_id">
+																{{ handleUserName(replyItem.replyUserInfo) }}
+															</div>
+														</user-info-popover>
+														<div
+															class="author-tag"
+															v-if="
+																replyItem.replyUserInfo.id !== replyItem.commentUserInfo.id &&
+																replyItem.replyUserInfo.id !== item.user_id &&
+																replyItem.replyUserInfo.id === hotTopic.user_id
+															"
+														>
+															作者
+														</div>
 														<div class="colon">:</div>
 													</div>
 													<div class="reply-content multiline-text-ellipsis" v-html="replyItem.content"></div>
 												</div>
 											</div>
-											<div class="reply-action">
-												<div class="action-time">{{ formatPast(replyItem.createdAt) }}</div>
-												<div class="action-digg" @click="handleClickLikeComment(item, replyItem)">
-													<img src="@/assets/images/点赞.png" v-show="!replyItem.alreadyLikeComment" />
-													<img src="@/assets/images/点赞_active.png" v-show="replyItem.alreadyLikeComment" />
-													<span :class="{ 'active-blue': replyItem.alreadyLikeComment }">
-														{{ replyItem.like_number > 0 ? replyItem.like_number : '点赞' }}
-													</span>
+											<div class="reply-bottom">
+												<div class="reply-action">
+													<div class="action-time">{{ formatPast(replyItem.createdAt) }}</div>
+													<div class="action-digg" @click="handleClickLikeComment(item, replyItem)">
+														<img src="@/assets/images/点赞.png" v-show="!replyItem.alreadyLikeComment" />
+														<img src="@/assets/images/点赞_active.png" v-show="replyItem.alreadyLikeComment" />
+														<span :class="{ 'active-blue': replyItem.alreadyLikeComment }">
+															{{ replyItem.like_number > 0 ? replyItem.like_number : '点赞' }}
+														</span>
+													</div>
+													<div class="action-reply" @click="handleClickReply(replyItem.id)">
+														<img src="@/assets/images/评论.png" v-show="!shouldShowCommentInput(replyItem.id)" />
+														<img src="@/assets/images/评论_active.png" v-show="shouldShowCommentInput(replyItem.id)" />
+														<span :class="{ 'active-blue': shouldShowCommentInput(replyItem.id) }">
+															{{ shouldShowCommentInput(replyItem.id) ? '取消回复' : '评论' }}
+														</span>
+													</div>
 												</div>
-												<div class="action-reply" @click="handleClickReply(replyItem.id)">
-													<img src="@/assets/images/评论.png" v-show="!shouldShowCommentInput(replyItem.id)" />
-													<img src="@/assets/images/评论_active.png" v-show="shouldShowCommentInput(replyItem.id)" />
-													<span :class="{ 'active-blue': shouldShowCommentInput(replyItem.id) }">
-														{{ shouldShowCommentInput(replyItem.id) ? '取消回复' : '评论' }}
-													</span>
-												</div>
+												<!-- 二级评论底部右侧图标气泡 -->
+												<a-popover placement="bottomRight">
+													<template #content>
+														<div class="delete-box" @click="toDeleteHot" v-if="replyItem.commentUserInfo.id == systemUserInfo.id">
+															<img src="@/assets/images/删除.png" alt="" />
+															<div class="text">删除</div>
+														</div>
+														<div class="operate-box" v-else>
+															<div class="item-box">
+																<div class="icon-box">
+																	<svg
+																		t="1709804743167"
+																		class="icon"
+																		viewBox="0 0 1024 1024"
+																		version="1.1"
+																		xmlns="http://www.w3.org/2000/svg"
+																		p-id="1620"
+																		width="14"
+																		height="14"
+																	>
+																		<path
+																			d="M645.376 320a174.933333 174.933333 0 1 1-349.866667 0 174.933333 174.933333 0 0 1 349.866667 0z m-64 206.848a234.666667 234.666667 0 1 0-224.128-1.237333C198.613333 577.408 85.333333 738.048 85.333333 924.117333a32 32 0 0 0 64 0c0-197.248 145.237333-352 318.293334-352 65.066667 0 125.738667 21.546667 176.384 58.965334a32 32 0 0 0 37.973333-51.498667 368.64 368.64 0 0 0-100.565333-52.736z m118.741333 124.586667a32 32 0 1 0-47.274666 43.136l84.736 92.928-84.736 92.885333a32 32 0 1 0 47.274666 43.093333l80.810667-88.490666 80.768 88.533333a32 32 0 0 0 47.274667-43.136l-84.736-92.885333 84.736-92.928a32 32 0 0 0-47.274667-43.093334l-80.768 88.533334-80.810667-88.533334z"
+																			fill="#232121"
+																			p-id="1621"
+																		></path>
+																	</svg>
+																</div>
+																<div class="text">{{ `屏蔽作者：${handleUserName(replyItem.commentUserInfo)}` }}</div>
+															</div>
+															<div class="item-box">
+																<div class="icon-box">
+																	<svg
+																		t="1709803615063"
+																		class="icon"
+																		viewBox="0 0 1088 1024"
+																		version="1.1"
+																		xmlns="http://www.w3.org/2000/svg"
+																		p-id="1923"
+																		width="14"
+																		height="14"
+																	>
+																		<path
+																			d="M566.224 10.032a48 48 0 0 1 20.32 20.32l480.768 920.32a48 48 0 0 1-42.544 70.24H63.232a48 48 0 0 1-42.56-70.24l480.784-920.32a48 48 0 0 1 64.768-20.32zM544 52.576L63.232 972.896h961.536L544 52.576z m16 712.32a48 48 0 1 1 0 96 48 48 0 0 1 0-96z m0-416a44.272 44.272 0 0 1 44.128 47.84l-24.72 305.456a16 16 0 0 1-15.936 14.72h-7.36a16 16 0 0 1-15.952-14.736l-24.352-305.424A44.32 44.32 0 0 1 560 348.912z"
+																			p-id="1924"
+																			fill="#232121"
+																		></path>
+																	</svg>
+																</div>
+																<div class="text">举报</div>
+															</div>
+														</div>
+													</template>
+													<div class="operate-icon">
+														<svg t="1709802541849" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1530" width="18" height="18">
+															<path
+																d="M170.666667 437.333333c-41.386667 0-74.666667 33.28-74.666667 74.666667s33.28 74.666667 74.666667 74.666667 74.666667-33.28 74.666666-74.666667-33.28-74.666667-74.666666-74.666667zM512 437.333333c-41.386667 0-74.666667 33.28-74.666667 74.666667s33.28 74.666667 74.666667 74.666667 74.666667-33.28 74.666667-74.666667-33.28-74.666667-74.666667-74.666667zM853.333333 437.333333c-41.386667 0-74.666667 33.28-74.666666 74.666667s33.28 74.666667 74.666666 74.666667 74.666667-33.28 74.666667-74.666667-33.28-74.666667-74.666667-74.666667z"
+																fill="#8D9297"
+																p-id="1531"
+															></path>
+														</svg>
+													</div>
+												</a-popover>
 											</div>
 											<!-- 二级评论输入框组件 -->
 											<div class="comment-input-wrap">
@@ -396,6 +531,7 @@ const handleClickLikeComment = async (item, replyItem) => {
 						height: 32px;
 						border-radius: 50%;
 						object-fit: cover;
+						cursor: pointer;
 					}
 				}
 
@@ -431,6 +567,7 @@ const handleClickLikeComment = async (item, replyItem) => {
 							font-size: 14px;
 							font-weight: 400;
 							line-height: 24px;
+							cursor: pointer;
 						}
 
 						.user-profile {
@@ -448,60 +585,73 @@ const handleClickLikeComment = async (item, replyItem) => {
 						font-weight: 400;
 						padding-right: 20px;
 					}
-
-					.comment-action {
+					.comment-bottom {
 						display: flex;
-						margin-top: 6px;
-						font-size: 12px;
-						line-height: 20px;
-						color: #8a919f;
-						font-weight: 400;
-
-						.action-time {
-							color: #8a919f;
+						align-items: center;
+						justify-content: space-between;
+						padding-right: 20px;
+						.comment-action {
+							display: flex;
+							margin-top: 6px;
 							font-size: 12px;
 							line-height: 20px;
-							margin-right: 10px;
-							display: flex;
-							align-items: center;
-						}
+							color: #8a919f;
+							font-weight: 400;
 
-						.action-digg {
-							display: flex;
-							padding: 0 8px;
-							cursor: pointer;
-							align-items: center;
-							transition: all 0.3s;
-
-							img {
-								width: 14px;
-								height: 14px;
-								margin-right: 4px;
-							}
-
-							span {
+							.action-time {
 								color: #8a919f;
 								font-size: 12px;
+								line-height: 20px;
+								margin-right: 10px;
+								display: flex;
+								align-items: center;
+							}
+
+							.action-digg {
+								display: flex;
+								padding: 0 8px;
+								cursor: pointer;
+								align-items: center;
+								transition: all 0.3s;
+
+								img {
+									width: 14px;
+									height: 14px;
+									margin-right: 4px;
+								}
+
+								span {
+									color: #8a919f;
+									font-size: 12px;
+								}
+							}
+
+							.action-reply {
+								display: flex;
+								padding: 0 8px;
+								cursor: pointer;
+								align-items: center;
+								transition: all 0.3s;
+
+								img {
+									width: 14px;
+									height: 14px;
+									margin-right: 4px;
+									object-fit: cover;
+								}
+
+								span {
+									color: #8a919f;
+									font-size: 12px;
+								}
 							}
 						}
-
-						.action-reply {
-							display: flex;
-							padding: 0 8px;
+						.icon {
 							cursor: pointer;
-							align-items: center;
-							transition: all 0.3s;
-
-							img {
-								width: 14px;
-								height: 14px;
-								margin-right: 4px;
-								object-fit: cover;
-							}
-
-							span {
-								color: #8a919f;
-								font-size: 12px;
+							&:hover {
+								path {
+									fill: @base-blue-color;
+								}
 							}
 						}
 					}
@@ -536,6 +686,7 @@ const handleClickLikeComment = async (item, replyItem) => {
 										height: 28px;
 										border-radius: 50%;
 										object-fit: cover;
+										cursor: pointer;
 									}
 								}
 
@@ -562,6 +713,21 @@ const handleClickLikeComment = async (item, replyItem) => {
 													color: #575757;
 													font-weight: 400;
 													min-width: max-content;
+													cursor: pointer;
+												}
+												.reply {
+													font-size: 14px;
+													line-height: 24px;
+													margin: 0 5px;
+												}
+												.reply-user {
+													color: #a9a9a9;
+													font-size: 14px;
+													line-height: 24px;
+													color: #575757;
+													font-weight: 400;
+													min-width: max-content;
+													cursor: pointer;
 												}
 
 												.author-tag {
@@ -594,58 +760,73 @@ const handleClickLikeComment = async (item, replyItem) => {
 										}
 									}
 
-									.reply-action {
+									.reply-bottom {
 										display: flex;
-										margin-top: 6px;
-										font-size: 12px;
-										line-height: 20px;
-										color: #8a919f;
-										font-weight: 400;
-
-										.action-time {
-											color: #8a919f;
+										align-items: center;
+										justify-content: space-between;
+										padding-right: 20px;
+										.reply-action {
+											display: flex;
+											margin-top: 6px;
 											font-size: 12px;
 											line-height: 20px;
-											margin-right: 10px;
-											display: flex;
-											align-items: center;
-										}
+											color: #8a919f;
+											font-weight: 400;
 
-										.action-digg {
-											display: flex;
-											padding: 0 8px;
-											cursor: pointer;
-											align-items: center;
-											transition: all 0.3s;
-
-											img {
-												width: 14px;
-												height: 14px;
-												margin-right: 4px;
-											}
-
-											span {
+											.action-time {
 												color: #8a919f;
 												font-size: 12px;
+												line-height: 20px;
+												margin-right: 10px;
+												display: flex;
+												align-items: center;
+											}
+
+											.action-digg {
+												display: flex;
+												padding: 0 8px;
+												cursor: pointer;
+												align-items: center;
+												transition: all 0.3s;
+
+												img {
+													width: 14px;
+													height: 14px;
+													margin-right: 4px;
+												}
+
+												span {
+													color: #8a919f;
+													font-size: 12px;
+												}
+											}
+
+											.action-reply {
+												display: flex;
+												padding: 0 8px;
+												cursor: pointer;
+												align-items: center;
+												transition: all 0.3s;
+
+												img {
+													width: 14px;
+													height: 14px;
+													margin-right: 4px;
+													object-fit: cover;
+												}
+
+												span {
+													color: #8a919f;
+													font-size: 12px;
+												}
 											}
 										}
-
-										.action-reply {
-											display: flex;
-											padding: 0 8px;
+										.icon {
 											cursor: pointer;
-											align-items: center;
-											transition: all 0.3s;
-
-											img {
-												width: 14px;
-												height: 14px;
-												margin-right: 4px;
-											}
-
-											span {
-												color: #8a919f;
-												font-size: 12px;
+											&:hover {
+												path {
+													fill: @base-blue-color;
+												}
 											}
 										}
 									}
@@ -654,6 +835,54 @@ const handleClickLikeComment = async (item, replyItem) => {
 						}
 					}
 				}
+			}
+		}
+	}
+}
+
+.ant-popover-content {
+	.delete-box {
+		width: 200px;
+		column-gap: 10px;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		transition: all 0.3s;
+		height: 16px;
+
+		&:hover {
+			opacity: 0.7;
+		}
+
+		img {
+			width: 16px;
+			height: 16px;
+		}
+
+		.text {
+			font-size: 14px;
+			color: #232121;
+		}
+	}
+	.operate-box {
+		width: 200px;
+		cursor: pointer;
+		transition: all 0.3s;
+
+		.item-box {
+			display: flex;
+			align-items: center;
+			column-gap: 8px;
+			.icon-box {
+				display: flex;
+				align-items: center;
+			}
+			.text {
+				color: #232121;
+				font-size: 14px;
+			}
+			&:hover {
+				opacity: 0.7;
 			}
 		}
 	}

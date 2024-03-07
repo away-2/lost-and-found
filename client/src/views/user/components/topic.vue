@@ -1,4 +1,6 @@
 <template>
+  <empty-status title="暂未发布沸点哦~" :isShow="!hotList"/>
+
 	<a-skeleton :loading="loading" active>
 		<hot-topic-item v-for="(item, index) in hotList" :key="index" :hotTopic="item" />
 	</a-skeleton>
