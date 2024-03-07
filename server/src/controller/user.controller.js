@@ -11,6 +11,7 @@ const {
   searchUserInfoById,
   modifyUserInfo,
   searchAllConcernUser,
+  searchAllFans
 } = require("../service/user.service");
 
 class UserController {
@@ -184,6 +185,14 @@ class UserController {
     ctx.body = {
       code: 200,
       data: concernUserList
+    }
+  }
+  // 查询某个用户的所有的粉丝
+  async findSomeOneAllFans(ctx,next) {
+    const fansList = await searchAllFans(ctx.request.query.user_id,ctx.state.user.id)
+    ctx.body = {
+      code: 200,
+      data: fansList
     }
   }
   // 通过学号查找学生信息

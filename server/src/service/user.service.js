@@ -225,6 +225,40 @@ class UserService {
             }
         })   
     }
+    // 查询某个用户的所有的粉丝
+    async searchAllFans(user_id,view_user_id) {
+        const fansList = await UserConcernRelation.findAll({
+            where: {
+                passiveUserId: user_id
+            },
+            raw: true
+        })
+        const fansInfoList = await User.findAll({
+            where: {
+                id: {
+                    [Op.in]: fansList.map(r => r.activeUserId)
+                }
+            },
+            raw: true
+        })
+        const viewUserConcernUserIds = (await UserConcernRelation.findAll({
+            where: {
+                activeUserId: view_user_id,
+                passiveUserId: {
+                    [Op.in]: fansList.map(r => r.activeUserId)
+                }
+            },
+            raw: true
+        })).map(r => r.passiveUserId)
+        return fansList.map(item => {
+            const fanUserInfo = fansInfoList.find(r => r.id === item.activeUserId)
+            return {
+                ...item,
+                fanUserInfo,
+                alreadyConcern: viewUserConcernUserIds.includes(item.activeUserId)
+            }
+        })
+    }
 }
 
 const userService = new UserService()
