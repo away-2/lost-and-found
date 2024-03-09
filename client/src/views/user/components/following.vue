@@ -173,7 +173,12 @@ onMounted(() => {
 
 	.digg-list {
 		border-bottom: 1px solid #f1f1f1;
-		padding: 15px 20px;
+		padding: 20px 20px;
+		cursor: pointer;
+		transition: all 0.3s;
+		&:hover {
+			background: rgb(248, 248, 248);
+		}
 		.digg-item {
 			display: flex;
 			justify-content: space-between;

@@ -85,3 +85,12 @@ export const findSomeoneAllFans = (user_id) => {
         url: `/userService/findSomeoneAllFans?user_id=${user_id}`
     })
 }
+
+// 修改个人信息
+export const updateUserInfo = (data) => {
+    return request({
+        url: `/userService/updateUserInfo`,
+        method: 'post',
+        data
+    })
+}

@@ -49,6 +49,10 @@ const HotTopicComment = seq.define('laf_hot_topic_commnet',{
         defaultValue: 0,
         comment: '评论数,二级的都是0'
     },
+    level: {
+        type: DataTypes.STRING,
+        comment: '评论类型'
+    }
 })
 
 User.belongsToMany(HotTopic,{

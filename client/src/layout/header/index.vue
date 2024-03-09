@@ -28,7 +28,7 @@
 					</template>
 				</a-dropdown>
 				<a-dropdown :trigger="['click']" :placement="bottomLeft">
-					<a-avatar :src="userInfo?.avator" :size="40" />
+					<a-avatar :src="systemUserInfo.avator" :size="40" />
 					<template #overlay>
 						<a-menu>
 							<a-menu-item key="1">

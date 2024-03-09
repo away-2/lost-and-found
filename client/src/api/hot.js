@@ -108,3 +108,11 @@ export const cancelLikeTopicComment = (comment_id) => {
         method: 'get',
     })
 }
+
+// 删除沸点评论
+export const removeHotTopicCommentById = (comment_id) => {
+    return request({
+        url: `/topicService/removeHotTopicCommentById?comment_id=${comment_id}`,
+        method: 'delete'
+    })
+}

@@ -126,7 +126,7 @@ const handleBlur = () => {
 }
 
 // 允许输入的最大字符数
-const allowInputCharQuantity = ref(50)
+const allowInputCharQuantity = ref(200)
 
 // 已经输入的最大字符数
 const alreadyInputCharQuantity = ref(0)

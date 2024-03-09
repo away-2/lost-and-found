@@ -9,7 +9,14 @@
 					:inputMinHeight="30"
 					:inputMaxHeight="150"
 					shapeType="comment"
-					@click="handleCommentClick({ reply_id: null, reply_user_id: null, replyItem: null, type: 'top' })"
+					@click="
+						handleCommentClick({
+							reply_id: null,
+							reply_user_id: null,
+							replyItem: null,
+							type: 'top',
+						})
+					"
 					@handleSubmit="handlePublishComment"
 					ref="firstLevelCommentInputRef"
 				/>
@@ -38,7 +45,9 @@
 						<div class="comment-wrapper">
 							<div class="comment-header">
 								<user-info-popover :userInfo="item.commentUserInfo">
-									<div class="user-name">{{ handleUserName(item.commentUserInfo) }}</div>
+									<div class="user-name">
+										{{ handleUserName(item.commentUserInfo) }}
+									</div>
 								</user-info-popover>
 								<div class="author-tag" v-if="item.user_id === hotTopic.user_id">作者</div>
 								<div class="user-profile">{{ item.commentUserInfo.profile }}</div>
@@ -55,15 +64,18 @@
 									<div class="action-reply" @click="handleClickReply(item.id)">
 										<img src="@/assets/images/评论.png" v-show="!shouldShowCommentInput(item.id)" />
 										<img src="@/assets/images/评论_active.png" v-show="shouldShowCommentInput(item.id)" />
-										<span :class="{ 'active-blue': shouldShowCommentInput(item.id) }">{{
-											shouldShowCommentInput(item.id) ? '取消回复' : `${item.remark_number ? item.remark_number : '评论'}`
-										}}</span>
+										<span
+											:class="{
+												'active-blue': shouldShowCommentInput(item.id),
+											}"
+											>{{ shouldShowCommentInput(item.id) ? '取消回复' : `${item.remark_number ? item.remark_number : '评论'}` }}</span
+										>
 									</div>
 								</div>
 								<!-- 一级评论底部右侧图标气泡 -->
 								<a-popover placement="bottomRight">
 									<template #content>
-										<div class="delete-box" @click="toDeleteHot" v-if="item.user_id == systemUserInfo.id">
+										<div class="delete-box" @click="toDeleteHot('top', item, null)" v-if="item.user_id == systemUserInfo.id">
 											<img src="@/assets/images/删除.png" alt="" />
 											<div class="text">删除</div>
 										</div>
@@ -78,7 +90,9 @@
 														></path>
 													</svg>
 												</div>
-												<div class="text">{{ `屏蔽作者：${handleUserName(item.commentUserInfo)}` }}</div>
+												<div class="text">
+													{{ `屏蔽作者：${handleUserName(item.commentUserInfo)}` }}
+												</div>
 											</div>
 											<div class="item-box">
 												<div class="icon-box">
@@ -113,7 +127,14 @@
 									:inputMaxHeight="150"
 									:isNeedIncreaseHeight="false"
 									:hintText="`回复${handleUserName(item.commentUserInfo)}...`"
-									@click="handleCommentClick({ reply_id: item.id, reply_user_id: item.commentUserInfo.id, replyItem: item, type: 'replyTop' })"
+									@click="
+										handleCommentClick({
+											reply_id: item.id,
+											reply_user_id: item.commentUserInfo.id,
+											replyItem: item,
+											type: 'replyTop',
+										})
+									"
 									@handleSubmit="handlePublishComment"
 									:ref="(el) => (replyFirstLevelCommentInputRefs[index] = el)"
 								/>
@@ -132,16 +153,19 @@
 												<div class="content">
 													<div class="user-info">
 														<user-info-popover :userInfo="replyItem.commentUserInfo">
-															<div class="user-name">{{ handleUserName(replyItem.commentUserInfo) }}</div>
+															<div class="user-name">
+																{{ handleUserName(replyItem.commentUserInfo) }}
+															</div>
 														</user-info-popover>
 
 														<div class="author-tag" v-if="replyItem.user_id === hotTopic.user_id">作者</div>
-														<div class="reply" v-if="replyItem.replyUserInfo.id !== replyItem.commentUserInfo.id || replyItem.replyUserInfo.id !== item.user_id">回复</div>
+														<div class="reply" v-if="replyItem.level === 'replySecond'">回复</div>
 														<user-info-popover :userInfo="replyItem.replyUserInfo">
-															<div class="reply-user" v-if="replyItem.replyUserInfo.id !== replyItem.commentUserInfo.id || replyItem.replyUserInfo.id !== item.user_id">
+															<div class="reply-user" v-if="replyItem.level === 'replySecond'">
 																{{ handleUserName(replyItem.replyUserInfo) }}
 															</div>
 														</user-info-popover>
+
 														<div
 															class="author-tag"
 															v-if="
@@ -159,18 +183,28 @@
 											</div>
 											<div class="reply-bottom">
 												<div class="reply-action">
-													<div class="action-time">{{ formatPast(replyItem.createdAt) }}</div>
+													<div class="action-time">
+														{{ formatPast(replyItem.createdAt) }}
+													</div>
 													<div class="action-digg" @click="handleClickLikeComment(item, replyItem)">
 														<img src="@/assets/images/点赞.png" v-show="!replyItem.alreadyLikeComment" />
 														<img src="@/assets/images/点赞_active.png" v-show="replyItem.alreadyLikeComment" />
-														<span :class="{ 'active-blue': replyItem.alreadyLikeComment }">
+														<span
+															:class="{
+																'active-blue': replyItem.alreadyLikeComment,
+															}"
+														>
 															{{ replyItem.like_number > 0 ? replyItem.like_number : '点赞' }}
 														</span>
 													</div>
 													<div class="action-reply" @click="handleClickReply(replyItem.id)">
 														<img src="@/assets/images/评论.png" v-show="!shouldShowCommentInput(replyItem.id)" />
 														<img src="@/assets/images/评论_active.png" v-show="shouldShowCommentInput(replyItem.id)" />
-														<span :class="{ 'active-blue': shouldShowCommentInput(replyItem.id) }">
+														<span
+															:class="{
+																'active-blue': shouldShowCommentInput(replyItem.id),
+															}"
+														>
 															{{ shouldShowCommentInput(replyItem.id) ? '取消回复' : '评论' }}
 														</span>
 													</div>
@@ -178,7 +212,7 @@
 												<!-- 二级评论底部右侧图标气泡 -->
 												<a-popover placement="bottomRight">
 													<template #content>
-														<div class="delete-box" @click="toDeleteHot" v-if="replyItem.commentUserInfo.id == systemUserInfo.id">
+														<div class="delete-box" @click="toDeleteHot('reply', item, replyItem)" v-if="replyItem.commentUserInfo.id == systemUserInfo.id">
 															<img src="@/assets/images/删除.png" alt="" />
 															<div class="text">删除</div>
 														</div>
@@ -202,7 +236,9 @@
 																		></path>
 																	</svg>
 																</div>
-																<div class="text">{{ `屏蔽作者：${handleUserName(replyItem.commentUserInfo)}` }}</div>
+																<div class="text">
+																	{{ `屏蔽作者：${handleUserName(replyItem.commentUserInfo)}` }}
+																</div>
 															</div>
 															<div class="item-box">
 																<div class="icon-box">
@@ -246,7 +282,14 @@
 													:inputMaxHeight="150"
 													:isNeedIncreaseHeight="false"
 													:hintText="`回复${handleUserName(replyItem.commentUserInfo)}...`"
-													@click="handleCommentClick({ reply_id: item.id, reply_user_id: replyItem.commentUserInfo.id, replyItem, type: 'replySecond' })"
+													@click="
+														handleCommentClick({
+															reply_id: item.id,
+															reply_user_id: replyItem.commentUserInfo.id,
+															replyItem,
+															type: 'replySecond',
+														})
+													"
 													@handleSubmit="handlePublishComment"
 													:ref="(el) => (replySecondLevelCommentInputRefs[index] = el)"
 												/>
@@ -265,9 +308,9 @@
 
 <script setup>
 import { ref, watch, reactive } from 'vue'
-import { findTopicCommentByPaging, publishHotTopicComment, likeTopicComment, cancelLikeTopicComment } from '@/api/hot'
+import { findTopicCommentByPaging, publishHotTopicComment, likeTopicComment, cancelLikeTopicComment, removeHotTopicCommentById } from '@/api/hot'
 import { formatPast } from '@/utils/time'
-import { message } from 'ant-design-vue'
+import { Modal, message } from 'ant-design-vue'
 import useUserStore from '@/store/user'
 import { storeToRefs } from 'pinia'
 
@@ -304,7 +347,12 @@ const handleSelectedSort = (type) => {
 
 const getAllCommentInfo = async () => {
 	loading.value = true
-	let params = { pageNum: pageNum.value, pageSize: pageSize.value, topic_id: props.hotTopic.id, classify: isSortActive.value }
+	let params = {
+		pageNum: pageNum.value,
+		pageSize: pageSize.value,
+		topic_id: props.hotTopic.id,
+		classify: isSortActive.value,
+	}
 	const res = await findTopicCommentByPaging(params)
 	loading.value = false
 	if (res.code == 200) {
@@ -382,7 +430,10 @@ const handlePublishComment = async (data) => {
 		picture: data.pictures[0] || null,
 		user_id: systemUserInfo.value.id,
 		hot_topic_id: props.hotTopic.id,
-		hotTopic: Object.assign({}, props.hotTopic, { pictures: JSON.stringify(props.hotTopic.pictures) }),
+		hotTopic: Object.assign({}, props.hotTopic, {
+			pictures: JSON.stringify(props.hotTopic.pictures),
+		}),
+		level: currentCommentType.value,
 	}
 	publishLoading.value = true
 	const res = await publishHotTopicComment(params)
@@ -454,6 +505,36 @@ const handleClickLikeComment = async (item, replyItem) => {
 			commentList[topIndex].replyList[secondIndex].like_number = alreadyLike ? originLikeNumber - 1 : originLikeNumber + 1
 		}
 	}
+}
+
+// 删除沸点评论
+const toDeleteHot = async (type, item, replyItem) => {
+	Modal.confirm({
+		title: '确认删除该评论吗?',
+		okText: '确认',
+		cancelText: '取消',
+		async onOk() {
+			const comment_id = replyItem?.id || item.id
+			const res = await removeHotTopicCommentById(comment_id)
+			if (res.code == 200) {
+				message.success('删除评论成功!')
+				let decreaseNum = 1
+				const topComment = commentList.find((r) => r.id === item.id)
+				const topCommentIndex = commentList.findIndex((r) => r.id === item.id)
+				if (type === 'top') {
+					// 删除的是顶级评论
+					decreaseNum += topComment.replyList.length
+					commentList.splice(topCommentIndex, 1)
+				} else {
+					// 删除的是二级评论
+					const replyCommentIndex = topComment.replyList.findIndex((r) => r.id === replyItem.id)
+					commentList[topCommentIndex].replyList.splice(replyCommentIndex, 1)
+					commentList[topCommentIndex].remark_number -= 1
+				}
+				emits('commentTotalChange', 'decrease', decreaseNum)
+			}
+		},
+	})
 }
 </script>
 
@@ -843,15 +924,17 @@ const handleClickLikeComment = async (item, replyItem) => {
 .ant-popover-content {
 	.delete-box {
 		width: 200px;
-		column-gap: 10px;
+		column-gap: 7px;
 		display: flex;
 		align-items: center;
 		cursor: pointer;
+		padding: 3px 5px;
+		border-radius: 3px;
 		transition: all 0.3s;
-		height: 16px;
 
 		&:hover {
 			opacity: 0.7;
+			background: rgb(242, 242, 242);
 		}
 
 		img {
@@ -867,6 +950,9 @@ const handleClickLikeComment = async (item, replyItem) => {
 	.operate-box {
 		width: 200px;
 		cursor: pointer;
+		display: flex;
+		flex-direction: column;
+		row-gap: 5px;
 		transition: all 0.3s;
 
 		.item-box {

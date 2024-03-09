@@ -60,9 +60,11 @@ const handleLikeTopic = async () => {
 	}
 }
 
-const commentTotalChange = (type) => {
+const commentTotalChange = (type,num = 1) => {
 	if(type === 'add') {
-		hotTopic.remark_number += 1
+		hotTopic.remark_number += num
+	} else if(type === 'decrease') {
+		hotTopic.remark_number -= num
 	}
 }
 

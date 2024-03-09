@@ -74,11 +74,16 @@ onMounted(() => {
 @import url('@/style/index.less');
 
 .container-wrap {
-	padding: 10px 20px;
-	padding-top: 20px;
+	padding: 10px 0;
 	.digg-list {
 		border-bottom: 1px solid #f1f1f1;
-		margin-bottom: 15px;
+		padding: 15px;
+		border-radius: 3px;
+		cursor: pointer;
+		transition: all 0.3s;
+		&:hover {
+			background: rgb(247, 248, 250);
+		}
 		.digg-item {
 			display: flex;
 			justify-content: space-between;

@@ -8,14 +8,13 @@
 				<div class="introduction">
 					<div class="left-box">
 						<div class="user-name text-ellipsis">{{ userInfo.nick_name || userInfo.real_name }}</div>
-						<div class="user-school">{{ userInfo.school_name }}</div>
+						<div class="user-school">{{ userInfo.nick_name ? userInfo.real_name : '' }}</div>
 					</div>
 					<div class="setting-btn" @click="toSettingPage" v-if="systemUserInfo.id == userInfo.id">编辑资料</div>
 				</div>
 
 				<div class="user-action">
 					<div class="user-action-item">
-						<div class="user-bar"></div>
 						<div class="user-info-box">
 							<div class="user-fans-num">{{ userInfo.fans_number }}</div>
 							<div class="user-fans">粉丝</div>
@@ -52,7 +51,7 @@
 									p-id="1379"
 								></path>
 							</svg>
-							<div class="department-name">{{ userInfo.department }}</div>
+							<div class="department-name">{{ userInfo.school_name }} - {{ userInfo.department }}</div>
 						</div>
 						<div class="profile-box">
 							<svg t="1709274120226" class="icon" viewBox="0 0 1154 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1316" width="16" height="16">
@@ -224,7 +223,7 @@ onMounted(() => {
 <style lang="less" scoped>
 @import '@/assets/style/custom.less';
 .user-container {
-	padding: 20px 150px;
+	padding: 20px 250px;
 
 	.nav-main-wrapper {
 		width: 100%;
@@ -265,7 +264,7 @@ onMounted(() => {
 
 				.left-box {
 					display: flex;
-					align-items: center;
+					align-items: baseline;
 					column-gap: 10px;
 
 					.user-name {
@@ -302,6 +301,7 @@ onMounted(() => {
 				.user-action-item {
 					display: flex;
 					justify-content: space-between;
+					font-size: 14px;
 
 					.user-bar {
 						width: 2px;
@@ -313,13 +313,14 @@ onMounted(() => {
 					.user-info-box {
 						display: flex;
 						column-gap: 5px;
+						align-items: center;
 
 						.user-fans-num {
 							color: #25262f;
 						}
 
 						.user-fans {
-							color: #555666;
+							color: #727272;
 							line-height: 16px;
 							margin-right: 15px;
 						}
@@ -332,11 +333,12 @@ onMounted(() => {
 				justify-content: space-between;
 				align-items: center;
 				.left-box {
+					margin-top: 5px;
 					.profile-box {
 						display: flex;
-						column-gap: 10px;
+						column-gap: 15px;
 						align-items: flex-start;
-						margin-top: 5px;
+						margin: 13px 0;
 
 						.profile {
 							font-size: 14px;
@@ -345,9 +347,9 @@ onMounted(() => {
 					}
 					.department-box {
 						display: flex;
-						column-gap: 10px;
+						column-gap: 15px;
 						align-items: flex-start;
-						margin-top: 5px;
+						margin: 13px 0;
 
 						.department-name {
 							font-size: 14px;

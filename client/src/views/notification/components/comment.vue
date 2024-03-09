@@ -13,17 +13,8 @@
 					<div class="digg-info">
 						<div class="user-info">
 							<div class="user-name">{{ item.commentUserInfo.nick_name || item.commentUserInfo.real_name }}</div>
-							<div class="user-operate" v-if="item.comment_type == ''">
-								<span>评论了你的「帖子」</span>
-							</div>
-							<div class="user-operate" v-if="item.comment_type == ''">
-								<span>回复了你在「帖子的评论」</span>
-							</div>
-							<div class="user-operate" v-if="item.comment_type == 'FD'">
-								<span>评论了你的「沸点」</span>
-							</div>
-							<div class="user-operate" v-if="item.comment_type == 'FDPL'">
-								<span>回复了你在「沸点的评论」</span>
+							<div class="user-operate">
+								<span>{{ computedGetRemarkTypeText(item.comment_type) }}</span>
 							</div>
 						</div>
 						<div class="main-content">
@@ -42,7 +33,7 @@
 							<div class="comment-action" @click="handleShowCommentInput(index)">
 								<img src="@/assets/images/评论.png" v-if="!isShowCommentInput[index]" />
 								<img v-else src="@/assets/images/评论_active.png" alt="" />
-								<span :style="{ color: isShowCommentInput[index] ? '#1e80ff' : '#a9a9a9' }">{{!isShowCommentInput[index] ? '评论' : '取消评论'}}</span>
+								<span :style="{ color: isShowCommentInput[index] ? '#1e80ff' : '#a9a9a9' }">{{ !isShowCommentInput[index] ? '评论' : '取消评论' }}</span>
 							</div>
 						</div>
 					</div>
@@ -51,10 +42,9 @@
 				<div class="image-box" v-if="item.source_pictures">
 					<img :src="item.source_pictures" alt="" />
 				</div>
-
 			</div>
 			<div class="input-box">
-				<comment-input v-show="isShowCommentInput[index]" :inputMinHeight="0" :isNeedIncreaseHeight="false"/>
+				<comment-input v-show="isShowCommentInput[index]" :inputMinHeight="0" :isNeedIncreaseHeight="false" />
 			</div>
 		</div>
 	</div>
@@ -63,8 +53,10 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
 import { findUserCommentNotice } from '@/api/notification'
+import { findGroupEnumByCodes } from '@/api/enum'
 import { formatPast } from '@/utils/time'
-
+import { useComputed } from '@/utils/common'
+ 
 const commentList = reactive([])
 const isShowCommentInput = ref(Array(commentList.length).fill(false))
 
@@ -110,25 +102,60 @@ const handleShowCommentInput = (index) => {
 
 onMounted(() => {
 	getAllUserCommentNotice()
+	handleSearchEnumList()
 })
+
+const data = reactive({
+	enumData: {},
+})
+
+const handleSearchEnumList = async () => {
+	const res = await findGroupEnumByCodes('PLLX')
+	data.enumData = res.data
+}
+
+const matchEnum = (val, type) => {
+	if (data.enumData[type]) {
+		const findItem = data.enumData[type].find((item) => {
+			return item.value == val
+		})
+		if (findItem) {
+			return findItem.label
+		} else {
+			return ''
+		}
+	}
+}
+
+const getRemarkTypeText = (val) => {
+	const type = matchEnum(val,"PLLX")
+	if(val.includes("PL")) {
+		return `回复了你在「${type}」`
+	}
+	return `评论了你的「${type}」`
+}
+
+const computedGetRemarkTypeText = useComputed(getRemarkTypeText)
+
 </script>
 
 <style lang="less" scoped>
 @import '@/assets/style/custom.less';
 
 .container-wrap {
-	padding: 10px 20px;
-	padding-top: 20px;
-
 	.digg-list {
 		border-bottom: 1px solid #f1f1f1;
-		margin-bottom: 15px;
+		padding: 15px 10px 5px 10px;
+		transition: all 0.3s;
+		&:hover {
+			background: rgb(247, 248, 250);
+		}
 
 		.digg-item {
 			display: flex;
 			justify-content: space-between;
-			margin-bottom: 15px;
 			align-items: center;
+			cursor: pointer;
 
 			.left-box {
 				display: flex;
@@ -157,10 +184,10 @@ onMounted(() => {
 						}
 						.user-operate {
 							margin-left: 8px;
-                            span {
-                                color: #515767;
-                            }
-                        }
+							span {
+								color: #515767;
+							}
+						}
 					}
 
 					.main-content {

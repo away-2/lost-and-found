@@ -19,6 +19,9 @@ let useUserStore = defineStore('User', {
                 this.systemUserInfo = res.data
                 SET_USERINFO(res.data)
             }
+        },
+        async updateSystemUserInfo(userInfo) {
+            Object.assign(this.systemUserInfo,userInfo)
         }
     },
     getters: () =>{
