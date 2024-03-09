@@ -48,7 +48,7 @@ import System from './components/system.vue'
 const router = useRouter()
 const route = useRoute()
 
-const currentKey = ref('comment')
+const currentKey = ref(route.params.method)
 
 // tab栏选项卡
 const tabList = reactive([
@@ -85,9 +85,6 @@ const handleChangeTabContent = (activeKey) => {
     router.push({ name: 'Notification', params: { method: activeKey } })
 }
 
-onMounted(() => {
-    currentKey.value = route.params.method
-})
 </script>
 
 <style lang="less" scoped>

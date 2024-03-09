@@ -48,6 +48,7 @@ class CommentService {
             where: {
                 receive_notice_user_id: user_id
             },
+            order: [['createdAt','desc']],
             raw: true
         })
         const allCommentUserInfo = await User.findAll({
@@ -76,6 +77,7 @@ class CommentService {
             where: {
                 receive_notice_user_id: user_id
             },
+            order: [['createdAt','desc']],
             raw: true
         })
         const allActiveUserInfo = await User.findAll({

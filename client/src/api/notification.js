@@ -15,3 +15,11 @@ export const findUserCommentNotice = () => {
         method: 'get'
     })
 }
+
+// 查询所有赞和收藏通知
+export const findUserLikeAndCollectNotice = () => {
+    return request({
+        url: '/noticeService/findUserLikeAndCollectNotice',
+        method: 'get'
+    })
+}

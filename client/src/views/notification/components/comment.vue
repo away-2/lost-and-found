@@ -4,49 +4,51 @@
 		<!-- 回复文章评论 -->
 		<!-- 评论沸点 -->
 		<!-- 回复沸点评论 -->
-		<div class="digg-list" v-for="(item, index) in commentList" :key="index">
-			<div class="digg-item">
-				<div class="left-box">
-					<div class="avatar">
-						<img :src="item.commentUserInfo.avator" alt="" />
+		<a-skeleton active :loading="loading">
+			<div class="digg-list" v-for="(item, index) in commentList" :key="index">
+				<div class="digg-item">
+					<div class="left-box">
+						<div class="avatar">
+							<img :src="item.commentUserInfo.avator" alt="" />
+						</div>
+						<div class="digg-info">
+							<div class="user-info">
+								<div class="user-name">{{ item.commentUserInfo.nick_name || item.commentUserInfo.real_name }}</div>
+								<div class="user-operate">
+									<span>{{ computedGetRemarkTypeText(item.comment_type) }}</span>
+								</div>
+							</div>
+							<div class="main-content">
+								<!-- 这是评论帖子或沸点的评论 -->
+								<div class="comment-content multiline-text-ellipsis">{{ item.comment_content }}</div>
+								<!-- 这是评论帖子或沸点的标题 -->
+								<div class="title-name" v-html="item.source_title"></div>
+							</div>
+							<div class="bottom-box">
+								<div class="timestamp">{{ formatPast(item.createdAt) }}</div>
+								<div class="like-action" @click="handleLikeTopic">
+									<img src="@/assets/images/点赞.png" alt="" />
+									<!-- <img v-else src="@/assets/images/点赞_active.png" /> -->
+									<span>{{ '点赞' }}</span>
+								</div>
+								<div class="comment-action" @click="handleShowCommentInput(index)">
+									<img src="@/assets/images/评论.png" v-if="!isShowCommentInput[index]" />
+									<img v-else src="@/assets/images/评论_active.png" alt="" />
+									<span :style="{ color: isShowCommentInput[index] ? '#1e80ff' : '#a9a9a9' }">{{ !isShowCommentInput[index] ? '评论' : '取消评论' }}</span>
+								</div>
+							</div>
+						</div>
 					</div>
-					<div class="digg-info">
-						<div class="user-info">
-							<div class="user-name">{{ item.commentUserInfo.nick_name || item.commentUserInfo.real_name }}</div>
-							<div class="user-operate">
-								<span>{{ computedGetRemarkTypeText(item.comment_type) }}</span>
-							</div>
-						</div>
-						<div class="main-content">
-							<!-- 这是评论帖子或沸点的评论 -->
-							<div class="comment-content multiline-text-ellipsis">{{ item.comment_content }}</div>
-							<!-- 这是评论帖子或沸点的标题 -->
-							<div class="title-name" v-html="item.source_title"></div>
-						</div>
-						<div class="bottom-box">
-							<div class="timestamp">{{ formatPast(item.createdAt) }}</div>
-							<div class="like-action" @click="handleLikeTopic">
-								<img src="@/assets/images/点赞.png" alt="" />
-								<!-- <img v-else src="@/assets/images/点赞_active.png" /> -->
-								<span>{{ '点赞' }}</span>
-							</div>
-							<div class="comment-action" @click="handleShowCommentInput(index)">
-								<img src="@/assets/images/评论.png" v-if="!isShowCommentInput[index]" />
-								<img v-else src="@/assets/images/评论_active.png" alt="" />
-								<span :style="{ color: isShowCommentInput[index] ? '#1e80ff' : '#a9a9a9' }">{{ !isShowCommentInput[index] ? '评论' : '取消评论' }}</span>
-							</div>
-						</div>
+					<!-- 如果有沸点或文章有图片就拿第一张填充 -->
+					<div class="image-box" v-if="item.source_pictures">
+						<img :src="item.source_pictures" alt="" />
 					</div>
 				</div>
-				<!-- 如果有沸点或文章有图片就拿第一张填充 -->
-				<div class="image-box" v-if="item.source_pictures">
-					<img :src="item.source_pictures" alt="" />
+				<div class="input-box">
+					<comment-input v-show="isShowCommentInput[index]" :inputMinHeight="0" :isNeedIncreaseHeight="false" />
 				</div>
 			</div>
-			<div class="input-box">
-				<comment-input v-show="isShowCommentInput[index]" :inputMinHeight="0" :isNeedIncreaseHeight="false" />
-			</div>
-		</div>
+		</a-skeleton>
 	</div>
 </template>
 
@@ -56,7 +58,7 @@ import { findUserCommentNotice } from '@/api/notification'
 import { findGroupEnumByCodes } from '@/api/enum'
 import { formatPast } from '@/utils/time'
 import { useComputed } from '@/utils/common'
- 
+
 const commentList = reactive([])
 const isShowCommentInput = ref(Array(commentList.length).fill(false))
 
@@ -81,9 +83,13 @@ const handlePictures = (pic) => {
 	return picUrl
 }
 
+const loading = ref(false)
+
 // 获取所有评论通知
 const getAllUserCommentNotice = async () => {
+	loading.value = true
 	const res = await findUserCommentNotice()
+	loading.value = false
 	if (res.code == 200) {
 		let pictures = res.data.map((item) => item.source_pictures)
 		let picUrl = handlePictures(pictures)
@@ -128,15 +134,14 @@ const matchEnum = (val, type) => {
 }
 
 const getRemarkTypeText = (val) => {
-	const type = matchEnum(val,"PLLX")
-	if(val.includes("PL")) {
+	const type = matchEnum(val, 'PLLX')
+	if (val.includes('PL')) {
 		return `回复了你在「${type}」`
 	}
 	return `评论了你的「${type}」`
 }
 
 const computedGetRemarkTypeText = useComputed(getRemarkTypeText)
-
 </script>
 
 <style lang="less" scoped>

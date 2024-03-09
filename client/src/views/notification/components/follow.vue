@@ -1,47 +1,52 @@
 <template>
-	<div class="container-wrap">
-		<div class="digg-list" v-for="(item, index) in fansList" :key="index">
-			<div class="digg-item" >
-				<div class="left-box">
-					<div class="avatar">
-						<img :src="item.fanUserInfo.avator" alt="" />
-					</div>
-					<div class="digg-info">
-						<div class="user-info">
-							<div class="user-name text-ellipsis">{{ item.fanUserInfo.nick_name || item.fanUserInfo.real_name }}</div>
-							<div class="user-operate">
-								<span>关注了你</span>
-							</div>
+	<a-skeleton active :loading="loading">
+		<div class="container-wrap">
+			<div class="digg-list" v-for="(item, index) in fansList" :key="index">
+				<div class="digg-item">
+					<div class="left-box">
+						<div class="avatar">
+							<img :src="item.fanUserInfo.avator" alt="" />
 						</div>
-						<div class="main-content">{{ item.fanUserInfo.profile }}</div>
-						<div class="timestamp">{{ formatPast(item.createdAt) }}</div>
+						<div class="digg-info">
+							<div class="user-info">
+								<div class="user-name text-ellipsis">{{ item.fanUserInfo.nick_name || item.fanUserInfo.real_name }}</div>
+								<div class="user-operate">
+									<span>关注了你</span>
+								</div>
+							</div>
+							<div class="main-content">{{ item.fanUserInfo.profile }}</div>
+							<div class="timestamp">{{ formatPast(item.createdAt) }}</div>
+						</div>
 					</div>
-				</div>
-				<div class="operate-box">
-					<div class="concern-btn" :class="{concerned: item.alreadyConcernFan}" @click="handleConcernSomeone(item)">{{item.alreadyConcernFan ? '已关注' : '关注'}}</div>
+					<div class="operate-box">
+						<div class="concern-btn" :class="{ concerned: item.alreadyConcernFan }" @click="handleConcernSomeone(item)">{{ item.alreadyConcernFan ? '已关注' : '关注' }}</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</a-skeleton>
 </template>
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
 import { findUserIncreaseFansNotice } from '@/api/notification'
-import { concernSomeone, cancelConcernSomeone } from '@/api/user';
-import { formatPast } from '@/utils/time';
+import { concernSomeone, cancelConcernSomeone } from '@/api/user'
+import { formatPast } from '@/utils/time'
 import { message } from 'ant-design-vue'
 
 const fansList = reactive([])
 
+const loading = ref(false)
+
 // 获取所有新增粉丝通知
-const getAllIncreaseFansNotice = async() => {
-	const res = await findUserIncreaseFansNotice() 
-	if(res.code == 200){
+const getAllIncreaseFansNotice = async () => {
+	loading.value = true
+	const res = await findUserIncreaseFansNotice()
+	loading.value = false
+	if (res.code == 200) {
 		fansList.push(...res.data)
 	}
 }
-
 
 // 让当前用户关注某个用户/取消关注某个用户
 const handleConcernSomeone = async (data) => {
@@ -65,8 +70,6 @@ const handleConcernSomeone = async (data) => {
 onMounted(() => {
 	getAllIncreaseFansNotice()
 })
-
-
 </script>
 
 <style lang="less" scoped>
@@ -139,7 +142,7 @@ onMounted(() => {
 		}
 	}
 }
-.ant-tabs-top >.ant-tabs-nav {
+.ant-tabs-top > .ant-tabs-nav {
 	margin: 0 !important;
 }
 </style>
