@@ -461,6 +461,7 @@ const handlePublishComment = async (data) => {
 		// 处理回显
 		const obj = res.data
 		obj.commentUserInfo = JSON.parse(JSON.stringify(systemUserInfo.value))
+		obj.level = currentCommentType.value
 		obj.alreadyLikeComment = false
 		if (Object.is(replyInfo.reply_id, null)) {
 			// 说明是在发布一级评论
