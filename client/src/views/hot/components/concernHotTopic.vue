@@ -2,6 +2,7 @@
 	<a-skeleton :loading="loading" active>
 		<hot-topic-item v-for="(item, index) in hotList" :key="index" :hotTopic="item" />
 	</a-skeleton>
+	<a-skeleton :loading="loadMoreLoading" active style="height: 80px;"></a-skeleton>
 	<div v-show="hotList.length >= total && total > 0" class="no-more-data">已经滑到底了,没有更多沸点啦</div>
 </template>
 

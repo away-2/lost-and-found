@@ -39,6 +39,7 @@ export const countDecreaseHook = defineComponent({
 export const scrollLoadMoreHook = defineComponent({
 	setup() {
 		let loadMoreFunction = null
+		let offsetTopIncreaseNum
 
 		// 通用防抖函数，传进一个函数，返回一个带有防抖功能的函数
 		function debounce(fn, delay) {
@@ -57,13 +58,14 @@ export const scrollLoadMoreHook = defineComponent({
 			const lastItem = item[item.length - 1]
 			if (!lastItem) return
 			// 如果滚动到最后一项的头顶时，就可以调用加载更多函数
-			if (lastItem.offsetTop + 60 < document.documentElement.clientHeight + document.documentElement.scrollTop) {
+			if (lastItem.offsetTop + offsetTopIncreaseNum < document.documentElement.clientHeight + document.documentElement.scrollTop) {
 				loadMoreFunction()
 			}
 		}
 
-		const startLoadMore = (fn) => {
+		const startLoadMore = (fn,_offsetTopIncreaseNum=60) => {
 			loadMoreFunction = fn
+			offsetTopIncreaseNum = _offsetTopIncreaseNum
 			// 监听window的scroll事件
 			window.onscroll = debounce(handleWindowScroll, 300)
 		}
