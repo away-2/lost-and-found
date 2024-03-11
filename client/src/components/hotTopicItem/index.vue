@@ -1,5 +1,5 @@
 <template>
-	<div class="contentWrap hotTopicItem">
+	<div class="contentWrap loadMoreItem">
 		<div class="hot-container">
 			<div class="hot-header">
 				<div class="userInfo-wrap">

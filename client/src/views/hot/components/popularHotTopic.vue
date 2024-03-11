@@ -10,6 +10,7 @@
 import { reactive, ref, onMounted, onUnmounted } from 'vue'
 import { filndAllHotInfo } from '@/api/hot'
 import { message } from 'ant-design-vue'
+import { scrollLoadMoreHook } from '@/hooks'
 
 const hotList = ref([])
 const pageNum = ref(1)
@@ -18,6 +19,8 @@ const total = ref(0)
 
 const loading = ref(false)
 const loadMoreLoading = ref(false)
+
+const { startLoadMore } = scrollLoadMoreHook.setup()
 
 // 获取沸点列表
 const getAllHotInfo = async () => {
@@ -55,38 +58,11 @@ const loadMoreTopic = () => {
 	}
 }
 
-// 通用防抖函数，传进一个函数，返回一个带有防抖功能的函数
-function debounce(fn, delay) {
-	var time = null
-	return () => {
-		clearTimeout(time)
-		time = setTimeout(() => {
-			fn()
-		}, delay)
-	}
-}
-
-// 处理window的scroll回调
-const handleWindowScroll = () => {
-	const item = document.querySelectorAll('.hotTopicItem')
-	const lastItem = item[item.length - 1]
-	if (!lastItem) return
-	// 如果滚动到最后一项的头顶时，就可以调用加载更多函数
-	if (lastItem.offsetTop + 60 < document.documentElement.clientHeight + document.documentElement.scrollTop) {
-		loadMoreTopic()
-	}
-}
-
 onMounted(() => {
 	getAllHotInfo()
-	// 监听window的scroll事件
-	window.onscroll = debounce(handleWindowScroll, 300)
+	startLoadMore(loadMoreTopic)
 })
 
-onUnmounted(() => {
-	// 卸载监听scroll事件
-	window.onscroll = null
-})
 </script>
 
 <style lang="less" scoped>
