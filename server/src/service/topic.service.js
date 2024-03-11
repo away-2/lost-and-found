@@ -562,7 +562,7 @@ class HotTopicServices {
       )
     }
     // 评论通知表插入记录
-    if (comment.user_id !== comment.reply_user_id || comment.user_id !== comment.hotTopic.user_id) {
+    if (commentNoticeObj.comment_user_id !== commentNoticeObj.receive_notice_user_id) {
       // 如果发布的用户不是回复的自己，就发通知
       await CommentNotice.create(commentNoticeObj)
     }
