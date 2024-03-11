@@ -21,7 +21,7 @@ const total = ref(0)
 const loading = ref(false)
 const loadMoreLoading = ref(false)
 
-const { startLoadMore } = scrollLoadMoreHook.setup()
+const { registerLoadMore } = scrollLoadMoreHook.setup()
 
 const route = useRoute()
 
@@ -65,7 +65,7 @@ const loadMoreTopic = () => {
 
 onMounted(() => {
 	getAllHotInfo()
-	startLoadMore(loadMoreTopic,260)
+	registerLoadMore(loadMoreTopic,260)
 })
 </script>
 

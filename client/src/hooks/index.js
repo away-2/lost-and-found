@@ -63,7 +63,7 @@ export const scrollLoadMoreHook = defineComponent({
 			}
 		}
 
-		const startLoadMore = (fn,_offsetTopIncreaseNum=60) => {
+		const registerLoadMore = (fn,_offsetTopIncreaseNum=60) => {
 			loadMoreFunction = fn
 			offsetTopIncreaseNum = _offsetTopIncreaseNum
 			// 监听window的scroll事件
@@ -75,7 +75,7 @@ export const scrollLoadMoreHook = defineComponent({
 			window.onscroll = null
 		})
 		return {
-			startLoadMore
+			registerLoadMore
 		}
 	},
 })
