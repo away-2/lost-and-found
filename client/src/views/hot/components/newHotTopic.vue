@@ -2,7 +2,8 @@
 	<a-skeleton :loading="loading" active>
 		<hot-topic-item v-for="(item, index) in hotList" :key="index" :hotTopic="item" />
 	</a-skeleton>
-	<a-skeleton :loading="loadMoreLoading" active></a-skeleton>
+	<a-skeleton :loading="loadMoreLoading" active style="height: 80px;"></a-skeleton>
+	<div v-show="hotList.length >= total && total > 0" class="no-more-data">已经滑到底了,没有更多沸点啦</div>
 </template>
 
 <script setup>
@@ -52,7 +53,6 @@ const loadMoreTopic = () => {
 		getAllHotInfo()
 		return
 	}
-	message.warning('没有更多沸点啦~')
 }
 
 // 通用防抖函数，传进一个函数，返回一个带有防抖功能的函数
@@ -89,4 +89,11 @@ onUnmounted(() => {
 })
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.no-more-data {
+	text-align: center;
+	margin: 20px 0 10px 0;
+	font-size: 14px;
+	color: rgb(99, 99, 99);
+}
+</style>
