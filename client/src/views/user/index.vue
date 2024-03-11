@@ -223,7 +223,7 @@ onMounted(() => {
 <style lang="less" scoped>
 @import '@/assets/style/custom.less';
 .user-container {
-	padding: 20px 250px;
+	padding: 10px 250px 20px 300px;
 
 	.nav-main-wrapper {
 		width: 100%;
