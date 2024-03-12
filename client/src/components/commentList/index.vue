@@ -53,6 +53,9 @@
 								<div class="user-profile">{{ item.commentUserInfo.profile }}</div>
 							</div>
 							<div class="comment-content multiline-text-ellipsis" v-html="item.content"></div>
+							<div class="comment-picture" v-if="item.picture">
+								<img :src="item.picture" @click="handlePreviewImg(item.picture)" />
+							</div>
 							<div class="comment-bottom">
 								<div class="comment-action">
 									<div class="action-time">{{ formatPast(item.createdAt) }}</div>
@@ -180,6 +183,9 @@
 													</div>
 													<div class="reply-content multiline-text-ellipsis" v-html="replyItem.content"></div>
 												</div>
+											</div>
+											<div class="comment-picture" v-if="replyItem.picture">
+												<img :src="replyItem.picture" @click="handlePreviewImg(replyItem.picture)" />
 											</div>
 											<div class="reply-bottom">
 												<div class="reply-action">
@@ -313,6 +319,7 @@ import { formatPast } from '@/utils/time'
 import { Modal, message } from 'ant-design-vue'
 import useUserStore from '@/store/user'
 import { storeToRefs } from 'pinia'
+import previewImg from '@/components/previewImg/index'
 
 const props = defineProps({
 	isShowComment: {
@@ -427,7 +434,7 @@ const handlePublishComment = async (data) => {
 	const params = {
 		...replyInfo,
 		content: data.content,
-		picture: data.pictures[0] || null,
+		picture: data.pictures[0]?.file_path || null,
 		user_id: systemUserInfo.value.id,
 		hot_topic_id: props.hotTopic.id,
 		hotTopic: Object.assign({}, props.hotTopic, {
@@ -537,6 +544,11 @@ const toDeleteHot = async (type, item, replyItem) => {
 		},
 	})
 }
+
+const handlePreviewImg = (picture) => {
+	previewImg.open({ imageList: [picture], currentShowIndex: 0 })
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -666,6 +678,17 @@ const toDeleteHot = async (type, item, replyItem) => {
 						color: #252933;
 						font-weight: 400;
 						padding-right: 20px;
+					}
+					.comment-picture {
+						margin-top: 8px;
+						margin-bottom: 3px;
+						img {
+							width: 98px;
+							height: 98px;
+							border-radius: 3px;
+							object-fit: cover;
+							cursor: zoom-in;
+						}
 					}
 					.comment-bottom {
 						display: flex;

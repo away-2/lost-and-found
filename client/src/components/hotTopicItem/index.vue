@@ -34,7 +34,14 @@
 				<div class="text" v-html="hotTopic.content"></div>
 				<template v-if="hotTopic.pictures">
 					<div class="picture-list">
-						<img v-for="(picture, index) in hotTopic.pictures" :key="index" class="picture" :class="{ small: hotTopic.pictures.length > 1 }" :src="picture" />
+						<img
+							v-for="(picture, index) in hotTopic.pictures"
+							:key="index"
+							class="picture"
+							:class="{ small: hotTopic.pictures.length > 1 }"
+							:src="picture"
+							@click="handlePreviewImg(index)"
+						/>
 					</div>
 				</template>
 			</div>
@@ -64,6 +71,7 @@ import { removeHotById } from '@/api/hot'
 import { GET_USERINFO } from '@/utils/token'
 import { message, Modal } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
+import previewImg from '@/components/previewImg/index'
 
 const props = defineProps({
 	hotTopic: {
@@ -102,8 +110,8 @@ const router = useRouter()
 // 点击发布日期进入沸点详情页
 const handleToTopicInfo = (id) => {
 	const { href } = router.resolve({
-		path: `/hot/${id}`
-	}) 
+		path: `/hot/${id}`,
+	})
 	window.open(href, '_blank')
 }
 
@@ -129,8 +137,8 @@ const handleOperateLikeOk = (isLike) => {
 // 前往个人主页
 const toUserCenter = (id) => {
 	const { href } = router.resolve({
-		path: `/user/${id}`
-	}) 
+		path: `/user/${id}`,
+	})
 	window.open(href, '_blank')
 }
 
@@ -149,9 +157,15 @@ const toDeleteHot = () => {
 				router.push('/home')
 			}
 		},
-		onCancel() { },
+		onCancel() {},
 	})
 }
+
+// 点击图片预览
+const handlePreviewImg = (index) => {
+	previewImg.open({ imageList: _hotTopic.pictures, currentShowIndex: index })
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -265,6 +279,7 @@ const toDeleteHot = () => {
 					height: 200px;
 					border-radius: 4px;
 					object-fit: cover;
+					cursor: zoom-in;
 
 					&.small {
 						width: 100px;

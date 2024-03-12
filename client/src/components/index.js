@@ -9,7 +9,6 @@ import BackTop from '@/components/backTop/index.vue'
 import EmptyStatus from '@/components/emptyStatus/index.vue'
 import Cropper from '@/components/cropper/index.vue'
 
-
 export default {
     install(app) {
         app.component('commentInput',CommentInput)
