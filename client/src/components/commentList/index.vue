@@ -309,10 +309,11 @@
 				</a-skeleton>
 			</div>
 		</div>
+		<div class="loading-wrap" v-show="loadMoreLoading">加载中...</div>
 		<!-- 加载更多部分 -->
-		<div class="load-more-wrap" @click="handleLoadMore">
+		<div class="load-more-wrap" v-show="commentList.length < total" @click="handleLoadMore">
 			<span>查看全部 {{ hotTopic.remark_number }} 条评论</span>
-			<DownOutlined />
+			<DownOutlined v-show="pageSize === 3" />
 		</div>
 	</div>
 </template>
@@ -325,6 +326,7 @@ import { formatPast } from '@/utils/time'
 import { Modal, message } from 'ant-design-vue'
 import useUserStore from '@/store/user'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 import previewImg from '@/components/previewImg/index'
 
 const props = defineProps({
@@ -337,6 +339,8 @@ const props = defineProps({
 	},
 })
 
+const router = useRouter()
+
 const emits = defineEmits(['commentTotalChange'])
 
 const userStore = useUserStore()
@@ -344,31 +348,40 @@ const { systemUserInfo } = storeToRefs(userStore)
 
 const pageNum = ref(1)
 const pageSize = ref(3)
+const offset = ref(null)
 const total = ref(0)
 const commentList = reactive([])
 const isSortActive = ref('new')
 const loading = ref(false)
+const loadMoreLoading = ref(false)
 
 const handleSelectedSort = (type) => {
 	if (type !== isSortActive.value) {
 		isSortActive.value = type
 		pageNum.value = 1
 		pageSize.value = 3
+		offset.value = null
 		commentList.splice(0, commentList.length)
 		getAllCommentInfo()
 	}
 }
 
-const getAllCommentInfo = async () => {
-	loading.value = true
+const getAllCommentInfo = async (isLoadMore) => {
+	if (isLoadMore) {
+		loadMoreLoading.value = true
+	} else {
+		loading.value = true
+	}
 	let params = {
 		pageNum: pageNum.value,
 		pageSize: pageSize.value,
+		offset: offset.value,
 		topic_id: props.hotTopic.id,
 		classify: isSortActive.value,
 	}
 	const res = await findTopicCommentByPaging(params)
 	loading.value = false
+	loadMoreLoading.value = false
 	if (res.code == 200) {
 		commentList.push(...res.data.topicCommentList)
 		total.value = res.data.total
@@ -377,7 +390,16 @@ const getAllCommentInfo = async () => {
 
 // 点击查看更多
 const handleLoadMore = () => {
-
+	if (pageSize.value === 3) {
+		offset.value = 3
+		pageSize.value = 5
+		getAllCommentInfo(true)
+	} else if (pageSize.value === 5) {
+		const { href } = router.resolve({
+			path: `/hot/${props.hotTopic.id}`,
+		})
+		window.open(href, '_blank')
+	}
 }
 
 const handleUserName = (user) => {
@@ -390,6 +412,9 @@ watch(
 		if (props.isShowComment) {
 			getAllCommentInfo()
 		} else {
+			offset.value = null
+			total.value = 0
+			pageSize.value = 3
 			commentList.splice(0, commentList.length)
 		}
 	}
@@ -487,6 +512,7 @@ const handlePublishComment = async (data) => {
 			// 说明是在发布一级评论
 			obj.replyList = []
 			commentList.unshift(obj)
+			total.value = total.value + 1
 		} else {
 			// 说明是在发布二级评论
 			obj.replyUserInfo = inputBelongReplyItem.commentUserInfo
@@ -546,6 +572,7 @@ const toDeleteHot = async (type, item, replyItem) => {
 					// 删除的是顶级评论
 					decreaseNum += topComment.replyList.length
 					commentList.splice(topCommentIndex, 1)
+					total.value = total.value - 1
 				} else {
 					// 删除的是二级评论
 					const replyCommentIndex = topComment.replyList.findIndex((r) => r.id === replyItem.id)
@@ -954,6 +981,12 @@ const handlePreviewImg = (picture) => {
 				}
 			}
 		}
+	}
+
+	.loading-wrap {
+		text-align: center;
+		font-size: 13px;
+		color: rgb(116, 116, 116);
 	}
 
 	.load-more-wrap {

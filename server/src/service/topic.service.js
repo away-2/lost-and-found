@@ -304,8 +304,8 @@ class HotTopicServices {
     return result
   }
   // 分页查询沸点的评论信息
-  async searchCommentByPaging({ pageNum, pageSize, topic_id, classify, view_user_id }) {
-    const offset = (pageNum - 1) * pageSize
+  async searchCommentByPaging({ pageNum, pageSize, offset: _offset, topic_id, classify, view_user_id }) {
+    const offset = _offset || (pageNum - 1) * pageSize
     const whereArr = []
     whereArr.push({ hot_topic_id: topic_id }, { reply_id: null })
     let order = [["createdAt", "desc"]]

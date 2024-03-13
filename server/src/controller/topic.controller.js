@@ -124,6 +124,7 @@ class HotTopicController {
       pageSize: ctx.request.body.pageSize,
       topic_id: ctx.request.body.topic_id,
       classify: ctx.request.body.classify,
+      offset: ctx.request.body.offset,
       view_user_id,
     });
     ctx.body = {
