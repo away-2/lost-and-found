@@ -8,10 +8,10 @@ export function useComputed(fn) {
     return function(...args) {
         const cacheResult = getCache(args)
         if(cacheResult) {
-            console.log("直接拿到缓存结果,未执行耗时操作");
+            // console.log("直接拿到缓存结果,未执行耗时操作",cacheResult.value);
             return cacheResult.value
         }
-        console.log("未拿到缓存结果,执行了耗时操作");
+        // console.log("未拿到缓存结果,执行了耗时操作",cacheResult,"传参: ",args);
         const result = computed(() => fn(...args))
         cache.set(JSON.stringify(args),result)
         return result.value

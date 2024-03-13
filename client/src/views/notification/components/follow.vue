@@ -2,7 +2,7 @@
 	<a-skeleton active :loading="loading">
 		<div class="container-wrap">
 			<div class="digg-list" v-for="(item, index) in fansList" :key="index">
-				<div class="digg-item">
+				<div class="digg-item" @click="toUserCenter(item.fanId)">
 					<div class="left-box">
 						<div class="avatar">
 							<img :src="item.fanUserInfo.avator" alt="" />
@@ -15,11 +15,11 @@
 								</div>
 							</div>
 							<div class="main-content">{{ item.fanUserInfo.profile }}</div>
-							<div class="timestamp">{{ formatPast(item.createdAt) }}</div>
+							<div class="timestamp">{{ computedFormatPast(item.createdAt) }}</div>
 						</div>
 					</div>
 					<div class="operate-box">
-						<div class="concern-btn" :class="{ concerned: item.alreadyConcernFan }" @click="handleConcernSomeone(item)">{{ item.alreadyConcernFan ? '已关注' : '关注' }}</div>
+						<div class="concern-btn" :class="{ concerned: item.alreadyConcernFan }" @click.stop="handleConcernSomeone(item)">{{ item.alreadyConcernFan ? '已关注' : '关注' }}</div>
 					</div>
 				</div>
 			</div>
@@ -32,7 +32,11 @@ import { ref, onMounted, reactive } from 'vue'
 import { findUserIncreaseFansNotice } from '@/api/notification'
 import { concernSomeone, cancelConcernSomeone } from '@/api/user'
 import { formatPast } from '@/utils/time'
+import { useComputed } from '@/utils/common'
 import { message } from 'ant-design-vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const fansList = reactive([])
 
@@ -70,6 +74,17 @@ const handleConcernSomeone = async (data) => {
 onMounted(() => {
 	getAllIncreaseFansNotice()
 })
+
+// 前往个人主页
+const toUserCenter = (id) => {
+	const { href } = router.resolve({
+		path: `/user/${id}`,
+	})
+	window.open(href, '_blank')
+}
+
+const computedFormatPast = useComputed(formatPast)
+
 </script>
 
 <style lang="less" scoped>
@@ -109,7 +124,7 @@ onMounted(() => {
 						display: flex;
 						align-items: center;
 						.user-name {
-							font-size: 15px;
+							font-size: 16px;
 							max-width: 150px;
 						}
 						.user-operate {
@@ -129,6 +144,7 @@ onMounted(() => {
 						font-size: 13px;
 						color: #8a919f;
 						margin: 5px 0;
+						margin-top: 8px;
 					}
 				}
 			}

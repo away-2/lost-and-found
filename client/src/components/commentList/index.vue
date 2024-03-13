@@ -309,12 +309,18 @@
 				</a-skeleton>
 			</div>
 		</div>
+		<!-- 加载更多部分 -->
+		<div class="load-more-wrap" @click="handleLoadMore">
+			<span>查看全部 {{ hotTopic.remark_number }} 条评论</span>
+			<DownOutlined />
+		</div>
 	</div>
 </template>
 
 <script setup>
-import { ref, watch, reactive } from 'vue'
+import { ref, watch, reactive, computed } from 'vue'
 import { findTopicCommentByPaging, publishHotTopicComment, likeTopicComment, cancelLikeTopicComment, removeHotTopicCommentById } from '@/api/hot'
+import { DownOutlined } from '@ant-design/icons-vue'
 import { formatPast } from '@/utils/time'
 import { Modal, message } from 'ant-design-vue'
 import useUserStore from '@/store/user'
@@ -338,6 +344,7 @@ const { systemUserInfo } = storeToRefs(userStore)
 
 const pageNum = ref(1)
 const pageSize = ref(3)
+const total = ref(0)
 const commentList = reactive([])
 const isSortActive = ref('new')
 const loading = ref(false)
@@ -364,7 +371,13 @@ const getAllCommentInfo = async () => {
 	loading.value = false
 	if (res.code == 200) {
 		commentList.push(...res.data.topicCommentList)
+		total.value = res.data.total
 	}
+}
+
+// 点击查看更多
+const handleLoadMore = () => {
+
 }
 
 const handleUserName = (user) => {
@@ -548,7 +561,6 @@ const toDeleteHot = async (type, item, replyItem) => {
 const handlePreviewImg = (picture) => {
 	previewImg.open({ imageList: [picture], currentShowIndex: 0 })
 }
-
 </script>
 
 <style lang="less" scoped>
@@ -941,6 +953,25 @@ const handlePreviewImg = (picture) => {
 					}
 				}
 			}
+		}
+	}
+
+	.load-more-wrap {
+		height: 45px;
+		text-align: center;
+		background-color: #f7f8fa;
+		border-radius: 3px;
+		color: #636363;
+		font-size: 14px;
+		margin: 0 15px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		column-gap: 8px;
+		cursor: pointer;
+		transition: all 0.3s;
+		&:hover {
+			background-color: #eeeeee;
 		}
 	}
 }

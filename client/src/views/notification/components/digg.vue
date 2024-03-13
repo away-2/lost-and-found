@@ -9,24 +9,24 @@
 				<div class="digg-item" v-for="notice in noticeList" :key="notice.id">
 					<div class="center">
 						<div class="left-box">
-							<div class="avatar">
+							<div class="avatar" @click="toUserCenter(notice.active_user_id)">
 								<img :src="notice.activeUserInfo.avator" />
 							</div>
 							<div class="digg-info">
 								<span class="user-info">
-									<span class="user-name">{{ notice.activeUserInfo.nick_name || notice.activeUserInfo.real_name }}</span>
+									<span class="user-name" @click="toUserCenter(notice.active_user_id)">{{ notice.activeUserInfo.nick_name || notice.activeUserInfo.real_name }}</span>
 									<span class="user-operate">
 										<span>{{ computedGetOperateName(notice.type) }}</span>
-										<span class="topic-content" v-if="!notice.type.includes('PL')" v-html="notice.source_title"></span>
+										<span class="topic-content" @click="handleToTopicInfo(notice.source_id)" v-if="!notice.type.includes('PL')" v-html="notice.source_title"></span>
 									</span>
 								</span>
 								<div class="main-content" v-if="notice.type.includes('PL')">
 									<!-- 这是点赞帖子或沸点的评论 -->
 									<div class="comment-content" v-html="notice.comment_content"></div>
 									<!-- 这是点赞帖子或沸点的标题 -->
-									<div class="title-name" v-html="notice.source_title"></div>
+									<div class="title-name" @click="handleToTopicInfo(notice.source_id)" v-html="notice.source_title"></div>
 								</div>
-								<div class="timestamp">1天前</div>
+								<div class="timestamp">{{ computedFormatPast(notice.createdAt) }}</div>
 							</div>
 						</div>
 						<!-- 如果有沸点或文章有图片就拿第一张填充 -->
@@ -42,10 +42,13 @@
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import { findUserLikeAndCollectNotice } from '@/api/notification'
 import { findGroupEnumByCodes } from '@/api/enum'
 import { useComputed } from '@/utils/common'
+import { formatPast } from '@/utils/time'
 
+const router = useRouter()
 const noticeList = reactive([])
 
 const loading = ref(false)
@@ -94,6 +97,24 @@ const getOperateName = (val) => {
 }
 
 const computedGetOperateName = useComputed(getOperateName)
+
+const computedFormatPast = useComputed(formatPast)
+
+// 点击头像或用户名前往个人主页
+const toUserCenter = (id) => {
+	const { href } = router.resolve({
+		path: `/user/${id}`,
+	})
+	window.open(href, '_blank')
+}
+
+// 前往沸点详情
+const handleToTopicInfo = (id) => {
+	const { href } = router.resolve({
+		path: `/hot/${id}`,
+	})
+	window.open(href, '_blank')
+}
 </script>
 
 <style lang="less" scoped>
@@ -106,6 +127,9 @@ const computedGetOperateName = useComputed(getOperateName)
 			transition: all 0.3s;
 			&:hover {
 				background: rgb(247, 248, 250);
+				.topic-content {
+					color: rgb(62, 126, 247);
+				}
 			}
 		}
 		.center {
@@ -121,10 +145,11 @@ const computedGetOperateName = useComputed(getOperateName)
 				.avatar {
 					flex: 0 0 auto;
 					img {
-						width: 36px;
-						height: 36px;
+						width: 38px;
+						height: 38px;
 						border-radius: 50%;
 						object-fit: cover;
+						cursor: pointer;
 					}
 				}
 				.digg-info {
@@ -132,20 +157,22 @@ const computedGetOperateName = useComputed(getOperateName)
 					.user-info {
 						line-height: 27px;
 						.user-name {
-							font-size: 14px;
+							font-size: 16px;
+							cursor: pointer;
 						}
 						.user-operate {
 							span {
 								margin: 0 10px;
 							}
 							span:nth-child(1) {
-								color: rgb(66, 66, 66);
+								color: rgb(94, 94, 94);
 							}
 							.article-name {
 								color: @base-blue-color;
 							}
 							.topic-content {
 								display: contents;
+								cursor: pointer;
 							}
 						}
 					}
@@ -158,6 +185,7 @@ const computedGetOperateName = useComputed(getOperateName)
 							border-left: 2px solid #f1f1f1;
 							padding-left: 15px;
 							color: #8a919f;
+							cursor: pointer;
 						}
 					}
 					.timestamp {

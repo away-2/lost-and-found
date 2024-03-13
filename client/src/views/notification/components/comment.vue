@@ -6,7 +6,7 @@
 		<!-- 回复沸点评论 -->
 		<a-skeleton active :loading="loading">
 			<div class="digg-list" v-for="(item, index) in commentList" :key="index">
-				<div class="digg-item">
+				<div class="digg-item" @click="handleToTopicInfo(item.source_id)">
 					<div class="left-box">
 						<div class="avatar">
 							<img :src="item.commentUserInfo.avator" alt="" />
@@ -25,16 +25,16 @@
 								<div class="title-name" v-html="item.source_title"></div>
 							</div>
 							<div class="bottom-box">
-								<div class="timestamp">{{ formatPast(item.createdAt) }}</div>
+								<div class="timestamp">{{ computedFormatPast(item.createdAt) }}</div>
 								<div class="like-action" @click="handleLikeTopic">
 									<img src="@/assets/images/点赞.png" alt="" />
 									<!-- <img v-else src="@/assets/images/点赞_active.png" /> -->
 									<span>{{ '点赞' }}</span>
 								</div>
-								<div class="comment-action" @click="handleShowCommentInput(index)">
+								<div class="comment-action" @click.stop="handleShowCommentInput(index)">
 									<img src="@/assets/images/评论.png" v-if="!isShowCommentInput[index]" />
 									<img v-else src="@/assets/images/评论_active.png" alt="" />
-									<span :style="{ color: isShowCommentInput[index] ? '#1e80ff' : '#a9a9a9' }">{{ !isShowCommentInput[index] ? '评论' : '取消评论' }}</span>
+									<span :style="{ color: isShowCommentInput[index] ? '#1e80ff' : '#a9a9a9' }">{{ !isShowCommentInput[index] ? '回复' : '取消回复' }}</span>
 								</div>
 							</div>
 						</div>
@@ -45,7 +45,12 @@
 					</div>
 				</div>
 				<div class="input-box">
-					<comment-input v-show="isShowCommentInput[index]" :inputMinHeight="0" :isNeedIncreaseHeight="false" />
+					<comment-input
+						v-show="isShowCommentInput[index]"
+						:hintText="`回复${item.commentUserInfo.nick_name || item.commentUserInfo.real_name}...`"
+						:inputMinHeight="0"
+						:isNeedIncreaseHeight="false"
+					/>
 				</div>
 			</div>
 		</a-skeleton>
@@ -54,10 +59,13 @@
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import { findUserCommentNotice } from '@/api/notification'
 import { findGroupEnumByCodes } from '@/api/enum'
 import { formatPast } from '@/utils/time'
 import { useComputed } from '@/utils/common'
+
+const router = useRouter()
 
 const commentList = reactive([])
 const isShowCommentInput = ref(Array(commentList.length).fill(false))
@@ -142,6 +150,16 @@ const getRemarkTypeText = (val) => {
 }
 
 const computedGetRemarkTypeText = useComputed(getRemarkTypeText)
+
+const computedFormatPast = useComputed(formatPast)
+
+// 前往沸点详情
+const handleToTopicInfo = (id) => {
+	const { href } = router.resolve({
+		path: `/hot/${id}`,
+	})
+	window.open(href, '_blank')
+}
 </script>
 
 <style lang="less" scoped>
@@ -275,7 +293,7 @@ const computedGetRemarkTypeText = useComputed(getRemarkTypeText)
 			}
 		}
 		.input-box {
-			padding: 0 0 15px 50px;
+			padding: 10px 0 15px 50px;
 		}
 	}
 }

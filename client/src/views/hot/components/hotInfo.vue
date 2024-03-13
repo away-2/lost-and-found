@@ -1,5 +1,5 @@
 <template>
-	<div class="mainContainer">
+	<div class="mainContainer" v-if="hotTopicIsExist && !loading">
 		<div class="leftWrap">
 			<hot-topic-item :hotTopic="hotTopic" :isNeedDelete="true" :supportShowComment="false" v-if="hotTopic.id" />
 			<div class="comment-wrap">
@@ -31,6 +31,11 @@
 			</div>
 		</div>
 	</div>
+	<div class="empty-container" v-if="!hotTopicIsExist && !loading">
+		<img :src="require('@/assets/images/noExist.png')" alt="">
+		<div class="back-btn" @click="backToHome">回到首页</div>
+	</div>
+	<a-skeleton active :loading="loading" style="height: 300px;width: 70%;margin: 0 auto;"></a-skeleton>
 </template>
 
 <script setup>
@@ -38,14 +43,19 @@ import { GET_USERINFO } from '@/utils/token'
 import { formatPast } from '@/utils/time'
 import { message, Modal } from 'ant-design-vue'
 import { onMounted, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { findTopicInfoById } from '@/api/hot'
 
 let userInfo = GET_USERINFO().user
 
 const route = useRoute()
+const router = useRouter()
 
 const hotTopicId = ref(route.params.id)
+
+const hotTopicIsExist = ref(true)
+
+const loading = ref(false)
 
 onMounted(() => {
 	searchHotTopicInfo()
@@ -54,12 +64,16 @@ onMounted(() => {
 const hotTopic = reactive({})
 
 const searchHotTopicInfo = async () => {
+	loading.value = true
 	const res = await findTopicInfoById(hotTopicId.value)
+	loading.value = false
 	if (res.code == 200) {
 		if (res.data.pictures) {
 			res.data.pictures = JSON.parse(res.data.pictures)
 		}
 		Object.assign(hotTopic, res.data)
+	} else {
+		hotTopicIsExist.value = false
 	}
 }
 
@@ -68,6 +82,11 @@ const handleSendComment = (data) => {
 	message.success('数据过来了')
 	console.log(data)
 }
+
+const backToHome = () => {
+	router.push('/home')
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -147,6 +166,36 @@ const handleSendComment = (data) => {
 					padding-top: 5px;
 				}
 			}
+		}
+	}
+}
+
+.empty-container {
+	width: 100%;
+	height: calc(100vh - 60px);
+	background: white;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	row-gap: 40px;
+	img {
+		width: 180px;
+		height: 180px;
+	}
+	.back-btn {
+		width: 120px;
+		height: 45px;
+		line-height: 45px;
+		border-radius: 3px;
+		text-align: center;
+		background-color: rgba(89, 161, 255, 0.1);
+		color: #2571fe;
+		border: 1px solid #bcd4ff;
+		cursor: pointer;
+		transition: all 0.3s;
+		&:hover {
+			background-color: rgba(89, 161, 255, 0.3);
 		}
 	}
 }

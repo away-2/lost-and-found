@@ -9,10 +9,10 @@
 			</div>
 		</div>
 		<!-- 空状态 -->
-		<empty-status title="暂无关注哦~" :isShow="!concernList"/>
-				<!-- 关注用户列表 -->
+		<empty-status title="暂无关注哦~" :isShow="!concernList" />
+		<!-- 关注用户列表 -->
 		<div class="digg-list" v-for="(item, index) in concernList" :key="index" v-if="concernType == 'concern'">
-			<div class="digg-item">
+			<div class="digg-item" @click="toUserCenter(item.concernUserInfo.id)">
 				<div class="left-box">
 					<div class="avatar">
 						<img :src="item.concernUserInfo.avator" alt="" />
@@ -26,13 +26,13 @@
 					</div>
 				</div>
 				<div class="operate-box">
-					<div class="concern-btn" :class="{ concerned: item.alreadyConcern }" @click="handleConcernSomeone(item)">{{ item.alreadyConcern ? '已关注' : '关注' }}</div>
+					<div class="concern-btn" :class="{ concerned: item.alreadyConcern }" @click.stop="handleConcernSomeone(item)">{{ item.alreadyConcern ? '已关注' : '关注' }}</div>
 				</div>
 			</div>
 		</div>
 		<!-- 粉丝用户列表 -->
 		<div class="digg-list" v-for="(item, index2) in fansList" :key="index2" v-else>
-			<div class="digg-item">
+			<div class="digg-item" @click="toUserCenter(item.fanUserInfo.id)">
 				<div class="left-box">
 					<div class="avatar">
 						<img :src="item.fanUserInfo.avator" alt="" />
@@ -46,7 +46,7 @@
 					</div>
 				</div>
 				<div class="operate-box">
-					<div class="concern-btn" :class="{ concerned: item.alreadyConcern }" @click="handleConcernSomeone(item)">{{ item.alreadyConcern ? '已关注' : '关注' }}</div>
+					<div class="concern-btn" :class="{ concerned: item.alreadyConcern }" @click.stop="handleConcernSomeone(item)">{{ item.alreadyConcern ? '已关注' : '关注' }}</div>
 				</div>
 			</div>
 		</div>
@@ -55,12 +55,14 @@
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import { findUserIncreaseFansNotice } from '@/api/notification'
 import { concernSomeone, cancelConcernSomeone, findSomeoneAllConcernUser, findSomeoneAllFans } from '@/api/user'
 import { message } from 'ant-design-vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 
 // 粉丝列表
 const fansList = reactive([])
@@ -82,33 +84,34 @@ const getAllConcernUser = async (id) => {
 // 获取当前用户所有粉丝
 const getAllFansUser = async () => {
 	const res = await findSomeoneAllFans(userId.value)
-	if(res.code == 200) {
-		console.log(res.data,"userId.value");
-		fansList.push(...res.data);
+	if (res.code == 200) {
+		console.log(res.data, 'userId.value')
+		fansList.push(...res.data)
 	}
 }
 
 // 让当前用户关注某个用户/取消关注某个用户
 const handleConcernSomeone = async (data) => {
-	if (concernType == 'concern') {
-		let params = { passiveUser: data.concernUserInfo.id, concernWay: 'FD' }
-		let id = data.concernUserInfo.id
+	let params, id
+	if (concernType.value == 'concern') {
+		params = { passiveUser: data.concernUserInfo.id, concernWay: 'FD' }
+		id = data.concernUserInfo.id
 	} else {
-		let params = { passiveUser: data.fanUserInfo.id, concernWay: 'FD' }
-		let id = data.fanUserInfo.id
+		params = { passiveUser: data.fanUserInfo.id, concernWay: 'FD' }
+		id = data.fanUserInfo.id
 	}
 	let res = null
 	if (data.alreadyConcern) {
 		// 取消关注用户
 		res = await cancelConcernSomeone(id)
 		if (res.code == 200) {
-			data.alreadyConcernFan = false
+			data.alreadyConcern = false
 		}
 	} else {
 		// 关注用户
 		res = await concernSomeone(params)
 		if (res.code == 200) {
-			data.alreadyConcernFan = true
+			data.alreadyConcern = true
 		}
 	}
 }
@@ -120,14 +123,24 @@ const handleConcernType = (type) => {
 		// concernList.splice(0,concernList.length)
 		getAllConcernUser()
 	} else {
-		fansList.splice(0,fansList.length)
+		fansList.splice(0, fansList.length)
 		getAllFansUser()
 	}
 }
+
 onMounted(() => {
 	userId.value = route.params.id.split('/')[0]
 	getAllConcernUser(parseInt(userId.value))
 })
+
+// 前往个人主页
+const toUserCenter = (id) => {
+	const { href } = router.resolve({
+		path: `/user/${id}`,
+	})
+	window.open(href, '_blank')
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -214,7 +227,7 @@ onMounted(() => {
 					.main-content {
 						font-size: 12px;
 						color: #b1b7c2;
-						margin-top: 6px;
+						margin-top: 10px;
 					}
 				}
 			}

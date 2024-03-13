@@ -194,6 +194,7 @@ class UserService {
             where: {
                 activeUserId: user_id
             },
+            order: [['createdAt','desc']],
             raw: true
         })
         const concernUserInfoList = await User.findAll({
@@ -231,6 +232,7 @@ class UserService {
             where: {
                 passiveUserId: user_id
             },
+            order: [['createdAt','desc']],
             raw: true
         })
         const fansInfoList = await User.findAll({
