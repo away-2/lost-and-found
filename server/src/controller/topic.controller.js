@@ -12,7 +12,8 @@ const {
   checkExistHotTopicCommentById,
   likeTopicComment,
   cancelLikeTopicComment,
-  deleteCommentInHotTopic
+  deleteCommentInHotTopic,
+  searchUserLikeTopicByPaging
 } = require("../service/topic.service");
 const { searchUserInfoById } = require("../service/user.service");
 
@@ -203,6 +204,20 @@ class HotTopicController {
       code: 200, 
       message: '删除评论成功'
     }
+  }
+  // 分页查询指定用户点赞的沸点
+  async findUserLikeTopicByPaging(ctx,next) {
+    const view_user_id = ctx.state.user.id;
+    const res = await searchUserLikeTopicByPaging({
+      pageNum: ctx.request.body.pageNum,
+      pageSize: ctx.request.body.pageSize,
+      user_id: ctx.request.body.user_id,
+      view_user_id,
+    });
+    ctx.body = {
+      code: 200,
+      data: res,
+    };
   }
   // {
   //     id: 1,

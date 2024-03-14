@@ -26,7 +26,7 @@
 							</div>
 							<div class="bottom-box">
 								<div class="timestamp">{{ computedFormatPast(item.createdAt) }}</div>
-								<div class="like-action" @click="handleLikeTopic">
+								<div class="like-action" @click.stop="handleLikeTopic">
 									<img src="@/assets/images/点赞.png" alt="" />
 									<!-- <img v-else src="@/assets/images/点赞_active.png" /> -->
 									<span>{{ '点赞' }}</span>

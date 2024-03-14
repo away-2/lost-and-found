@@ -16,7 +16,8 @@ const {
   createHotTopicComment,
   handleLikeTopicComment,
   handleCancelLikeTopicComment,
-  removeHotTopicCommentById
+  removeHotTopicCommentById,
+  findUserLikeTopicByPaging
 } = require("../controller/topic.controller");
 // 引入一些要用到的中间件
 const { auth } = require("../middleware/auth.middleware");
@@ -59,5 +60,8 @@ router.get('/cancelLikeTopicComment',auth,handleCancelLikeTopicComment)
 
 // 根据id删除沸点评论
 router.delete('/removeHotTopicCommentById',auth,removeHotTopicCommentById)
+
+// 分页查询指定用户点赞的沸点
+router.post('/findUserLikeTopicByPaging',auth,findUserLikeTopicByPaging)
 
 module.exports = router;
