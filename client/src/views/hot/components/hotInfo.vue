@@ -3,11 +3,12 @@
 		<div class="leftWrap">
 			<hot-topic-item :hotTopic="hotTopic" :isNeedDelete="true" :supportShowComment="false" v-if="hotTopic.id" />
 			<div class="comment-wrap">
-				<div class="comment-container">
+				<!-- <div class="comment-container">
 					<div class="title">评论 0</div>
 					<comment-input @handleSubmit="handleSendComment" />
-				</div>
-				<div class="comment-empty" v-show="hotTopic.remark_number === 0">
+				</div> -->
+				<comment-list style="margin: 0 15px;" :isShowComment="isShowComment" :hotTopic="hotTopic" :isRegularlyLoad="true" :pageSize="5" />
+				<div class="comment-empty" v-show="hotTopic.remark_number <= 0">
 					<img src="@/assets/images/暂无数据.png" alt="" />
 					<div class="text">暂无评论数据</div>
 				</div>
@@ -61,6 +62,8 @@ onMounted(() => {
 	searchHotTopicInfo()
 })
 
+const isShowComment = ref(false)
+
 const hotTopic = reactive({})
 
 const searchHotTopicInfo = async () => {
@@ -72,6 +75,7 @@ const searchHotTopicInfo = async () => {
 			res.data.pictures = JSON.parse(res.data.pictures)
 		}
 		Object.assign(hotTopic, res.data)
+		isShowComment.value = true
 	} else {
 		hotTopicIsExist.value = false
 	}
@@ -98,6 +102,7 @@ const backToHome = () => {
 	.leftWrap {
 		// background: #fff;
 		width: 70%;
+		margin-bottom: 20px;
 
 		.comment-wrap {
 			background: #fff;

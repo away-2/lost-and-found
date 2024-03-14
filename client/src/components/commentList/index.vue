@@ -337,6 +337,15 @@ const props = defineProps({
 		// default
 		require: true,
 	},
+	pageSize: {
+		require: false,
+		default: 3
+	},
+	// 是否有规律地加载
+	isRegularlyLoad: {
+		require: false,
+		default: false
+	}
 })
 
 const router = useRouter()
@@ -347,7 +356,7 @@ const userStore = useUserStore()
 const { systemUserInfo } = storeToRefs(userStore)
 
 const pageNum = ref(1)
-const pageSize = ref(3)
+const pageSize = ref(props.pageSize)
 const offset = ref(null)
 const total = ref(0)
 const commentList = reactive([])
@@ -359,7 +368,7 @@ const handleSelectedSort = (type) => {
 	if (type !== isSortActive.value) {
 		isSortActive.value = type
 		pageNum.value = 1
-		pageSize.value = 3
+		pageSize.value = props.pageSize
 		offset.value = null
 		commentList.splice(0, commentList.length)
 		getAllCommentInfo()
@@ -390,11 +399,19 @@ const getAllCommentInfo = async (isLoadMore) => {
 
 // 点击查看更多
 const handleLoadMore = () => {
-	if (pageSize.value === 3) {
-		offset.value = 3
-		pageSize.value = 5
+	if(props.isRegularlyLoad) {
+		// 需要有规律地加载
+		pageNum.value = pageNum.value + 1
 		getAllCommentInfo(true)
-	} else if (pageSize.value === 5) {
+		return
+	}
+	if (pageSize.value === props.pageSize) {
+		// 说明还是第一次点加载更多，偏移为第一次加载的size数，这一次一下加载第一次的size+2条
+		offset.value = props.pageSize
+		pageSize.value = props.pageSize + 2
+		getAllCommentInfo(true)
+	} else if (pageSize.value === props.pageSize + 2) {
+		// 说明已经加载更多一次了，还有更多条评论，则去沸点详情查看
 		const { href } = router.resolve({
 			path: `/hot/${props.hotTopic.id}`,
 		})
@@ -414,10 +431,11 @@ watch(
 		} else {
 			offset.value = null
 			total.value = 0
-			pageSize.value = 3
+			pageSize.value = props.pageSize
 			commentList.splice(0, commentList.length)
 		}
-	}
+	},
+	{ immediate: true }
 )
 
 // 当前展示的回复评论组件的id,根据id判断哪个显示

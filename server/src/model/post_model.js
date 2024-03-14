@@ -23,6 +23,10 @@ const Post = seq.define('laf_post',{
         type: DataTypes.STRING,
         comment: '物品图片, [12,13]'
     },
+    thing_property: {
+        type: DataTypes.STRING,
+        comment: '物品属性."书籍,电子产品"多个逗号分隔'
+    },
     lost_or_pick_place: {
         type: DataTypes.STRING,
         allowNull: false,
