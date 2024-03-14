@@ -25,8 +25,9 @@
 		</div>
 		<div class="content-box">
             <div class="tab-box">
-                <tab :titles="titleTab" :initialIndex="0"/>
+                <tab :titles="titleTab" :initialIndex="0" />
             </div>
+
         </div>
 	</div>
 </template>
