@@ -67,7 +67,7 @@
 						</div>
 					</div>
 					<div class="operate-box" v-if="systemUserInfo.id !== userInfo.id">
-						<div class="concern-btn" :class="{concerned: isConcernUser}" @click="handleConcernSomeone">关注</div>
+						<div class="concern-btn" :class="{ concerned: isConcernUser }" @click="handleConcernSomeone">{{ isConcernUser ? '已关注' : '关注Ta' }}</div>
 						<div class="message-btn">私信</div>
 					</div>
 				</div>
@@ -179,7 +179,7 @@ const handleCheckIsConcernUser = async () => {
 	if (systemUserInfo.value.id !== route.params.id) {
 		const res = await checkAlreadyConcernSomeone(route.params.id)
 		if (res.code == 200) {
-			console.log(res.data);
+			console.log(res.data)
 			isConcernUser.value = res.data
 		}
 	}
@@ -194,18 +194,17 @@ const handleConcernSomeone = async () => {
 		res = await cancelConcernSomeone(route.params.id)
 		if (res.code == 200) {
 			isConcernUser.value = !isConcernUser.value
-			message.success("取消关注成功")
+			message.success('取消关注成功')
 		}
 	} else {
 		// 关注用户
 		res = await concernSomeone(params)
 		if (res.code == 200) {
 			isConcernUser.value = !isConcernUser.value
-			message.success("关注成功")
+			message.success('关注成功')
 		}
 	}
 }
-
 
 watch(
 	() => route.path,

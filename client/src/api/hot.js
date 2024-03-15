@@ -116,3 +116,12 @@ export const removeHotTopicCommentById = (comment_id) => {
         method: 'delete'
     })
 }
+
+// 分页查询指定用户点赞的沸点
+export const findUserLikeTopicByPaging = (data) => {
+    return request({
+        url: `/topicService/findUserLikeTopicByPaging`,
+        method: 'post',
+        data
+    })
+}

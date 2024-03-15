@@ -118,7 +118,7 @@ const handleBlur = () => {
 	isFocusedOfInput.value = false
 	// 如果做了自动增高效果，要考虑是否缩回去
 	if(props.isNeedIncreaseHeight) {
-		if(inputRef.value.scrollHeight <= props.inputMinHeight + 40) {
+		if(inputRef.value.scrollHeight <= props.inputMinHeight + 40 && alreadyInputCharQuantity.value === 0) {
 			saveInputMinHeight.value = props.inputMinHeight + 'px'
 		}
 	}
