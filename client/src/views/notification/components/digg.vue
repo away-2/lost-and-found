@@ -43,13 +43,16 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { findUserLikeAndCollectNotice } from '@/api/notification'
+import { findUserLikeAndCollectNotice, clearUnreadNotice } from '@/api/notification'
 import { findGroupEnumByCodes } from '@/api/enum'
 import { useComputed } from '@/utils/common'
 import { formatPast } from '@/utils/time'
+import useUserStore from '@/store/user'
 
 const router = useRouter()
 const noticeList = reactive([])
+
+const userStore = useUserStore()
 
 const loading = ref(false)
 
@@ -62,6 +65,14 @@ const searchAllNotice = async () => {
 			ele.source_pictures = JSON.parse(ele.source_pictures)
 		})
 		noticeList.splice(0, noticeList.length, ...res.data)
+		clearUnreadLikeAndConcernNotice()
+	}
+}
+
+const clearUnreadLikeAndConcernNotice = async () => {
+	const res = await clearUnreadNotice('likeAndConcern')
+	if(res.code == 200) {
+		userStore.updateSystemUserInfo({ unreadLikeAndConcernNoticeNum: 0 })
 	}
 }
 

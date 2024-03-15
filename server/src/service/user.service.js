@@ -4,6 +4,8 @@ const User = require('../model/user.model')
 const UserConcernRelation = require('../model/user_concern_relation.model')
 const UserLikeRelation = require('../model/user_like_relation.model')
 const IncreaseFansNotice = require('../model/increase_fans_notice.model')
+const LikeConcernNotice = require('../model/like_conern_notice.model')
+const CommentNotice = require('../model/comment_notice.model')
 const HotTopic = require('../model/hot_topic.model')
 const StudentCode = require('../model/student_code.model')
 const School = require('../model/school.model')
@@ -38,6 +40,31 @@ class UserService {
             }
         })
         res.publishHotTopicNumber = publishHotTopicNumber
+        // 查询各类未读通知数量
+        // 评论通知未读数
+        const unreadCommentNoticeNum = await CommentNotice.count({
+            where: {
+                receive_notice_user_id: user_id,
+                read_status: '0'
+            }
+        })
+        res.unreadCommentNoticeNum = unreadCommentNoticeNum
+        // 新增粉丝通知未读数
+        const unreadIncreaseFansNoticeNum = await IncreaseFansNotice.count({
+            where: {
+                userId: user_id,
+                read_status: '0'
+            }
+        })
+        res.unreadIncreaseFansNoticeNum = unreadIncreaseFansNoticeNum
+        // 赞与收藏通知未读数
+        const unreadLikeAndConcernNoticeNum = await LikeConcernNotice.count({
+            where: {
+                receive_notice_user_id: user_id,
+                read_status: '0'
+            }
+        })
+        res.unreadLikeAndConcernNoticeNum = unreadLikeAndConcernNoticeNum
         return res
     }
     // 查询传入的activeUser是否已经关注了passiveUser

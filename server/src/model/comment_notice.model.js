@@ -44,6 +44,12 @@ const CommentNotice = seq.define('laf_comment_notice', {
     type: DataTypes.STRING,
     allowNull: false,
     comment: '评论的类型, 是 沸点的评论 or 沸点 or 帖子...'
+  },
+  read_status: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: '0',
+    comment: '阅读状态,0代表未读,1代表已读'
   }
 })
 

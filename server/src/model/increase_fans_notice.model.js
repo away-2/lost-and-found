@@ -23,6 +23,12 @@ const IncreaseFansNotice = seq.define('laf_increase_fans_notice',{
         type: DataTypes.STRING,
         allowNull: false,
         comment: '前端会给关注接口传入这个字段, 关注途径, 枚举'
+    },
+    read_status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: '0',
+        comment: '阅读状态,0代表未读,1代表已读'
     }
 })
 

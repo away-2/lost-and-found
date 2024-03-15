@@ -100,6 +100,18 @@ class CommentService {
         })
         return result
     }
+    // 修改赞与收藏通知表
+    async modifyLikeAndConcernNotice({ whereObj, updateObj }) {
+        await LikeConcernNotice.update(updateObj,{ where: whereObj })
+    }
+    // 修改新增粉丝通知表
+    async modifyIncreaseFansNotice({ whereObj, updateObj }) {
+        await IncreaseFansNotice.update(updateObj,{ where: whereObj })
+    }
+    // 修改评论通知表
+    async modifyCommentNotice({ whereObj, updateObj }) {
+        await CommentNotice.update(updateObj,{ where: whereObj })
+    }
 }
 
 const a = new CommentService()

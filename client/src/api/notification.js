@@ -23,3 +23,10 @@ export const findUserLikeAndCollectNotice = () => {
         method: 'get'
     })
 }
+
+// 根据类别清空用户未读通知
+export const clearUnreadNotice = (type) => {
+    return request({
+        url: `/noticeService/clearUnreadNotice?type=${type}`
+    })
+}

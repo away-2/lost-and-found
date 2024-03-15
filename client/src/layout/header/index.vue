@@ -9,21 +9,33 @@
 			<div class="loginWrap" v-show="!token" @click="toLogin">登录</div>
 			<div class="avatorWrap" v-show="token">
 				<a-dropdown>
-					<svg t="1709695143893" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1908" width="24" height="22">
-						<path
-							d="M594.7 143.1c0-43.9-36.8-79.7-82.2-79.7-45.3 0-82.2 35.7-82.2 79.7 0 4.5 0.4 8.9 1.1 13.2-113.5 38.3-206.7 156.1-206.7 295.4v109.6s0 157.9-40 159.3c-23.9 0-42.2 17.8-42.2 39.8 0 22.1 18.4 39.8 41.1 39.8h657.8c22.8 0 41.1-17.8 41.1-39.8 0-22.2-18.4-39.8-41.1-39.8-41.1 0-41.1-158.2-41.1-158.2V451.6c0-139.4-87.1-257.2-206.7-295.5 0.7-4.2 1.1-8.6 1.1-13z m41.1 696.8c-0.1 66.1-54.8 119.5-123.3 119.5-68 0-123.2-53.3-123.3-119.5"
-							p-id="1909"
-							fill="#8a919f"
-						></path>
-					</svg>
+					<div class="notice-icon-wrap">
+						<svg t="1709695143893" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1908" width="24" height="22">
+							<path
+								d="M594.7 143.1c0-43.9-36.8-79.7-82.2-79.7-45.3 0-82.2 35.7-82.2 79.7 0 4.5 0.4 8.9 1.1 13.2-113.5 38.3-206.7 156.1-206.7 295.4v109.6s0 157.9-40 159.3c-23.9 0-42.2 17.8-42.2 39.8 0 22.1 18.4 39.8 41.1 39.8h657.8c22.8 0 41.1-17.8 41.1-39.8 0-22.2-18.4-39.8-41.1-39.8-41.1 0-41.1-158.2-41.1-158.2V451.6c0-139.4-87.1-257.2-206.7-295.5 0.7-4.2 1.1-8.6 1.1-13z m41.1 696.8c-0.1 66.1-54.8 119.5-123.3 119.5-68 0-123.2-53.3-123.3-119.5"
+								p-id="1909"
+								fill="#8a919f"
+							></path>
+						</svg>
+						<div class="have-unread-dot" v-if="isHaveUnreadNotice"></div>
+					</div>
 					<template #overlay>
-						<a-menu style="width: 150px; padding: 10px" @click="handleClickMenuItem">
-							<a-menu-item key="comment" style="padding: 8px 15px">评论</a-menu-item>
-							<a-menu-item key="digg" style="padding: 8px 15px">赞和收藏</a-menu-item>
-							<a-menu-item key="follow" style="padding: 8px 15px">新增粉丝</a-menu-item>
-							<a-menu-item key="message" style="padding: 8px 15px">私信</a-menu-item>
-							<a-menu-item key="system" style="padding: 8px 15px">系统通知</a-menu-item>
-							<a-menu-item key="setting" style="padding: 8px 15px">消息设置</a-menu-item>
+						<a-menu class="notice-menu-wrap" @click="handleClickMenuItem">
+							<a-menu-item key="comment" class="notice-menu-item">
+								<span>评论</span>
+								<div class="unread-num" v-if="systemUserInfo.unreadCommentNoticeNum > 0">{{ systemUserInfo.unreadCommentNoticeNum }}</div>
+							</a-menu-item>
+							<a-menu-item key="digg" class="notice-menu-item">
+								<span>赞和收藏</span>
+								<div class="unread-num" v-if="systemUserInfo.unreadLikeAndConcernNoticeNum > 0">{{ systemUserInfo.unreadLikeAndConcernNoticeNum }}</div>
+							</a-menu-item>
+							<a-menu-item key="follow" class="notice-menu-item">
+								<span>新增粉丝</span>
+								<div class="unread-num" v-if="systemUserInfo.unreadIncreaseFansNoticeNum > 0">{{ systemUserInfo.unreadIncreaseFansNoticeNum }}</div>
+							</a-menu-item>
+							<a-menu-item key="message" class="notice-menu-item">私信</a-menu-item>
+							<a-menu-item key="system" class="notice-menu-item">系统通知</a-menu-item>
+							<a-menu-item key="setting" class="notice-menu-item">消息设置</a-menu-item>
 						</a-menu>
 					</template>
 				</a-dropdown>
@@ -77,7 +89,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, watch } from 'vue'
+import { ref, onMounted, reactive, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { GET_USERINFO, REMOVE_USERINFO } from '@/utils/token'
 import { message, Modal } from 'ant-design-vue'
@@ -89,6 +101,14 @@ const route = useRoute()
 const userStore = useUserStore()
 
 const { systemUserInfo } = storeToRefs(userStore)
+
+const isHaveUnreadNotice = computed(() => {
+	const { unreadCommentNoticeNum, unreadIncreaseFansNoticeNum, unreadLikeAndConcernNoticeNum } = systemUserInfo.value
+	if (unreadCommentNoticeNum > 0 || unreadIncreaseFansNoticeNum > 0 || unreadLikeAndConcernNoticeNum > 0) {
+		return true
+	}
+	return false
+})
 
 const convertPathToKey = (path) => {
 	let key = path
@@ -127,9 +147,12 @@ const items = ref([
 	},
 ])
 
-watch(()=>route.path,() => {
-	current.value = [convertPathToKey(route.path)]
-})
+watch(
+	() => route.path,
+	() => {
+		current.value = [convertPathToKey(route.path)]
+	}
+)
 
 // 消息下拉框点击回调
 const handleClickMenuItem = ({ item, key, keyPath }) => {
@@ -237,6 +260,18 @@ onMounted(() => {
 			display: flex;
 			align-items: center;
 			cursor: pointer;
+			.notice-icon-wrap {
+				position: relative;
+				.have-unread-dot {
+					width: 6px;
+					height: 6px;
+					border-radius: 50%;
+					background-color: red;
+					position: absolute;
+					top: 0;
+					left: 16px;
+				}
+			}
 		}
 
 		.isLogin {
@@ -323,4 +358,30 @@ onMounted(() => {
 		}
 	}
 }
+
+.notice-menu-wrap {
+	width: 180px;
+	padding: 10px;
+	::v-deep(.ant-dropdown-menu-item) {
+		.ant-dropdown-menu-title-content {
+			padding: 4px 2px;
+			display: flex;
+			column-gap: 20px;
+			align-items: center;
+			.unread-num {
+				width: 24px;
+				height: 24px;
+				text-align: center;
+				line-height: 24px;
+				border-radius: 50%;
+				color: white;
+				font-size: 13px;
+				background-color: red;
+			}
+		}
+	}
+}
+// :global(:where(.css-dev-only-do-not-override-19yxfbp).ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item.notice-menu-item) {
+// 	padding: 8px 15px;
+// }
 </style>

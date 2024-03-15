@@ -38,6 +38,12 @@ const LikeConcernNotice = seq.define('laf_like_concern_notice',{
         type: DataTypes.STRING,
         allowNull: false,
         comment: '赞和收藏的类型'
+    },
+    read_status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: '0',
+        comment: '阅读状态,0代表未读,1代表已读'
     }
 })
 
