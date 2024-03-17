@@ -93,17 +93,13 @@ const formVal = reactive({
 	verifyCode: '',
 })
 
-let verifyVal = ref('')
-let isFreeze = ref(0)
+const verifyVal = ref('')
+const isFreeze = ref(0)
+const isAdmin = ref(0)
 
 // 选中学生传入0， 选中管理员传入1
 const selctedStatus = (index) => {
 	isActive.value = index
-	if (index === 1) {
-		formVal.identity = 'admin'
-	} else {
-		formVal.identity = 'user'
-	}
 }
 
 // 选择登录方式学号/邮箱
@@ -130,9 +126,15 @@ const codeLogin = async () => {
 		if (res.code === 200) {
 			SET_USERINFO(res.data)
 			isFreeze.value = res.data.userInfo.is_freeze
+			isActive.value = res.data.userInfo.is_admin
 			if (isFreeze.value === 0) {
-				router.push('/home')
-				notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好` })
+				if (isSelected.value === 0 && isAdmin.value === 1) {
+					router.push('/admin')
+					notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好` })
+				} else {
+					router.push('/home')
+					notification.success({ message: '欢迎回来', description: `Hi,${getTime()}好` })
+				}
 			} else {
 				message.warn('账户已冻结，请联系管理员解除冻结')
 			}
@@ -443,9 +445,7 @@ const toUpdatePwd = () => {
 			.text {
 				font-weight: 100;
 				font-size: 14px;
-
 			}
-
 		}
 		.right-box {
 			display: flex;
@@ -454,7 +454,6 @@ const toUpdatePwd = () => {
 			.text {
 				font-weight: 100;
 				font-size: 14px;
-
 			}
 		}
 	}

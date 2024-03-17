@@ -160,6 +160,11 @@ const routes = [
       }
     ]
   },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: () => import('@/admin/index.vue'),
+  },
 
 ]
 
