@@ -369,13 +369,13 @@ onMounted(() => {
 			column-gap: 20px;
 			align-items: center;
 			.unread-num {
-				width: 24px;
-				height: 24px;
+				width: 19px;
+				height: 19px;
 				text-align: center;
-				line-height: 24px;
+				line-height: 19px;
 				border-radius: 50%;
 				color: white;
-				font-size: 13px;
+				font-size: 12px;
 				background-color: red;
 			}
 		}

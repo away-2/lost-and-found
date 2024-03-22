@@ -27,15 +27,15 @@
 						</div>
 					</div>
 					<div class="count-item">
-						<div class="single-count-item">
+						<div class="single-count-item" @click="toUserCenter('topic')">
 							<div class="count-num">{{ systemUserInfo.publishHotTopicNumber }}</div>
 							<div class="count-text">沸点</div>
 						</div>
-						<div class="single-count-item">
+						<div class="single-count-item" @click="toUserCenter('following')">
 							<div class="count-num">{{ systemUserInfo.concern_number }}</div>
 							<div class="count-text">关注</div>
 						</div>
-						<div class="single-count-item">
+						<div class="single-count-item" @click="toUserCenter('following')">
 							<div class="count-num">{{ systemUserInfo.fans_number }}</div>
 							<div class="count-text">粉丝</div>
 						</div>
@@ -136,8 +136,12 @@ const toTopicDetail = (id) => {
 	router.push(`/hot/${id}`)
 }
 
-// 通过右侧卡片进入个人中心
-const toUserCenter = () => {
+// 进入个人中心某个页面
+const toUserCenter = (page) => {
+	if(page) {
+		router.push({ path: `/user/${userInfo.id}/${page}` })
+		return
+	}
 	router.push({ path: `/user/${userInfo.id}` })
 }
 
@@ -221,6 +225,7 @@ onMounted(() => {
 					border-top: 1px solid #e4e6eb;
 
 					.single-count-item {
+						cursor: pointer;
 						margin-top: 20px;
 
 						.count-num {
