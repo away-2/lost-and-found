@@ -1,17 +1,17 @@
 <template>
 	<div class="container">
-		<div class="back-one"></div>
-		<div class="back-two"></div>
-		<div class="back-three"></div>
-		<div class="back-four"></div>
+		<div class="image-box">
+			<img src="@/assets/images/not-found.png" alt="" />
+		</div>
 		<div class="logo-box">
-			<img src="@/assets/images/logo.png" alt="" />
-			<div class="title">校园失物招领系统</div>
+			<!-- <img src="@/assets/images/logo.png" alt="" /> -->
+			<div class="title-left">校园失物招领中心，</div>
+			<div class="title-right">让失物不再流浪</div>
 		</div>
 		<div class="loginWrap">
 			<div class="loginBox">
 				<div class="loginForm">
-					<div class="login-title">欢迎登录</div>
+					<div class="login-title">您好，请登录</div>
 					<div class="tabWrap">
 						<div class="tabItem">
 							<div v-for="(item, index) in titleTab" :key="index" class="tabList" :class="{ selected: index === isSelected }" @click="tabSelected(index)">{{ item }}</div>
@@ -184,7 +184,8 @@ const toUpdatePwd = () => {
 	width: 100vw;
 	height: 100vh;
 	// background: #f4f9ff;
-	background: #fff;
+	background: url('@/assets/images/bg.svg');
+	// background: #fff;
 	background-size: cover;
 	background-position: center center;
 	background-repeat: no-repeat;
@@ -194,45 +195,13 @@ const toUpdatePwd = () => {
 	flex-direction: column;
 	align-content: center;
 	justify-content: center;
-	.back-one {
+	.image-box {
 		position: absolute;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 560px;
-		height: 560px;
-		border-radius: 50%;
-		opacity: 0.9;
-		border: 1px solid #eaecf0;
-	}
-	.back-two {
-		position: absolute;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 680px;
-		height: 680px;
-		border-radius: 50%;
-		opacity: 0.7;
-		border: 1px solid #eaecf0;
-	}
-	.back-three {
-		position: absolute;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 800px;
-		height: 800px;
-		border-radius: 50%;
-		opacity: 0.5;
-		border: 1px solid #eaecf0;
-	}
-	.back-four {
-		position: absolute;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 920px;
-		height: 920px;
-		border-radius: 50%;
-		opacity: 0.4;
-		border: 1px solid #eaecf0;
+		left: 0px;
+		top: 182.5px;
+		width: 498px;
+		height: 390px;
+		transform: scale(0.7);
 	}
 	.logo-box {
 		position: fixed;
@@ -247,7 +216,7 @@ const toUpdatePwd = () => {
 			height: 48px;
 		}
 		.title {
-			font-family: 'MyFont';
+			// font-family: 'MyFont';
 			font-size: 20px;
 			color: rgba(16, 24, 40, 0.8);
 		}
@@ -255,10 +224,12 @@ const toUpdatePwd = () => {
 
 	.loginWrap {
 		display: flex;
-		justify-content: center;
+		justify-content: flex-end;
 		align-items: center;
 		height: calc(100vh - 35px);
 		z-index: 99;
+		margin-right: 10%;
+		// opacity: 0.9;
 
 		.loginBox {
 			// background: #e8f1fd;
@@ -270,11 +241,10 @@ const toUpdatePwd = () => {
 			.loginForm {
 				width: 440px;
 				height: 510px;
-				border-radius: 16px;
+				border-radius: 20px;
 				border: 1px solid #eaecf0;
 				background: #fff;
-				// box-shadow: 0px 22px 35px 0px rgba(5, 27, 105, 0.12);
-				box-shadow: rgba(22, 14, 45, 0.02) 0px 0px 40px, rgba(22, 14, 45, 0.06) 0px 0px 104px;
+				box-shadow: 0 2px 10px 6px rgba(0,42,92,.06);
 				display: flex;
 				flex-direction: column;
 				padding: 50px 75px;
@@ -287,11 +257,11 @@ const toUpdatePwd = () => {
 					.tabItem {
 						display: flex;
 						height: 25px;
-						font-size: 13px;
+						font-size: 16px;
 						width: 100%;
 
 						.tabList {
-							width: 55px;
+							width: 80px;
 							margin-right: 20px;
 							padding-left: 2px;
 							align-items: center;
@@ -306,9 +276,10 @@ const toUpdatePwd = () => {
 
 					.underline {
 						position: absolute;
-						width: 55px;
+						width: 70px;
 						height: 2px;
-						background: #1e2c4b;
+						// background: #1e2c4b;
+						background: #4284d3;
 						transition: all 0.3s;
 
 						&.lineLeft {
@@ -316,7 +287,7 @@ const toUpdatePwd = () => {
 						}
 
 						&.lineRight {
-							left: 26%;
+							left: 34%;
 						}
 					}
 				}
@@ -324,10 +295,10 @@ const toUpdatePwd = () => {
 				.login-title {
 					font-size: 25px;
 					width: 100%;
-					text-align: center;
+					text-align: right;
 					// font-family: 'MyFont';
 					color: rgba(16, 24, 40, 0.8);
-					margin-bottom: 20px;
+					margin-bottom: 30px;
 				}
 
 				.btnContainer {
@@ -378,7 +349,8 @@ const toUpdatePwd = () => {
 				.loginBtn {
 					width: 100%;
 					height: 40px;
-					background: #1e2c4b;
+					// background: #1e2c4b;
+					background: #4284d3;
 					color: #fff;
 					text-align: center;
 					padding-top: 10px;
@@ -436,7 +408,7 @@ const toUpdatePwd = () => {
 		align-items: center;
 		column-gap: 30px;
 		position: fixed;
-		bottom: 20px;
+		bottom: 10px;
 		left: 36px;
 		.left-box {
 			display: flex;
