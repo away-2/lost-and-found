@@ -19,7 +19,7 @@
 			<div class="sider-content">
 				<!-- 个人信息卡片 -->
 				<div class="user-info-card">
-					<div class="card-header" @click="toUserCenter">
+					<div class="card-header" @click="toUserCenter()">
 						<img :src="systemUserInfo.avator" alt="" />
 						<div class="user-info">
 							<div class="user-name text-ellipsis">{{ systemUserInfo.nick_name || systemUserInfo.real_name }}</div>
